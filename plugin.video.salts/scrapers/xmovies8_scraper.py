@@ -75,7 +75,7 @@ class XMovies8_Scraper(scraper.Scraper):
         return hosters
 
     def get_url(self, video):
-        return super(XMovies8_Scraper, self)._default_get_url(video)
+        return self._default_get_url(video)
 
     def search(self, video_type, title, year):
         search_url = urlparse.urljoin(self.base_url, '/results?q=%s' % urllib.quote_plus(title))
@@ -103,7 +103,7 @@ class XMovies8_Scraper(scraper.Scraper):
 
     @classmethod
     def get_settings(cls):
-        settings = super(XMovies8_Scraper, cls).get_settings()
+        settings = super(cls, cls).get_settings()
         settings.append('         <setting id="%s-default_url" type="string" visible="false"/>' % (cls.get_name()))
         return settings
 

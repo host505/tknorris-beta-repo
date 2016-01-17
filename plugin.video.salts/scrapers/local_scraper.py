@@ -73,7 +73,7 @@ class Local_Scraper(scraper.Scraper):
         return hosters
 
     def get_url(self, video):
-        return super(Local_Scraper, self)._default_get_url(video)
+        return self._default_get_url(video)
 
     def _get_episode_url(self, show_url, video):
         params = urlparse.parse_qs(show_url)
@@ -108,7 +108,7 @@ class Local_Scraper(scraper.Scraper):
 
     @classmethod
     def get_settings(cls):
-        settings = super(Local_Scraper, cls).get_settings()
+        settings = super(cls, cls).get_settings()
         name = cls.get_name()
         settings.append('         <setting id="%s-def-quality" type="enum" label="     Default Quality" values="None|Low|Medium|High|HD720|HD1080" default="0" visible="eq(-4,true)"/>' % (name))
         return settings

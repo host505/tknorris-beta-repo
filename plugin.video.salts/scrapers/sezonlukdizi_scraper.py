@@ -132,12 +132,12 @@ class SezonLukDizi_Scraper(scraper.Scraper):
         return sources
     
     def get_url(self, video):
-        return super(SezonLukDizi_Scraper, self)._default_get_url(video)
+        return self._default_get_url(video)
 
     def _get_episode_url(self, show_url, video):
         episode_pattern = 'href="([^"]+(?:-|/)%s-sezon-%s-[^"]*bolum[^"]*)' % (video.season, video.episode)
         title_pattern = 'class="episode-name"\s+href="(?P<url>[^"]+)"\s+title="(?P<title>[^"]+)'
-        return super(SezonLukDizi_Scraper, self)._default_get_episode_url(show_url, video, episode_pattern, title_pattern)
+        return self._default_get_episode_url(show_url, video, episode_pattern, title_pattern)
 
     def search(self, video_type, title, year):
         results = []

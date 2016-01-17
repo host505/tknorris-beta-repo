@@ -78,7 +78,7 @@ class TwoMovies_Scraper(scraper.Scraper):
         return sources
 
     def get_url(self, video):
-        return super(TwoMovies_Scraper, self)._default_get_url(video)
+        return self._default_get_url(video)
 
     def search(self, video_type, title, year):
         results = []
@@ -121,13 +121,13 @@ class TwoMovies_Scraper(scraper.Scraper):
         episode_pattern = 'class="linkname\d*" href="([^"]+/watch_episode/[^/]+/%s/%s/)"' % (video.season, video.episode)
         title_pattern = 'class="linkname"\s+href="(?P<url>[^"]+)">Episode_\d+\s+-\s+(?P<title>[^<]+)'
         headers = {'Referer': urlparse.urljoin(self.base_url, show_url)}
-        return super(TwoMovies_Scraper, self)._default_get_episode_url(show_url, video, episode_pattern, title_pattern, headers=headers)
+        return self._default_get_episode_url(show_url, video, episode_pattern, title_pattern, headers=headers)
     
     def _http_get(self, url, cookies=None, data=None, multipart_data=None, headers=None, allow_redirect=True, cache_limit=8):
         if headers is None: headers = {}
         if 'Referer' not in headers: headers['Referer'] = urlparse.urljoin(self.base_url, '/')
         headers.update({'User-Agent': LOCAL_USER_AGENT})
-        return super(TwoMovies_Scraper, self)._http_get(url, cookies=cookies, data=data, multipart_data=multipart_data, headers=headers, allow_redirect=allow_redirect, cache_limit=cache_limit)
+        return super(self.__class__, self)._http_get(url, cookies=cookies, data=data, multipart_data=multipart_data, headers=headers, allow_redirect=allow_redirect, cache_limit=cache_limit)
 
     def __randomize_ua(self):
         index = random.randrange(len(RAND_UAS))

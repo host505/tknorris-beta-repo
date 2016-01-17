@@ -27,6 +27,7 @@ import os
 import re
 import time
 import base64
+import hashlib
 from StringIO import StringIO
 import gzip
 import datetime
@@ -57,6 +58,7 @@ COOKIEPATH = kodi.translate_path(kodi.get_profile())
 MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 Q_LIST = [item[0] for item in sorted(Q_ORDER.items(), key=lambda x:x[1])]
 MAX_RESPONSE = 1024 * 1024 * 2
+IV = '\0' * 16
 
 class NoRedirection(urllib2.HTTPErrorProcessor):
     def http_response(self, request, response):
@@ -378,7 +380,7 @@ class Scraper(object):
                 for key in c[domain][path]:
                     cookie = c[domain][path][key]
                     if cookie.expires > sys.maxint:
-                        log_utils.log('Fixing cookie expiration for %s: was: %s now: %s' % (key, cookie.expires, sys.maxint))
+                        log_utils.log('Fixing cookie expiration for %s: was: %s now: %s' % (key, cookie.expires, sys.maxint), log_utils.LOGDEBUG)
                         cookie.expires = sys.maxint
         
     def _do_recaptcha(self, key, tries=None, max_tries=None):
@@ -623,7 +625,7 @@ class Scraper(object):
             
         try: height = int(height)
         except: height = 200
-        if height > 800:
+        if height >= 800:
             quality = QUALITIES.HD1080
         elif height > 480:
             quality = QUALITIES.HD720
@@ -826,3 +828,37 @@ class Scraper(object):
         else:
             log_utils.log('Empty JSON object: %s: %s' % (html, url), log_utils.LOGDEBUG)
             return {}
+
+    def _update_scraper_py(self, filename):
+        try:
+            py_path = os.path.join(kodi.get_path(), 'scrapers', filename)
+            self.exists = os.path.exists(py_path)
+            scraper_url = kodi.get_setting('%s-scraper_url' % (self.get_name()))
+            scraper_password = kodi.get_setting('%s-scraper_password' % (self.get_name()))
+            if scraper_url and scraper_password and (not self.exists or os.path.getmtime(py_path) < time.time() - (24 * 60 * 60)):
+                try:
+                    req = urllib2.urlopen(scraper_url)
+                    cipher_text = req.read()
+                except Exception as e:
+                    log_utils.log('Failure during %s scraper get: %s' % (self.get_name(), e), log_utils.LOGWARNING)
+                    return
+                
+                if cipher_text:
+                    scraper_key = hashlib.sha256(scraper_password).digest()
+                    decrypter = pyaes.Decrypter(pyaes.AESModeOfOperationCBC(scraper_key, IV))
+                    new_py = decrypter.feed(cipher_text)
+                    new_py += decrypter.feed()
+                    
+                    old_py = ''
+                    if os.path.exists(py_path):
+                        with open(py_path, 'r') as f:
+                            old_py = f.read()
+                    
+                    log_utils.log('%s path: %s, new_py: %s, match: %s' % (self.get_name(), py_path, bool(new_py), new_py == old_py), log_utils.LOGDEBUG)
+                    if old_py != new_py:
+                        with open(py_path, 'w') as f:
+                            f.write(new_py)
+        except Exception as e:
+            log_utils.log('Failure during %s scraper update: %s' % (self.get_name(), e), log_utils.LOGWARNING)
+        finally:
+            self.exists = os.path.exists(py_path)

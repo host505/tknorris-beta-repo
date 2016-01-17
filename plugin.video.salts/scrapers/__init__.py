@@ -73,6 +73,7 @@ def update_settings():
         old_xml = xml
         classes = scraper.Scraper.__class__.__subclasses__(scraper.Scraper)  # @UndefinedVariable
         for cls in sorted(classes, key=lambda x: x.get_name().upper()):
+            if cls.has_proxy(): continue
             new_settings += cls.get_settings()
             if len(new_settings) > 90:
                 xml = update_xml(xml, new_settings, cat_count)

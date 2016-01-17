@@ -104,13 +104,13 @@ class NoobRoom_Scraper(scraper.Scraper):
         return hosters
 
     def get_url(self, video):
-        return super(NoobRoom_Scraper, self)._default_get_url(video)
+        return self._default_get_url(video)
 
     def _get_episode_url(self, show_url, video):
         episode_pattern = "%sx%02d\s*-\s*.*?href='([^']+)" % (video.season, int(video.episode))
         title_pattern = "\d+x\d+\s*-\s*.*?href='(?P<url>[^']+)'>(?P<title>[^<]+)"
         airdate_pattern = "href='([^']+)(?:[^>]+>){3}\s*-\s*\(Original Air Date:\s+{day}-{month}-{year}"
-        return super(NoobRoom_Scraper, self)._default_get_episode_url(show_url, video, episode_pattern, title_pattern, airdate_pattern)
+        return self._default_get_episode_url(show_url, video, episode_pattern, title_pattern, airdate_pattern)
 
     def search(self, video_type, title, year):
         if not self.include_paid and video_type != VIDEO_TYPES.MOVIE: return []
@@ -137,7 +137,7 @@ class NoobRoom_Scraper(scraper.Scraper):
 
     @classmethod
     def get_settings(cls):
-        settings = super(NoobRoom_Scraper, cls).get_settings()
+        settings = super(cls, cls).get_settings()
         name = cls.get_name()
         settings.append('         <setting id="%s-username" type="text" label="     %s" default="" visible="eq(-4,true)"/>' % (name, i18n('username')))
         settings.append('         <setting id="%s-password" type="text" label="     %s" option="hidden" default="" visible="eq(-5,true)"/>' % (name, i18n('password')))
@@ -149,11 +149,11 @@ class NoobRoom_Scraper(scraper.Scraper):
         if not self.username or not self.password:
             return ''
 
-        html = super(NoobRoom_Scraper, self)._cached_http_get(url, self.base_url, self.timeout, data=data, headers=headers, cache_limit=cache_limit)
+        html = self._cached_http_get(url, self.base_url, self.timeout, data=data, headers=headers, cache_limit=cache_limit)
         if 'href="logout.php"' not in html:
             log_utils.log('Logging in for url (%s)' % (url), log_utils.LOGDEBUG)
             self.__login(html)
-            html = super(NoobRoom_Scraper, self)._cached_http_get(url, self.base_url, self.timeout, data=data, headers=headers, cache_limit=0)
+            html = self._cached_http_get(url, self.base_url, self.timeout, data=data, headers=headers, cache_limit=0)
 
         return html
 
@@ -164,6 +164,6 @@ class NoobRoom_Scraper(scraper.Scraper):
         if match:
             data.update(self._do_recaptcha(match.group(1)))
             
-        html = super(NoobRoom_Scraper, self)._cached_http_get(url, self.base_url, self.timeout, data=data, allow_redirect=False, cache_limit=0)
+        html = self._cached_http_get(url, self.base_url, self.timeout, data=data, allow_redirect=False, cache_limit=0)
         if 'index.php' not in html:
             raise Exception('noobroom login failed')

@@ -69,7 +69,7 @@ class Ayyex_Scraper(scraper.Scraper):
         return hosters
 
     def get_url(self, video):
-        return super(Ayyex_Scraper, self)._default_get_url(video)
+        return self._default_get_url(video)
 
     def search(self, video_type, title, year):
         results = []

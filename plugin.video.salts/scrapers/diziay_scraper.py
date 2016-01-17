@@ -96,7 +96,7 @@ class Diziay_Scraper(scraper.Scraper):
         return cookies
 
     def get_url(self, video):
-        return super(Diziay_Scraper, self)._default_get_url(video)
+        return self._default_get_url(video)
 
     def _get_episode_url(self, show_url, video):
         url = urlparse.urljoin(self.base_url, show_url)
@@ -106,7 +106,7 @@ class Diziay_Scraper(scraper.Scraper):
             data = {'sezon_id': video.season, 'dizi_id': show_id[0], 'tip': 'dizi', 'bolumid': ''}
             episode_pattern = 'href="([^"]+/[^"]*%s-sezon-%s-bolum[^"]*)"' % (video.season, video.episode)
             title_pattern = 'href="(?P<url>[^"]*-\d+-sezon-\d+-bolum[^"]*)[^>]*>.*?class="realcuf">(?P<title>[^<]*)'
-            return super(Diziay_Scraper, self)._default_get_episode_url(SEASON_URL, video, episode_pattern, title_pattern, data=data, headers=XHR)
+            return self._default_get_episode_url(SEASON_URL, video, episode_pattern, title_pattern, data=data, headers=XHR)
 
     def search(self, video_type, title, year):
         html = self._http_get(self.base_url, cache_limit=8)

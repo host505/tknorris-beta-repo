@@ -70,7 +70,7 @@ class WS_Scraper(scraper.Scraper):
         return hosters
 
     def get_url(self, video):
-        return super(WS_Scraper, self)._default_get_url(video)
+        return self._default_get_url(video)
 
     def search(self, video_type, title, year):
         results = []
@@ -133,14 +133,14 @@ class WS_Scraper(scraper.Scraper):
 
     @classmethod
     def get_settings(cls):
-        settings = super(WS_Scraper, cls).get_settings()
+        settings = super(cls, cls).get_settings()
         settings = cls._disable_sub_check(settings)
         return settings
     
     def _http_get(self, url, cache_limit=8):
         url = self.__translate_url(url)
         headers = {'User-Agent': WS_USER_AGENT}
-        result = super(WS_Scraper, self)._http_get(url, headers=headers, cache_limit=cache_limit)
+        result = super(self.__class__, self)._http_get(url, headers=headers, cache_limit=cache_limit)
         result = re.sub('<script.*?</script>', '', result)
         return result
     

@@ -95,7 +95,7 @@ class UFlix_Scraper(scraper.Scraper):
         return sources
 
     def get_url(self, video):
-        return super(UFlix_Scraper, self)._default_get_url(video)
+        return self._default_get_url(video)
 
     def search(self, video_type, title, year):
         search_url = urlparse.urljoin(self.base_url, '/index.php?menu=search&query=')
@@ -127,4 +127,4 @@ class UFlix_Scraper(scraper.Scraper):
     def _get_episode_url(self, show_url, video):
         episode_pattern = 'class="link"\s+href="([^"]+/show/[^"]+/season/%s/episode/%s)"' % (video.season, video.episode)
         title_pattern = 'class="link"\s+href="(?P<url>[^"]+).*?class="tv_episode_name"[^>]*>\s*(?P<title>[^<]+)'
-        return super(UFlix_Scraper, self)._default_get_episode_url(show_url, video, episode_pattern, title_pattern)
+        return self._default_get_episode_url(show_url, video, episode_pattern, title_pattern)

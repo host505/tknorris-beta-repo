@@ -104,7 +104,7 @@ class Zumvo_Scraper(scraper.Scraper):
         return hosters
 
     def get_url(self, video):
-        return super(Zumvo_Scraper, self)._default_get_url(video)
+        return self._default_get_url(video)
 
     def search(self, video_type, title, year):
         search_url = urlparse.urljoin(self.base_url, '/search/')
@@ -123,9 +123,9 @@ class Zumvo_Scraper(scraper.Scraper):
         return results
 
     def _http_get(self, url, data=None, headers=None, cache_limit=8):
-        html = super(Zumvo_Scraper, self)._cached_http_get(url, self.base_url, self.timeout, data=data, headers=headers, cache_limit=cache_limit)
+        html = self._cached_http_get(url, self.base_url, self.timeout, data=data, headers=headers, cache_limit=cache_limit)
         cookie = self._get_sucuri_cookie(html)
         if cookie:
             log_utils.log('Setting Zumvo cookie: %s' % (cookie), log_utils.LOGDEBUG)
-            html = super(Zumvo_Scraper, self)._cached_http_get(url, self.base_url, self.timeout, cookies=cookie, data=data, headers=headers, cache_limit=0)
+            html = self._cached_http_get(url, self.base_url, self.timeout, cookies=cookie, data=data, headers=headers, cache_limit=0)
         return html

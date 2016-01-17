@@ -95,7 +95,7 @@ class Niter_Scraper(scraper.Scraper):
         return hosters
 
     def get_url(self, video):
-        return super(Niter_Scraper, self)._default_get_url(video)
+        return self._default_get_url(video)
 
     def search(self, video_type, title, year):
         search_url = urlparse.urljoin(self.base_url, '/search?q=')
@@ -111,7 +111,7 @@ class Niter_Scraper(scraper.Scraper):
 
     @classmethod
     def get_settings(cls):
-        settings = super(Niter_Scraper, cls).get_settings()
+        settings = super(cls, cls).get_settings()
         name = cls.get_name()
         settings.append('         <setting id="%s-username" type="text" label="     %s" default="" visible="eq(-4,true)"/>' % (name, i18n('username')))
         settings.append('         <setting id="%s-password" type="text" label="     %s" option="hidden" default="" visible="eq(-5,true)"/>' % (name, i18n('password')))
@@ -122,17 +122,17 @@ class Niter_Scraper(scraper.Scraper):
         if not self.username or not self.password:
             return ''
 
-        html = super(Niter_Scraper, self)._cached_http_get(url, self.base_url, self.timeout, data=data, cache_limit=cache_limit)
+        html = self._cached_http_get(url, self.base_url, self.timeout, data=data, cache_limit=cache_limit)
         if auth and not re.search('href="[^"]+/logout"', html):
             log_utils.log('Logging in for url (%s)' % (url), log_utils.LOGDEBUG)
             self.__login()
-            html = super(Niter_Scraper, self)._cached_http_get(url, self.base_url, self.timeout, data=data, cache_limit=0)
+            html = self._cached_http_get(url, self.base_url, self.timeout, data=data, cache_limit=0)
 
         return html
 
     def __login(self):
         url = urlparse.urljoin(self.base_url, '/sessions')
         data = {'username': self.username, 'password': self.password, 'remember': 1}
-        html = super(Niter_Scraper, self)._cached_http_get(url, self.base_url, self.timeout, data=data, allow_redirect=False, cache_limit=0)
+        html = self._cached_http_get(url, self.base_url, self.timeout, data=data, allow_redirect=False, cache_limit=0)
         if html != self.base_url:
             raise Exception('niter.tv login failed')

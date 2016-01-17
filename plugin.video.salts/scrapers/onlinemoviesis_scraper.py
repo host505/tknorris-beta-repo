@@ -79,7 +79,7 @@ class OnlineMoviesIs_Scraper(scraper.Scraper):
         return hosters
 
     def get_url(self, video):
-        return super(OnlineMoviesIs_Scraper, self)._default_get_url(video)
+        return self._default_get_url(video)
 
     def search(self, video_type, title, year):
         results = []
@@ -99,4 +99,4 @@ class OnlineMoviesIs_Scraper(scraper.Scraper):
 
     def _http_get(self, url, data=None, cache_limit=8):
         headers = {'Referer': url}
-        return super(OnlineMoviesIs_Scraper, self)._cached_http_get(url, self.base_url, self.timeout, data=data, headers=headers, cache_limit=cache_limit)
+        return self._cached_http_get(url, self.base_url, self.timeout, data=data, headers=headers, cache_limit=cache_limit)

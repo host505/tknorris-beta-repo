@@ -73,13 +73,13 @@ class MovieStorm_Scraper(scraper.Scraper):
         return hosters
 
     def get_url(self, video):
-        return super(MovieStorm_Scraper, self)._default_get_url(video)
+        return self._default_get_url(video)
 
     def _get_episode_url(self, show_url, video):
         episode_pattern = 'href="([^"]+season-%d/episode-%d/[^"]+)' % (int(video.season), int(video.episode))
         title_pattern = 'class="name left">\s*<a\s+href="(?P<url>[^"]+)">(?P<title>[^<]+)'
         airdate_pattern = 'class="edate[^>]+>\s*{p_month}-{p_day}-{year}.*?href="([^"]+)'
-        return super(MovieStorm_Scraper, self)._default_get_episode_url(show_url, video, episode_pattern, title_pattern, airdate_pattern)
+        return self._default_get_episode_url(show_url, video, episode_pattern, title_pattern, airdate_pattern)
 
     def search(self, video_type, title, year):
         results = []

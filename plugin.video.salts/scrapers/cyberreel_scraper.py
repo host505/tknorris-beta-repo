@@ -107,7 +107,7 @@ class CyberReel_Scraper(scraper.Scraper):
         return self._height_get_quality(height)
         
     def get_url(self, video):
-        return super(CyberReel_Scraper, self)._default_get_url(video)
+        return self._default_get_url(video)
 
     def search(self, video_type, title, year):
         results = []

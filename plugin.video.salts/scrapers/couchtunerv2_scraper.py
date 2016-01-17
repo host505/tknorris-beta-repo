@@ -75,12 +75,12 @@ class CouchTunerV2_Scraper(scraper.Scraper):
         return hosters
 
     def get_url(self, video):
-        return super(CouchTunerV2_Scraper, self)._default_get_url(video)
+        return self._default_get_url(video)
 
     def _get_episode_url(self, show_url, video):
         episode_pattern = 'href="([^"]+[sS]%s[eE]%s\.html)"' % (video.season, video.episode)
         title_pattern = 'href="(?P<url>[^"]+[sS]\d+[eE]\d+\.html)"(?:[^>]+>){6}(?P<title>[^<]+)'
-        return super(CouchTunerV2_Scraper, self)._default_get_episode_url(show_url, video, episode_pattern, title_pattern)
+        return self._default_get_episode_url(show_url, video, episode_pattern, title_pattern)
 
     def search(self, video_type, title, year):
         search_url = urlparse.urljoin(self.base_url, '/search?q=')

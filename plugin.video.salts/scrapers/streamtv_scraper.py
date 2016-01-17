@@ -63,12 +63,12 @@ class StreamTV_Scraper(scraper.Scraper):
         return hosters
 
     def get_url(self, video):
-        return super(StreamTV_Scraper, self)._default_get_url(video)
+        return self._default_get_url(video)
 
     def _get_episode_url(self, show_url, video):
         episode_pattern = 'href="([^"]+s%d-?e%d[^"]+)' % (int(video.season), int(video.episode))
         title_pattern = 'href="(?P<url>[^"]+)"\s+rel="nofollow.*</a>(?P<title>[^<]+)'
-        ep_url = super(StreamTV_Scraper, self)._default_get_episode_url(show_url, video, episode_pattern, title_pattern)
+        ep_url = self._default_get_episode_url(show_url, video, episode_pattern, title_pattern)
         if ep_url:
             return self._pathify_url(ep_url)
 

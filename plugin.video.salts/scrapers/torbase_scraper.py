@@ -136,7 +136,7 @@ class TorbaSe_Scraper(scraper.Scraper):
         return sources
         
     def get_url(self, video):
-        return super(TorbaSe_Scraper, self)._default_get_url(video)
+        return self._default_get_url(video)
 
     def search(self, video_type, title, year):
         results = []

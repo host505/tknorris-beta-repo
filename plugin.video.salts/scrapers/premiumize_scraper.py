@@ -162,7 +162,7 @@ class Premiumize_Scraper(scraper.Scraper):
 
     @classmethod
     def get_settings(cls):
-        settings = super(Premiumize_Scraper, cls).get_settings()
+        settings = super(cls, cls).get_settings()
         settings = cls._disable_sub_check(settings)
         name = cls.get_name()
         settings.append('         <setting id="%s-username" type="text" label="     %s" default="" visible="eq(-4,true)"/>' % (name, i18n('username')))

@@ -68,7 +68,7 @@ class PFTV_Scraper(scraper.Scraper):
         return hosters
 
     def get_url(self, video):
-        return super(PFTV_Scraper, self)._default_get_url(video)
+        return self._default_get_url(video)
 
     def _get_episode_url(self, show_url, video):
         url = urlparse.urljoin(self.base_url, show_url)
@@ -79,7 +79,7 @@ class PFTV_Scraper(scraper.Scraper):
             season_url = match.group(1)
             episode_pattern = 'href="([^"]+season-%s-episode-%s/)' % (video.season, video.episode)
             airdate_pattern = '{day} {short_month} {year}\s*<a\s+href="([^"]+)'
-            return super(PFTV_Scraper, self)._default_get_episode_url(season_url, video, episode_pattern, airdate_pattern=airdate_pattern)
+            return self._default_get_episode_url(season_url, video, episode_pattern, airdate_pattern=airdate_pattern)
 
     def search(self, video_type, title, year):
         url = urlparse.urljoin(self.base_url, '/watch-tv-series')

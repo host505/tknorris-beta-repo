@@ -108,11 +108,11 @@ class Stream_Scraper(scraper.Scraper):
         return quality
 
     def get_url(self, video):
-        return super(Stream_Scraper, self)._default_get_url(video)
+        return self._default_get_url(video)
 
     def _get_episode_url(self, show_url, video):
         episode_pattern = 'href="([^"]+s%02de%02d\.html)"\s+class="la"' % (int(video.season), int(video.episode))
-        return super(Stream_Scraper, self)._default_get_episode_url(show_url, video, episode_pattern, '')
+        return self._default_get_episode_url(show_url, video, episode_pattern, '')
 
     def search(self, video_type, title, year):
         url = urlparse.urljoin(self.base_url, '/tv-shows-list.html')

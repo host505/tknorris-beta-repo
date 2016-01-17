@@ -74,7 +74,7 @@ class Vidics_Scraper(scraper.Scraper):
         return hosters
 
     def get_url(self, video):
-        return super(Vidics_Scraper, self)._default_get_url(video)
+        return self._default_get_url(video)
 
     def search(self, video_type, title, year):
         if video_type == VIDEO_TYPES.MOVIE:
@@ -103,4 +103,4 @@ class Vidics_Scraper(scraper.Scraper):
         episode_pattern = 'href="(/Serie/[^-]+-Season-%s-Episode-%s)' % (video.season, video.episode)
         title_pattern = 'class="episode"\s+href="(?P<url>[^"]+).*?class="episode_title">\s*-\s*(?P<title>.*?) \('
         airdate_pattern = 'class="episode"\s+(?:style="[^"]+")?\s+href="([^"]+)(?:[^>]+>){2}[^<]+\s+\({year} {month_name} {p_day}\)'
-        return super(Vidics_Scraper, self)._default_get_episode_url(show_url, video, episode_pattern, title_pattern, airdate_pattern)
+        return self._default_get_episode_url(show_url, video, episode_pattern, title_pattern, airdate_pattern)

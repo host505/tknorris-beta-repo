@@ -128,7 +128,7 @@ class DirectDownload_Scraper(scraper.Scraper):
 
     @classmethod
     def get_settings(cls):
-        settings = super(DirectDownload_Scraper, cls).get_settings()
+        settings = super(cls, cls).get_settings()
         settings = cls._disable_sub_check(settings)
         return settings
 
@@ -153,7 +153,7 @@ class DirectDownload_Scraper(scraper.Scraper):
             log_utils.log('Translating Search Url: %s' % (url), log_utils.LOGDEBUG)
             url = self.__translate_search(url)
 
-        return super(DirectDownload_Scraper, self)._cached_http_get(url, self.base_url, self.timeout, data=data, cache_limit=cache_limit)
+        return self._cached_http_get(url, self.base_url, self.timeout, data=data, cache_limit=cache_limit)
 
     def __translate_search(self, url):
         query = urlparse.parse_qs(urlparse.urlparse(url).query)

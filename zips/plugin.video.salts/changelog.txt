@@ -1,3 +1,10 @@
+[B]Version 1.0.102[/B]
+- Fix 123movies xml sources
+- More DB Recovery Improvements
+- Fix MySQL Key Length again
+- Remove filter sources with unknown values setting
+- Improvements on private scrapers logic
+
 [B]Version 1.0.101[/B]
 - Fix rel_url key length for MySQL 32 bit
 - Fix mvl scraper

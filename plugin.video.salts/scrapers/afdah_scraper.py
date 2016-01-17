@@ -105,7 +105,7 @@ class Afdah_Scraper(scraper.Scraper):
         return urllib.quote(';'.join(cookies))
 
     def get_url(self, video):
-        return super(Afdah_Scraper, self)._default_get_url(video)
+        return self._default_get_url(video)
 
     def search(self, video_type, title, year):
         search_url = urlparse.urljoin(self.base_url, '/wp-content/themes/afdah/ajax-search.php')

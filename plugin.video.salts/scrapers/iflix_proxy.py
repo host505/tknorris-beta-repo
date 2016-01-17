@@ -16,40 +16,35 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 import scraper
-import os
-import time
-import urllib2
-import hashlib
-from salts_lib import kodi
 from salts_lib.trans_utils import i18n
-from salts_lib import pyaes
 from salts_lib import log_utils
-
-BASE_URL = 'http://iflix.ch'
-IV = '\0' * 16
+from salts_lib.constants import VIDEO_TYPES
+try:
+    from iflix_scraper import Iflix_Scraper as real_scraper
+except Exception as e:
+    log_utils.log('import failed: %s' % (e), log_utils.LOGDEBUG)
 
 class IFlix_Proxy(scraper.Scraper):
-    base_url = BASE_URL
+    base_url = ''
     
     def __init__(self, timeout=scraper.DEFAULT_TIMEOUT):
         self.timeout = timeout
         self.exists = False
-        self.__update_scraper_py()
+        self._update_scraper_py('iflix_scraper.py')
+        self.__scraper = None
         if self.exists:
             try:
-                import iflix_scraper
-                self.__scraper = iflix_scraper.Iflix_Scraper(timeout)
+                from iflix_scraper import Iflix_Scraper as real_scraper
+                self.__scraper = real_scraper(timeout)
             except Exception as e:
                 log_utils.log('Failure during %s scraper creation: %s' % (self.get_name(), e), log_utils.LOGWARNING)
-                self.__scraper = None
    
     @classmethod
     def provides(cls):
         try:
-            import iflix_scraper
-            return iflix_scraper.Iflix_Scraper.provides()
+            return real_scraper.provides()
         except:
-            return frozenset([])
+            return frozenset([VIDEO_TYPES.TVSHOW, VIDEO_TYPES.EPISODE, VIDEO_TYPES.MOVIE])
     
     @classmethod
     def get_name(cls):
@@ -85,46 +80,11 @@ class IFlix_Proxy(scraper.Scraper):
     def get_settings(cls):
         name = cls.get_name()
         try:
-            import iflix_scraper
-            settings = iflix_scraper.Iflix_Scraper.get_settings()
+            settings = real_scraper.get_settings()
             offset = 5
         except:
-            settings = super(IFlix_Proxy, cls).get_settings()
+            settings = super(cls, cls).get_settings()
             offset = 4
         settings.append('         <setting id="%s-scraper_url" type="text" label="    %s" default="" visible="eq(-%d,true)"/>' % (name, i18n('scraper_location'), offset))
         settings.append('         <setting id="%s-scraper_password" type="text" label="    %s" option="hidden" default="" visible="eq(-%d,true)"/>' % (name, i18n('scraper_key'), offset + 1))
         return settings
-    
-    def __update_scraper_py(self):
-        try:
-            py_path = os.path.join(kodi.get_path(), 'scrapers', 'iflix_scraper.py')
-            self.exists = os.path.exists(py_path)
-            scraper_url = kodi.get_setting('%s-scraper_url' % (self.get_name()))
-            scraper_password = kodi.get_setting('%s-scraper_password' % (self.get_name()))
-            if scraper_url and scraper_password and (not self.exists or os.path.getmtime(py_path) < time.time() - (24 * 60 * 60)):
-                try:
-                    req = urllib2.urlopen(scraper_url)
-                    cipher_text = req.read()
-                except Exception as e:
-                    log_utils.log('Failure during %s scraper get: %s' % (self.get_name(), e), log_utils.LOGWARNING)
-                    return
-                
-                if cipher_text:
-                    scraper_key = hashlib.sha256(scraper_password).digest()
-                    decrypter = pyaes.Decrypter(pyaes.AESModeOfOperationCBC(scraper_key, IV))
-                    new_py = decrypter.feed(cipher_text)
-                    new_py += decrypter.feed()
-                    
-                    old_py = ''
-                    if os.path.exists(py_path):
-                        with open(py_path, 'r') as f:
-                            old_py = f.read()
-                    
-                    log_utils.log('%s path: %s, new_py: %s, match: %s' % (self.get_name(), py_path, bool(new_py), new_py == old_py), log_utils.LOGDEBUG)
-                    if old_py != new_py:
-                        with open(py_path, 'w') as f:
-                            f.write(new_py)
-        except Exception as e:
-            log_utils.log('Failure during %s scraper update: %s' % (self.get_name(), e), log_utils.LOGWARNING)
-        finally:
-            self.exists = os.path.exists(py_path)

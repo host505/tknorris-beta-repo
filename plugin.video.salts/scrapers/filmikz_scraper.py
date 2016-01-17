@@ -71,7 +71,7 @@ class Filmikz_Scraper(scraper.Scraper):
         return hosters
 
     def get_url(self, video):
-        return super(Filmikz_Scraper, self)._default_get_url(video)
+        return self._default_get_url(video)
 
     def search(self, video_type, title, year):
         search_url = urlparse.urljoin(self.base_url, '/index.php?search=%s&image.x=0&image.y=0')

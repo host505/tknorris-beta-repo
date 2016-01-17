@@ -135,7 +135,7 @@ class WatchHD_Scraper(scraper.Scraper):
         return urllib.quote(';'.join(cookies))
 
     def get_url(self, video):
-        return super(WatchHD_Scraper, self)._default_get_url(video)
+        return self._default_get_url(video)
 
     def search(self, video_type, title, year):
         search_url = urlparse.urljoin(self.base_url, '/search/%s' % (urllib.quote_plus(title)))
@@ -161,7 +161,7 @@ class WatchHD_Scraper(scraper.Scraper):
 
     @classmethod
     def get_settings(cls):
-        settings = super(WatchHD_Scraper, cls).get_settings()
+        settings = super(cls, cls).get_settings()
         name = cls.get_name()
         settings.append('         <setting id="%s-auto_pick" type="bool" label="    %s" default="false" visible="eq(-4,true)"/>' % (name, i18n('auto_pick')))
         return settings

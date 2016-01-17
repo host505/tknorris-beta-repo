@@ -71,7 +71,7 @@ class YShows_Scraper(scraper.Scraper):
         return hosters
 
     def get_url(self, video):
-        return super(YShows_Scraper, self)._default_get_url(video)
+        return self._default_get_url(video)
 
     def _get_episode_url(self, show_url, video):
         show_url = urlparse.urljoin(self.base_url, show_url)
@@ -81,7 +81,7 @@ class YShows_Scraper(scraper.Scraper):
             if '/season-%s/' % (video.season) in season_url:
                 episode_pattern = 'href="([^"]+)(?:[^>]+>){3}\s*S%s\s*Epi\s*%s' % (video.season, video.episode)
                 title_pattern = 'href="(?P<url>[^"]+)(?:[^>]+>){3}\s*S\d+\s*Epi\s*\d+\s*:\s*(?P<title>[^<]+)'
-                return super(YShows_Scraper, self)._default_get_episode_url(season_url, video, episode_pattern, title_pattern)
+                return self._default_get_episode_url(season_url, video, episode_pattern, title_pattern)
 
     def search(self, video_type, title, year):
         search_url = urlparse.urljoin(self.base_url, '/search_ajax')

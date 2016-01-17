@@ -1409,9 +1409,7 @@ msgctxt "#30592"
 msgid "Sort Sources"
 msgstr ""
 
-msgctxt "#30593"
-msgid "Drop Sources with unknown sort values"
-msgstr ""
+# 30593 removed
 
 msgctxt "#30594"
 msgid "1st Sort Key"

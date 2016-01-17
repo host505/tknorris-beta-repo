@@ -76,7 +76,7 @@ class Rainierland_Scraper(scraper.Scraper):
         return hosters
 
     def get_url(self, video):
-        return super(Rainierland_Scraper, self)._default_get_url(video)
+        return self._default_get_url(video)
 
     def _get_episode_url(self, show_url, video):
         for page_num in xrange(1, PAGE_LIMIT + 1):
@@ -86,7 +86,7 @@ class Rainierland_Scraper(scraper.Scraper):
                 page_url = show_url
             episode_pattern = 'href="([^"]+season-%s-episode-%s-[^"]*)' % (video.season, video.episode)
             title_pattern = 'class="entry-title".*?href="(?P<url>[^"]+)[^>]+title="[^"]*&#8211;\s*(?P<title>[^"]+)'
-            result = super(Rainierland_Scraper, self)._default_get_episode_url(page_url, video, episode_pattern, title_pattern)
+            result = self._default_get_episode_url(page_url, video, episode_pattern, title_pattern)
             if result:
                 return result
     

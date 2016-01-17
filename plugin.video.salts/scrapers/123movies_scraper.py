@@ -28,7 +28,7 @@ from salts_lib.constants import QUALITIES
 
 BASE_URL = 'http://123movies.to'
 PLAYLIST_URL1 = 'movie/loadEmbed/%s'
-PLAYLIST_URL2 = 'movie/loadepisoderss/%s/%s/3/%s'
+PLAYLIST_URL2 = 'movie/load_episode/%s'
 SL_URL = '/movie/loadepisodes/%s'
 Q_MAP = {'TS': QUALITIES.LOW, 'CAM': QUALITIES.LOW, 'HDTS': QUALITIES.LOW, 'HD-720P': QUALITIES.HD720}
 
@@ -72,11 +72,11 @@ class One23Movies_Scraper(scraper.Scraper):
                         url = urlparse.urljoin(self.base_url, PLAYLIST_URL1 % (link_id))
                         sources.update(self.__get_link_from_json(url, q_str))
                     else:
-                        media_url = self.__get_ep_pl_url(link_type, page_html)
-                        if media_url:
-                            url = urlparse.urljoin(self.base_url, media_url)
-                            xml = self._http_get(url, cache_limit=.5)
-                            sources.update(self.__get_links_from_xml(xml, video))
+                        media_url = PLAYLIST_URL2 % (link_id)
+                        headers = {'Referer': url}
+                        url = urlparse.urljoin(self.base_url, media_url)
+                        xml = self._http_get(url, headers=headers, cache_limit=.5)
+                        sources.update(self.__get_links_from_xml(xml, video))
                 
             for source in sources:
                 if sources[source]['direct']:
@@ -87,12 +87,6 @@ class One23Movies_Scraper(scraper.Scraper):
                 hosters.append(hoster)
         return hosters
 
-    def __get_ep_pl_url(self, link_id, html):
-        movie_id = dom_parser.parse_dom(html, 'div', {'id': 'media-player'}, 'movie-id')
-        player_token = dom_parser.parse_dom(html, 'div', {'id': 'media-player'}, 'player-token')
-        if movie_id and player_token:
-            return PLAYLIST_URL2 % (movie_id[0], player_token[0], link_id)
-    
     def __get_link_from_json(self, url, q_str):
         sources = {}
         html = self._http_get(url, cache_limit=.5)
@@ -125,7 +119,7 @@ class One23Movies_Scraper(scraper.Scraper):
         return sources
     
     def get_url(self, video):
-        return super(One23Movies_Scraper, self)._default_get_url(video)
+        return self._default_get_url(video)
 
     def search(self, video_type, title, year):
         search_url = urlparse.urljoin(self.base_url, '/movie/search/')

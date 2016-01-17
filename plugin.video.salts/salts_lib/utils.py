@@ -30,8 +30,6 @@ import sys
 import urlparse
 import urllib
 import urllib2
-import traceback
-import random
 import xml.etree.ElementTree as ET
 import kodi
 from constants import *
@@ -50,14 +48,13 @@ SORT_FIELDS = [
     (SORT_LIST[int(kodi.get_setting('sort5_field'))], SORT_SIGNS[kodi.get_setting('sort5_order')]),
     (SORT_LIST[int(kodi.get_setting('sort6_field'))], SORT_SIGNS[kodi.get_setting('sort6_order')])]
 
+_db_connection = None
 last_check = datetime.datetime.fromtimestamp(0)
-
 TOKEN = kodi.get_setting('trakt_oauth_token')
 use_https = kodi.get_setting('use_https') == 'true'
 trakt_timeout = int(kodi.get_setting('trakt_timeout'))
 list_size = int(kodi.get_setting('list_size'))
 trakt_api = Trakt_API(TOKEN, use_https, list_size, trakt_timeout)
-db_connection = DB_Connection()
 
 THEME_LIST = ['Shine', 'Luna_Blue', 'Iconic', 'Simple', 'SALTy', 'SALTy (Blended)', 'SALTy (Blue)', 'SALTy (Frog)', 'SALTy (Green)',
               'SALTy (Macaw)', 'SALTier (Green)', 'SALTier (Orange)', 'SALTier (Red)', 'IGDB', 'Simply Elegant', 'IGDB Redux']
@@ -69,6 +66,13 @@ else:
 THEME_PATH = os.path.join(themepak_path, 'art', 'themes', THEME)
 PLACE_POSTER = os.path.join(kodi.get_path(), 'resources', 'place_poster.png')
 
+# delay db_connection until needed to force db errors during recovery try: block
+def _get_db_connection():
+    global _db_connection
+    if _db_connection is None:
+        _db_connection = DB_Connection()
+    return _db_connection
+    
 def art(name):
     path = os.path.join(THEME_PATH, name)
     if not xbmcvfs.exists(path):
@@ -114,6 +118,7 @@ def show_id(show):
 
 def update_url(video_type, title, year, source, old_url, new_url, season, episode):
     log_utils.log('Setting Url: |%s|%s|%s|%s|%s|%s|%s|%s|' % (video_type, title.decode('utf-8').encode('ascii', 'xmlcharrefreplace'), year, source, old_url, new_url, season, episode), log_utils.LOGDEBUG)
+    db_connection = _get_db_connection()
     if new_url:
         db_connection.set_related_url(video_type, title, year, source, new_url, season, episode)
     else:
@@ -300,16 +305,6 @@ def filename_from_title(title, video_type, year=None):
     xbmc.makeLegalFilename(filename)
     return filename
 
-def filter_unknown_hosters(hosters):
-    filtered_hosters = []
-    for host in hosters:
-        for key, _ in SORT_FIELDS:
-            if key in host and host[key] is None:
-                break
-        else:
-            filtered_hosters.append(host)
-    return filtered_hosters
-
 def filter_exclusions(hosters):
     exclusions = kodi.get_setting('excl_list')
     exclusions = exclusions.replace(' ', '')
@@ -362,6 +357,7 @@ def make_source_sort_key():
     sso = kodi.get_setting('source_sort_order')
     # migrate sso to kodi setting
     if not sso:
+        db_connection = _get_db_connection()
         sso = db_connection.get_setting('source_sort_order')
         sso = kodi.set_setting('source_sort_order', sso)
         db_connection.set_setting('source_sort_order', '')
@@ -490,7 +486,7 @@ def do_startup_task(task):
         log_utils.log('Service: Running startup task [%s]' % (task))
         now = datetime.datetime.now()
         xbmc.executebuiltin('RunPlugin(plugin://%s/?mode=%s)' % (kodi.get_id(), task))
-        db_connection.set_setting('%s-last_run' % (task), now.strftime("%Y-%m-%d %H:%M:%S.%f"))
+        _get_db_connection().set_setting('%s-last_run' % (task), now.strftime("%Y-%m-%d %H:%M:%S.%f"))
 
 # Run a recurring scheduled task. Settings and mode values must match task name
 def do_scheduled_task(task, isPlaying):
@@ -514,7 +510,7 @@ def do_scheduled_task(task, isPlaying):
                     log_utils.log('Service: Running Scheduled Task: [%s]' % (task))
                     builtin = 'RunPlugin(plugin://%s/?mode=%s)' % (kodi.get_id(), task)
                     xbmc.executebuiltin(builtin)
-                    db_connection.set_setting('%s-last_run' % task, now.strftime("%Y-%m-%d %H:%M:%S.%f"))
+                    _get_db_connection().set_setting('%s-last_run' % task, now.strftime("%Y-%m-%d %H:%M:%S.%f"))
                 else:
                     log_utils.log('Service: Playing... Busy... Postponing [%s]' % (task), log_utils.LOGDEBUG)
             else:
@@ -524,7 +520,7 @@ def get_next_run(task):
     # strptime mysteriously fails sometimes with TypeError; this is a hacky workaround
     # note, they aren't 100% equal as time.strptime loses fractional seconds but they are close enough
     try:
-        last_run_string = db_connection.get_setting(task + '-last_run')
+        last_run_string = _get_db_connection().get_setting(task + '-last_run')
         if not last_run_string: last_run_string = LONG_AGO
         last_run = datetime.datetime.strptime(last_run_string, "%Y-%m-%d %H:%M:%S.%f")
     except (TypeError, ImportError):
@@ -796,7 +792,7 @@ def keep_search(section, search_text):
     head = int(kodi.get_setting('%s_search_head' % (section)))
     new_head = (head + 1) % SEARCH_HISTORY
     log_utils.log('Setting %s to %s' % (new_head, search_text), log_utils.LOGDEBUG)
-    db_connection.set_setting('%s_search_%s' % (section, new_head), search_text)
+    _get_db_connection().set_setting('%s_search_%s' % (section, new_head), search_text)
     kodi.set_setting('%s_search_head' % (section), str(new_head))
 
 def bookmark_exists(trakt_id, season, episode):
@@ -807,7 +803,7 @@ def bookmark_exists(trakt_id, season, episode):
             bookmark = None
         return bookmark is not None
     else:
-        return db_connection.bookmark_exists(trakt_id, season, episode)
+        return _get_db_connection().bookmark_exists(trakt_id, season, episode)
 
 # returns true if user chooses to resume, else false
 def get_resume_choice(trakt_id, season, episode):
@@ -815,7 +811,7 @@ def get_resume_choice(trakt_id, season, episode):
         resume_point = '%s%%' % (trakt_api.get_bookmark(trakt_id, season, episode))
         header = i18n('trakt_bookmark_exists')
     else:
-        resume_point = format_time(db_connection.get_bookmark(trakt_id, season, episode))
+        resume_point = format_time(_get_db_connection().get_bookmark(trakt_id, season, episode))
         header = i18n('local_bookmark_exists')
     question = i18n('resume_from') % (resume_point)
     return xbmcgui.Dialog().yesno(header, question, '', '', i18n('start_from_beginning'), i18n('resume')) == 1
@@ -827,7 +823,7 @@ def get_bookmark(trakt_id, season, episode):
         else:
             bookmark = None
     else:
-        bookmark = db_connection.get_bookmark(trakt_id, season, episode)
+        bookmark = _get_db_connection().get_bookmark(trakt_id, season, episode)
     return bookmark
 
 def format_time(seconds):

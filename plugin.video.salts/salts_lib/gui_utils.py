@@ -199,7 +199,6 @@ def perform_auto_conf(responses):
         kodi.set_setting('source_sort_order', '|'.join(sso))
     
     if responses[11]: reset_base_url()
-    kodi.set_setting('filter-unknown', 'false')
     kodi.notify(msg=i18n('auto_conf_complete'))
 
 def do_auto_config():

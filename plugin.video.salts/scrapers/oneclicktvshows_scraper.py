@@ -77,7 +77,7 @@ class OCTV_Scraper(scraper.Scraper):
         return hosters
 
     def get_url(self, video):
-        return super(OCTV_Scraper, self)._default_get_url(video)
+        return self._default_get_url(video)
 
     def _get_episode_url(self, show_url, video):
         return show_url

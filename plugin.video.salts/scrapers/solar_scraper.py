@@ -79,7 +79,7 @@ class Solar_Scraper(scraper.Scraper):
         return hosters
 
     def get_url(self, video):
-        return super(Solar_Scraper, self)._default_get_url(video)
+        return self._default_get_url(video)
 
     def search(self, video_type, title, year):
         if video_type == VIDEO_TYPES.MOVIE:
@@ -103,4 +103,4 @@ class Solar_Scraper(scraper.Scraper):
         episode_pattern = 'href="([^"]+/season-%s/episode-%s/)' % (video.season, video.episode)
         title_pattern = 'href="(?P<url>[^"]+/season-\d+/episode-\d+/)"\s+title="(?P<title>[^"]+)'
         airdate_pattern = '<em>{month_name}\s+{day},\s+{year}</em>\s*<span\s+class="epnomber">\s*<a\s+href="([^"]+)'
-        return super(Solar_Scraper, self)._default_get_episode_url(show_url, video, episode_pattern, title_pattern, airdate_pattern)
+        return self._default_get_episode_url(show_url, video, episode_pattern, title_pattern, airdate_pattern)

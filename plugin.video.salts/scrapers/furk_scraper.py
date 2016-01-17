@@ -51,7 +51,7 @@ class Furk_Scraper(scraper.Scraper):
         return 'Furk.net'
 
     def resolve_link(self, link):
-        playlist = super(Furk_Scraper, self)._http_get(link, cache_limit=.5)
+        playlist = super(self.__class__, self)._http_get(link, cache_limit=.5)
         root = ET.fromstring(playlist)
         location = root.find('.//{http://xspf.org/ns/0/}location')
         if location is not None:
@@ -161,7 +161,7 @@ class Furk_Scraper(scraper.Scraper):
 
     @classmethod
     def get_settings(cls):
-        settings = super(Furk_Scraper, cls).get_settings()
+        settings = super(cls, cls).get_settings()
         settings = cls._disable_sub_check(settings)
         name = cls.get_name()
         settings.append('         <setting id="%s-username" type="text" label="     %s" default="" visible="eq(-4,true)"/>' % (name, i18n('username')))
@@ -173,7 +173,7 @@ class Furk_Scraper(scraper.Scraper):
         if not self.username or not self.password:
             return {}
         
-        result = super(Furk_Scraper, self)._http_get(url, data=data, allow_redirect=allow_redirect, cache_limit=cache_limit)
+        result = super(self.__class__, self)._http_get(url, data=data, allow_redirect=allow_redirect, cache_limit=cache_limit)
         if result:
             try:
                 js_result = json.loads(result)

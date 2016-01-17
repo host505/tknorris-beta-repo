@@ -82,12 +82,12 @@ class OroroTV_Scraper(scraper.Scraper):
         return hosters
 
     def get_url(self, video):
-        return super(OroroTV_Scraper, self)._default_get_url(video)
+        return self._default_get_url(video)
 
     def _get_episode_url(self, show_url, video):
         episode_pattern = 'data-href="([^"]+)[^>]*class="episode"\s+href="#%s-%s"' % (video.season, video.episode)
         title_pattern = 'data-href="(?P<url>[^"]+)[^>]+class="episode"[^>]+>.\d+\s+(?P<title>[^<]+)'
-        return super(OroroTV_Scraper, self)._default_get_episode_url(show_url, video, episode_pattern, title_pattern)
+        return self._default_get_episode_url(show_url, video, episode_pattern, title_pattern)
 
     def search(self, video_type, title, year):
         url = urlparse.urljoin(self.base_url, 'http://ororo.tv/en')
@@ -110,7 +110,7 @@ class OroroTV_Scraper(scraper.Scraper):
 
     @classmethod
     def get_settings(cls):
-        settings = super(OroroTV_Scraper, cls).get_settings()
+        settings = super(cls, cls).get_settings()
         name = cls.get_name()
         settings.append('         <setting id="%s-username" type="text" label="     %s" default="" visible="eq(-4,true)"/>' % (name, i18n('username')))
         settings.append('         <setting id="%s-password" type="text" label="     %s" option="hidden" default="" visible="eq(-5,true)"/>' % (name, i18n('password')))
@@ -122,12 +122,12 @@ class OroroTV_Scraper(scraper.Scraper):
         if not self.username or not self.password:
             return ''
 
-        html = super(OroroTV_Scraper, self)._cached_http_get(url, self.base_url, self.timeout, cookies=cookies, data=data, headers=headers, allow_redirect=allow_redirect, cache_limit=cache_limit)
+        html = self._cached_http_get(url, self.base_url, self.timeout, cookies=cookies, data=data, headers=headers, allow_redirect=allow_redirect, cache_limit=cache_limit)
         if auth and (not html or LOGIN_URL in html):
             log_utils.log('Logging in for url (%s)' % (url), log_utils.LOGDEBUG)
             self.__login()
             xbmc.sleep(ORORO_WAIT)
-            html = super(OroroTV_Scraper, self)._cached_http_get(url, self.base_url, self.timeout, data=data, headers=headers, cache_limit=0)
+            html = self._cached_http_get(url, self.base_url, self.timeout, data=data, headers=headers, cache_limit=0)
 
         return html
 

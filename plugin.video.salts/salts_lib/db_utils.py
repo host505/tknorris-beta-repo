@@ -38,7 +38,6 @@ MYSQL_URL_SIZE = 255
 
 class DB_Connection():
     def __init__(self):
-        global db_lib
         global OperationalError
         global DatabaseError
         self.dbname = kodi.get_setting('db_name')
@@ -66,6 +65,7 @@ class DB_Connection():
             self.db_type = DB_TYPES.SQLITE
             db_dir = kodi.translate_path("special://database")
             self.db_path = os.path.join(db_dir, 'saltscache.db')
+        self.db_lib = db_lib
         self.__connect_to_db()
 
     def flush_cache(self):
@@ -351,7 +351,7 @@ class DB_Connection():
                 self.__execute('CREATE TABLE IF NOT EXISTS rel_url \
                 (video_type VARCHAR(15) NOT NULL, title VARCHAR(255) NOT NULL, year VARCHAR(4) NOT NULL, season VARCHAR(5) NOT NULL, episode VARCHAR(5) NOT NULL, source VARCHAR(49) NOT NULL, rel_url VARCHAR(255), \
                 PRIMARY KEY(video_type, title, year, season, episode, source))')
-                self.__execute('CREATE TABLE IF NOT EXISTS other_lists (section VARCHAR(10) NOT NULL, username VARCHAR(255) NOT NULL, slug VARCHAR(255) NOT NULL, name VARCHAR(255), \
+                self.__execute('CREATE TABLE IF NOT EXISTS other_lists (section VARCHAR(10) NOT NULL, username VARCHAR(68) NOT NULL, slug VARCHAR(255) NOT NULL, name VARCHAR(255), \
                 PRIMARY KEY(section, username, slug))')
                 self.__execute('CREATE TABLE IF NOT EXISTS saved_searches (id INTEGER NOT NULL AUTO_INCREMENT, section VARCHAR(10) NOT NULL, added DOUBLE NOT NULL,query VARCHAR(255) NOT NULL, \
                 PRIMARY KEY(id))')
@@ -359,6 +359,7 @@ class DB_Connection():
                 PRIMARY KEY(slug, season, episode))')
             else:
                 self.__create_sqlite_db()
+                self.__execute('PRAGMA journal_mode=WAL')
                 self.__execute('CREATE TABLE IF NOT EXISTS url_cache (url VARCHAR(255) NOT NULL, data VARCHAR(255), response, timestamp, PRIMARY KEY(url, data))')
                 self.__execute('CREATE TABLE IF NOT EXISTS db_info (setting VARCHAR(255), value TEXT, PRIMARY KEY(setting))')
                 self.__execute('CREATE TABLE IF NOT EXISTS rel_url \
@@ -494,11 +495,10 @@ class DB_Connection():
     def __connect_to_db(self):
         if not self.db:
             if self.db_type == DB_TYPES.MYSQL:
-                self.db = db_lib.connect(database=self.dbname, user=self.username, password=self.password, host=self.address, buffered=True)
+                self.db = self.db_lib.connect(database=self.dbname, user=self.username, password=self.password, host=self.address, buffered=True)
             else:
-                self.db = db_lib.connect(self.db_path)
+                self.db = self.db_lib.connect(self.db_path)
                 self.db.text_factory = str
-                self.__execute('PRAGMA journal_mode=WAL')
 
     # apply formatting changes to make sql work with a particular db driver
     def __format(self, sql):

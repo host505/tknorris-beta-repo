@@ -90,7 +90,7 @@ class View47_Scraper(scraper.Scraper):
         return hosters
 
     def get_url(self, video):
-        return super(View47_Scraper, self)._default_get_url(video)
+        return self._default_get_url(video)
 
     def search(self, video_type, title, year):
         search_url = urlparse.urljoin(self.base_url, '/search.php?q=%s&limit=20&timestamp=%s' % (urllib.quote_plus(title), time.time()))

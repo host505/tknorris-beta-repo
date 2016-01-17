@@ -97,7 +97,7 @@ class MoviesPlanet_Scraper(scraper.Scraper):
         return sources
 
     def get_url(self, video):
-        return super(MoviesPlanet_Scraper, self)._default_get_url(video)
+        return self._default_get_url(video)
 
     def search(self, video_type, title, year):
         results = []
@@ -120,11 +120,11 @@ class MoviesPlanet_Scraper(scraper.Scraper):
 
     def _get_episode_url(self, show_url, video):
         episode_pattern = 'href="([^"]+/season/%s/episode/%s/?)"' % (video.season, video.episode)
-        return super(MoviesPlanet_Scraper, self)._default_get_episode_url(show_url, video, episode_pattern)
+        return self._default_get_episode_url(show_url, video, episode_pattern)
 
     @classmethod
     def get_settings(cls):
-        settings = super(MoviesPlanet_Scraper, cls).get_settings()
+        settings = super(cls, cls).get_settings()
         name = cls.get_name()
         settings.append('         <setting id="%s-username" type="text" label="     %s" default="" visible="eq(-4,true)"/>' % (name, i18n('username')))
         settings.append('         <setting id="%s-password" type="text" label="     %s" option="hidden" default="" visible="eq(-5,true)"/>' % (name, i18n('password')))
@@ -135,16 +135,16 @@ class MoviesPlanet_Scraper(scraper.Scraper):
         if not self.username or not self.password:
             return ''
 
-        html = super(MoviesPlanet_Scraper, self)._cached_http_get(url, self.base_url, self.timeout, data=data, headers=headers, allow_redirect=allow_redirect, cache_limit=cache_limit)
+        html = self._cached_http_get(url, self.base_url, self.timeout, data=data, headers=headers, allow_redirect=allow_redirect, cache_limit=cache_limit)
         if re.search('Please Register or Login', html, re.I):
             log_utils.log('Logging in for url (%s)' % (url), log_utils.LOGDEBUG)
             self.__login()
-            html = super(MoviesPlanet_Scraper, self)._cached_http_get(url, self.base_url, self.timeout, data=data, headers=headers, allow_redirect=allow_redirect, cache_limit=0)
+            html = self._cached_http_get(url, self.base_url, self.timeout, data=data, headers=headers, allow_redirect=allow_redirect, cache_limit=0)
         return html
 
     def __login(self):
         url = urlparse.urljoin(self.base_url, '/login')
         data = {'username': self.username, 'password': self.password, 'action': 'login'}
-        html = super(MoviesPlanet_Scraper, self)._cached_http_get(url, self.base_url, self.timeout, data=data, headers=XHR, cache_limit=0)
+        html = self._cached_http_get(url, self.base_url, self.timeout, data=data, headers=XHR, cache_limit=0)
         if 'incorrect login' in html.lower():
             raise Exception('moviesplanet login failed')

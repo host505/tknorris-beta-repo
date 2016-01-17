@@ -121,7 +121,7 @@ class IWatchOnline_Scraper(scraper.Scraper):
         return age
 
     def get_url(self, video):
-        return super(IWatchOnline_Scraper, self)._default_get_url(video)
+        return self._default_get_url(video)
 
     def search(self, video_type, title, year):
         search_url = urlparse.urljoin(self.base_url, '/advance-search')
@@ -145,4 +145,4 @@ class IWatchOnline_Scraper(scraper.Scraper):
     def _get_episode_url(self, show_url, video):
         episode_pattern = 'href="([^"]+-s%02de%02d)"' % (int(video.season), int(video.episode))
         title_pattern = 'href="(?P<url>[^"]+)"><i class="icon-play-circle">.*?<td>(?P<title>[^<]+)</td>'
-        return super(IWatchOnline_Scraper, self)._default_get_episode_url(show_url, video, episode_pattern, title_pattern)
+        return self._default_get_episode_url(show_url, video, episode_pattern, title_pattern)

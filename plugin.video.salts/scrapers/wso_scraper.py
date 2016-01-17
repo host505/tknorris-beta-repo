@@ -70,7 +70,7 @@ class WSO_Scraper(scraper.Scraper):
         return hosters
 
     def get_url(self, video):
-        return super(WSO_Scraper, self)._default_get_url(video)
+        return self._default_get_url(video)
 
     def search(self, video_type, title, year):
         url = urlparse.urljoin(self.base_url, '/?s=%s&search=')
@@ -92,4 +92,4 @@ class WSO_Scraper(scraper.Scraper):
 
     def _get_episode_url(self, show_url, video):
         episode_pattern = "href='([^']+)'>(?:[^<]*(?:[Ss]%02d[Ee]%02d |-\s*%s(?:[×xX]|&#215;)%s\s*-))" % (int(video.season), int(video.episode), video.season, video.episode)
-        return super(WSO_Scraper, self)._default_get_episode_url(show_url, video, episode_pattern)
+        return self._default_get_episode_url(show_url, video, episode_pattern)

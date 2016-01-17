@@ -76,7 +76,7 @@ class RLSSource_Scraper(scraper.Scraper):
 
     @classmethod
     def get_settings(cls):
-        settings = super(RLSSource_Scraper, cls).get_settings()
+        settings = super(cls, cls).get_settings()
         settings = cls._disable_sub_check(settings)
         name = cls.get_name()
         settings.append('         <setting id="%s-filter" type="slider" range="0,180" option="int" label="     Filter results older than (0=No Filter) (days)" default="30" visible="eq(-4,true)"/>' % (name))

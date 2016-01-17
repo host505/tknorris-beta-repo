@@ -103,7 +103,7 @@ class MovieTV_Scraper(scraper.Scraper):
         return urllib.quote(';'.join(cookies))
 
     def get_url(self, video):
-        return super(MovieTV_Scraper, self)._default_get_url(video)
+        return self._default_get_url(video)
 
     def _get_episode_url(self, show_url, video):
         url = urlparse.urljoin(self.base_url, show_url)
@@ -150,7 +150,7 @@ class MovieTV_Scraper(scraper.Scraper):
     def __get_token(self):
         if self.token is None:
             headers = {'Referer': self.def_ref}
-            html = super(MovieTV_Scraper, self)._cached_http_get(self.base_url, self.base_url, self.timeout, headers=headers, cache_limit=8)
+            html = self._cached_http_get(self.base_url, self.base_url, self.timeout, headers=headers, cache_limit=8)
             match = re.search('var\s+token_key\s*=\s*"([^"]+)', html)
             if match:
                 self.token = match.group(1)

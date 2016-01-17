@@ -138,7 +138,7 @@ class EasyNews_Scraper(scraper.Scraper):
 
     @classmethod
     def get_settings(cls):
-        settings = super(EasyNews_Scraper, cls).get_settings()
+        settings = super(cls, cls).get_settings()
         settings = cls._disable_sub_check(settings)
         name = cls.get_name()
         settings.append('         <setting id="%s-username" type="text" label="     %s" default="" visible="eq(-4,true)"/>' % (name, i18n('username')))
@@ -149,7 +149,7 @@ class EasyNews_Scraper(scraper.Scraper):
         if not self.username or not self.password:
             return ''
         
-        return super(EasyNews_Scraper, self)._cached_http_get(url, self.base_url, self.timeout, cookies=self.cookie, cache_limit=cache_limit)
+        return self._cached_http_get(url, self.base_url, self.timeout, cookies=self.cookie, cache_limit=cache_limit)
 
     def __get_cookies(self):
         cookies = []
