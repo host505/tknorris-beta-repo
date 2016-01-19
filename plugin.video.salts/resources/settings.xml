@@ -196,10 +196,6 @@
          <setting id="CouchTunerV2-base_url" type="text" label="    Base Url" default="http://couchtuner.at" visible="eq(-1,true)"/>
          <setting id="CouchTunerV2-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="CouchTunerV2_last_results" type="number" default="0" visible="false"/>
-         <setting id="CyberReel-enable" type="bool" label="CyberReel Enabled" default="true" visible="true"/>
-         <setting id="CyberReel-base_url" type="text" label="    Base Url" default="http://cyberreel.com" visible="eq(-1,true)"/>
-         <setting id="CyberReel-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
-         <setting id="CyberReel_last_results" type="number" default="0" visible="false"/>
          <setting id="DD.tv-enable" type="bool" label="DD.tv Enabled" default="true" visible="true"/>
          <setting id="DD.tv-base_url" type="text" label="    Base Url" default="https://directdownload.tv" visible="eq(-1,true)"/>
          <setting id="DD.tv-sub_check" type="bool" label="    Include in Page Existence checks?" default="false" visible="eq(-2,true)"/>
@@ -235,6 +231,10 @@
          <setting id="EasyNews_last_results" type="number" default="0" visible="false"/>
          <setting id="EasyNews-username" type="text" label="     Username" default="" visible="eq(-4,true)"/>
          <setting id="EasyNews-password" type="text" label="     Password" option="hidden" default="" visible="eq(-5,true)"/>
+         <setting id="FardaDownload-enable" type="bool" label="FardaDownload Enabled" default="true" visible="true"/>
+         <setting id="FardaDownload-base_url" type="text" label="    Base Url" default="http://dl.fardadownload.ir/" visible="eq(-1,true)"/>
+         <setting id="FardaDownload-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
+         <setting id="FardaDownload_last_results" type="number" default="0" visible="false"/>
          <setting id="filmikz.ch-enable" type="bool" label="filmikz.ch Enabled" default="true" visible="true"/>
          <setting id="filmikz.ch-base_url" type="text" label="    Base Url" default="http://filmikz.ch" visible="eq(-1,true)"/>
          <setting id="filmikz.ch-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
@@ -246,6 +246,10 @@
          <setting id="FilmStreaming.in-base_url" type="text" label="    Base Url" default="http://film-streaming.in" visible="eq(-1,true)"/>
          <setting id="FilmStreaming.in-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="FilmStreaming.in_last_results" type="number" default="0" visible="false"/>
+         <setting id="FireMoviesHD-enable" type="bool" label="FireMoviesHD Enabled" default="true" visible="true"/>
+         <setting id="FireMoviesHD-base_url" type="text" label="    Base Url" default="http://firemovieshd.com" visible="eq(-1,true)"/>
+         <setting id="FireMoviesHD-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
+         <setting id="FireMoviesHD_last_results" type="number" default="0" visible="false"/>
          <setting id="Flixanity-enable" type="bool" label="Flixanity Enabled" default="true" visible="true"/>
          <setting id="Flixanity-base_url" type="text" label="    Base Url" default="http://www.flixanity.is" visible="eq(-1,true)"/>
          <setting id="Flixanity-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
@@ -288,7 +292,7 @@
          <setting id="Local_last_results" type="number" default="0" visible="false"/>
          <setting id="Local-def-quality" type="enum" label="     Default Quality" values="None|Low|Medium|High|HD720|HD1080" default="0" visible="eq(-4,true)"/>
          <setting id="LosMovies-enable" type="bool" label="LosMovies Enabled" default="true" visible="true"/>
-         <setting id="LosMovies-base_url" type="text" label="    Base Url" default="http://losmovies.ws" visible="eq(-1,true)"/>
+         <setting id="LosMovies-base_url" type="text" label="    Base Url" default="http://losmovies.es" visible="eq(-1,true)"/>
          <setting id="LosMovies-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="LosMovies_last_results" type="number" default="0" visible="false"/>
          <setting id="MerDB-enable" type="bool" label="MerDB Enabled" default="true" visible="true"/>
@@ -323,10 +327,6 @@
          <setting id="MoviesHD-base_url" type="text" label="    Base Url" default="http://movieshd.eu" visible="eq(-1,true)"/>
          <setting id="MoviesHD-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="MoviesHD_last_results" type="number" default="0" visible="false"/>
-         <setting id="MoviesOnline7-enable" type="bool" label="MoviesOnline7 Enabled" default="true" visible="true"/>
-         <setting id="MoviesOnline7-base_url" type="text" label="    Base Url" default="http://moviesonline7.co" visible="eq(-1,true)"/>
-         <setting id="MoviesOnline7-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
-         <setting id="MoviesOnline7_last_results" type="number" default="0" visible="false"/>
          <setting id="MoviesPlanet-enable" type="bool" label="MoviesPlanet Enabled" default="true" visible="true"/>
          <setting id="MoviesPlanet-base_url" type="text" label="    Base Url" default="http://www.moviesplanet.is" visible="eq(-1,true)"/>
          <setting id="MoviesPlanet-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>

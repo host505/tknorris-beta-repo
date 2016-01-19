@@ -135,7 +135,7 @@ class Furk_Scraper(scraper.Scraper):
                 stream_url = item['url_pls']
                 host = self._get_direct_hostname(stream_url)
                 hoster = {'multi-part': False, 'class': self, 'views': None, 'url': stream_url, 'rating': None, 'host': host, 'quality': quality, 'direct': True}
-                hoster['size'] = self.__format_size(int(item['size']), 'B')
+                hoster['size'] = self._format_size(int(item['size']), 'B')
                 hoster['extra'] = item['name']
                 hosters.append(hoster)
         return hosters
@@ -207,10 +207,3 @@ class Furk_Scraper(scraper.Scraper):
         query = {'sort': 'relevance', 'filter': 'all', 'moderated': 'yes', 'offset': 0, 'limit': self.max_results, 'match': 'all'}
         query['q'] = urllib.quote_plus(urlparse.parse_qs(urlparse.urlparse(url).query)['query'][0])
         return query
-    
-    def __format_size(self, num, suffix='B'):
-        for unit in ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z']:
-            if abs(num) < 1024.0:
-                return "%3.1f%s%s" % (num, unit, suffix)
-            num /= 1024.0
-        return "%.1f%s%s" % (num, 'Y', suffix)

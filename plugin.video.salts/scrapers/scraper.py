@@ -772,8 +772,12 @@ class Scraper(object):
         if match:
             return match.groups()
         else:
-            match = re.match('', file_name)
-            return ('', '', '480', '')  # make 480p when unknown
+            match = re.match('(.*?)(?:(?:\.|_| )(\d{4})(?:(?:\.|_| ).*?)*)(.*)', file_name)
+            if match:
+                title, year, extra = match.groups()
+                return (title, year, '480', extra)
+            else:
+                return ('', '', '480', '')  # make 480p when unknown
     
     def _title_check(self, video, title):
         title = self._normalize_title(title)
@@ -829,6 +833,13 @@ class Scraper(object):
             log_utils.log('Empty JSON object: %s: %s' % (html, url), log_utils.LOGDEBUG)
             return {}
 
+    def _format_size(self, num, suffix='B'):
+        for unit in ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z']:
+            if abs(num) < 1024.0:
+                return "%3.1f%s%s" % (num, unit, suffix)
+            num /= 1024.0
+        return "%.1f%s%s" % (num, 'Y', suffix)
+
     def _update_scraper_py(self, filename):
         try:
             py_path = os.path.join(kodi.get_path(), 'scrapers', filename)
@@ -862,3 +873,4 @@ class Scraper(object):
             log_utils.log('Failure during %s scraper update: %s' % (self.get_name(), e), log_utils.LOGWARNING)
         finally:
             self.exists = os.path.exists(py_path)
+

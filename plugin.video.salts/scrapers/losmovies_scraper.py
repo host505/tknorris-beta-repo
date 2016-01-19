@@ -23,7 +23,7 @@ from salts_lib import kodi
 from salts_lib.constants import VIDEO_TYPES
 from salts_lib.constants import FORCE_NO_MATCH
 
-BASE_URL = 'http://losmovies.ws'
+BASE_URL = 'http://losmovies.es'
 
 class LosMovies_Scraper(scraper.Scraper):
     base_url = BASE_URL
