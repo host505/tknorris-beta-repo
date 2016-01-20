@@ -840,18 +840,19 @@ class Scraper(object):
             num /= 1024.0
         return "%.1f%s%s" % (num, 'Y', suffix)
 
-    def _update_scraper_py(self, filename):
+    @classmethod
+    def _update_scraper_py(cls, filename):
         try:
             py_path = os.path.join(kodi.get_path(), 'scrapers', filename)
-            self.exists = os.path.exists(py_path)
-            scraper_url = kodi.get_setting('%s-scraper_url' % (self.get_name()))
-            scraper_password = kodi.get_setting('%s-scraper_password' % (self.get_name()))
-            if scraper_url and scraper_password and (not self.exists or os.path.getmtime(py_path) < time.time() - (24 * 60 * 60)):
+            exists = os.path.exists(py_path)
+            scraper_url = kodi.get_setting('%s-scraper_url' % (cls.get_name()))
+            scraper_password = kodi.get_setting('%s-scraper_password' % (cls.get_name()))
+            if scraper_url and scraper_password and (not exists or os.path.getmtime(py_path) < time.time() - (24 * 60 * 60)):
                 try:
                     req = urllib2.urlopen(scraper_url)
                     cipher_text = req.read()
                 except Exception as e:
-                    log_utils.log('Failure during %s scraper get: %s' % (self.get_name(), e), log_utils.LOGWARNING)
+                    log_utils.log('Failure during %s scraper get: %s' % (cls.get_name(), e), log_utils.LOGWARNING)
                     return
                 
                 if cipher_text:
@@ -865,12 +866,9 @@ class Scraper(object):
                         with open(py_path, 'r') as f:
                             old_py = f.read()
                     
-                    log_utils.log('%s path: %s, new_py: %s, match: %s' % (self.get_name(), py_path, bool(new_py), new_py == old_py), log_utils.LOGDEBUG)
+                    log_utils.log('%s path: %s, new_py: %s, match: %s' % (cls.get_name(), py_path, bool(new_py), new_py == old_py), log_utils.LOGDEBUG)
                     if old_py != new_py:
                         with open(py_path, 'w') as f:
                             f.write(new_py)
         except Exception as e:
-            log_utils.log('Failure during %s scraper update: %s' % (self.get_name(), e), log_utils.LOGWARNING)
-        finally:
-            self.exists = os.path.exists(py_path)
-
+            log_utils.log('Failure during %s scraper update: %s' % (cls.get_name(), e), log_utils.LOGWARNING)

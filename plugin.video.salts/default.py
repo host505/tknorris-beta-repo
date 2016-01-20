@@ -1132,11 +1132,7 @@ def apply_urlresolver(hosters):
                 # log_utils.log('Debrid cache found for %s: %s' % (host, debrid_hosts[host]), log_utils.LOGDEBUG)
                 hoster['debrid'] = debrid_hosts[host]
             else:
-                temp_resolvers = []
-                for resolver in debrid_resolvers:
-                    if resolver.valid_url('', host):
-                        temp_resolvers.append(resolver.name[:3].upper())
-    
+                temp_resolvers = [resolver.name[:3].upper() for resolver in debrid_resolvers if resolver.valid_url('', host)]
                 # log_utils.log('%s supported by: %s' % (host, temp_resolvers), log_utils.LOGDEBUG)
                 debrid_hosts[host] = temp_resolvers
                 if temp_resolvers:

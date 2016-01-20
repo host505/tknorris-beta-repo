@@ -1,3 +1,8 @@
+[B]Version 1.0.104[/B]
+- Fix funtastic scraper
+- Make OCW private
+- Update translations
+
 [B]Version 1.0.103[/B]
 - Add FardaDownload scraper
 - Add FireMoviesHD scraper

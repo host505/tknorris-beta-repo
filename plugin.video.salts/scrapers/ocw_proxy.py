@@ -19,11 +19,11 @@ import scraper
 from salts_lib.trans_utils import i18n
 from salts_lib import log_utils
 try:
-    from iflix_scraper import Iflix_Scraper as real_scraper
+    from ocw_scraper import OCW_Scraper as real_scraper
 except Exception as e:
     log_utils.log('import failed: %s' % (e), log_utils.LOGDEBUG)
 
-class IFlix_Proxy(scraper.Scraper):
+class OCW_Proxy(scraper.Scraper):
     base_url = ''
     
     def __init__(self, timeout=scraper.DEFAULT_TIMEOUT):
@@ -46,14 +46,14 @@ class IFlix_Proxy(scraper.Scraper):
         try:
             return real_scraper.get_name()
         except:
-            return 'IFlix'
+            return 'OCW'
     
     @classmethod
     def get_settings(cls):
         name = cls.get_name()
         try:
             settings = real_scraper.get_settings()
-            offset = 5
+            offset = 6
         except:
             settings = super(cls, cls).get_settings()
             offset = 4
@@ -87,4 +87,4 @@ class IFlix_Proxy(scraper.Scraper):
         if self.__scraper is not None:
             return self.__scraper._get_episode_url(show_url, video)
 
-IFlix_Proxy._update_scraper_py('iflix_scraper.py')
+OCW_Proxy._update_scraper_py('ocw_scraper.py')
