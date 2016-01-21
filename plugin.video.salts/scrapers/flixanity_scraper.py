@@ -115,8 +115,10 @@ class Flixanity_Scraper(scraper.Scraper):
 
         for item in self._parse_json(html, search_url):
             if item['meta'].upper().startswith(media_type):
-                result = {'title': item['title'], 'url': self._pathify_url(item['permalink']), 'year': ''}
-                results.append(result)
+                match_year = str(item['year']) if 'year' in item and item['year'] else ''
+                if not year or not match_year or year == match_year:
+                    result = {'title': item['title'], 'url': self._pathify_url(item['permalink']), 'year': match_year}
+                    results.append(result)
 
         return results
 

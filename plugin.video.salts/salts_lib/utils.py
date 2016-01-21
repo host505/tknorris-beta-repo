@@ -967,6 +967,6 @@ def reset_base_url():
     for category in tree.getroot().findall('category'):
         if category.get('label').startswith('Scrapers '):
             for setting in category.findall('setting'):
-                if setting.get('id').endswith('-base_url'):
+                if re.search('-base_url\d*$', setting.get('id')):
                     log_utils.log('Resetting: %s -> %s' % (setting.get('id'), setting.get('default')), xbmc.LOGDEBUG)
                     kodi.set_setting(setting.get('id'), setting.get('default'))

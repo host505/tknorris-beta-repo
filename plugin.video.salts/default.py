@@ -171,6 +171,10 @@ def addon_settings():
 def get_pin():
     gui_utils.get_pin()
 
+@url_dispatcher.register(MODES.INSTALL_THEMES)
+def install_themepak():
+    xbmc.executebuiltin('RunPlugin(plugin://script.salts.themepak)')
+
 @url_dispatcher.register(MODES.RESET_BASE_URL)
 def reset_base_url():
     utils.reset_base_url()

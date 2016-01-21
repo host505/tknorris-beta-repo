@@ -1,3 +1,9 @@
+[B]Version 1.0.105[/B]
+- Add HDMovie14 scraper
+- Improve Flixanity scraper
+- Replace default Movies list with Movist one
+- Add method to install themepak automatically
+
 [B]Version 1.0.104[/B]
 - Fix funtastic scraper
 - Make OCW private

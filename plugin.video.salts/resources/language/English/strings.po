@@ -1718,3 +1718,7 @@ msgctxt "#30668"
 msgid "Cancel"
 msgstr ""
 
+msgctxt "#30669"
+msgid "Select this item to Install the SALTS Themepak"
+msgstr ""
+
