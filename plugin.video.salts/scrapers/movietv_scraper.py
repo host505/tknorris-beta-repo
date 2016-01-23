@@ -89,7 +89,8 @@ class MovieTV_Scraper(scraper.Scraper):
                 
             for source in sources:
                 if not source.lower().startswith('http'): continue
-                stream_url = source + '|Referer=%s&Cookie=%s' % (urllib.quote(url), self.__get_stream_cookies())
+                stream_url = re.sub('&end=\d+', '', source)
+                stream_url += '|Referer=%s&Cookie=%s' % (urllib.quote(url), self.__get_stream_cookies())
                 hoster = {'multi-part': False, 'host': self._get_direct_hostname(stream_url), 'class': self, 'url': stream_url, 'quality': sources[source], 'views': None, 'rating': None, 'direct': True}
                 hosters.append(hoster)
 

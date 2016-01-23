@@ -1,3 +1,9 @@
+[B]Version 1.0.106[/B]
+- Fix movietv
+- Fix HDMovie14 scraper
+- Add dizibox scraper
+- Add dayt scraper
+
 [B]Version 1.0.105[/B]
 - Add HDMovie14 scraper
 - Improve Flixanity scraper

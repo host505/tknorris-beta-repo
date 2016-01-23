@@ -78,11 +78,12 @@ class Flixanity_Scraper(scraper.Scraper):
     def search(self, video_type, title, year):
         results = []
         search_url = urlparse.urljoin(self.base_url, '/search?key=')
-        search_key = title
+        search_key = title.lower()
         if year: search_key += ' %s' % (year)
         search_url += urllib.quote_plus(search_key)
         html = self._http_get(search_url, cache_limit=1)
-        seen_urls = {}
+        
+        # detect search results redirect
         meta = dom_parser.parse_dom(html, 'meta', {'property': 'og:url'}, ret='content')
         if meta:
             match_url = meta[0]
@@ -98,31 +99,34 @@ class Flixanity_Scraper(scraper.Scraper):
                 match_url = re.sub('-season-\d+', '', match_url)
                 match_title = match_title.strip()
                 results = [{'title': match_title, 'year': match_year, 'url': self._pathify_url(match_url)}]
-        else:
-            for item in dom_parser.parse_dom(html, 'div', {'class': 'caption'}):
-                match = re.search('href="([^"]+)[^>]+>(.*?)</a>', item)
-                if match:
-                    match_url, match_title = match.groups()
-                    is_season = re.search('-season-\d+', match_url)
-                    if video_type == VIDEO_TYPES.TVSHOW and is_season:
-                        match_url = re.sub('-season-\d+', '', match_url)
-                        if match_url in seen_urls: continue
-                        seen_urls[match_url] = True
-                    elif video_type == VIDEO_TYPES.MOVIE and not is_season:
-                        pass
-                    else:
-                        continue
-    
-                    match_title = re.sub('</?[^>]*>', '', match_title)
-                    match = re.search('-(\d{4})$', match_url)
+        
+        # collect search results if no redirect found
+        seen_urls = {}
+        if not results:
+                for item in dom_parser.parse_dom(html, 'div', {'class': 'caption'}):
+                    match = re.search('href="([^"]+)[^>]+>(.*?)</a>', item)
                     if match:
-                        match_year = match.group(1)
-                    else:
-                        match_year = ''
-                    
-                    if not year or not match_year or year == match_year:
-                        result = {'title': match_title, 'year': match_year, 'url': self._pathify_url(match_url)}
-                        results.append(result)
+                        match_url, match_title = match.groups()
+                        is_season = re.search('-season-\d+', match_url)
+                        if video_type == VIDEO_TYPES.TVSHOW and is_season:
+                            match_url = re.sub('-season-\d+', '', match_url)
+                            if match_url in seen_urls: continue
+                            seen_urls[match_url] = True
+                        elif video_type == VIDEO_TYPES.MOVIE and not is_season:
+                            pass
+                        else:
+                            continue
+        
+                        match_title = re.sub('</?[^>]*>', '', match_title)
+                        match = re.search('-(\d{4})$', match_url)
+                        if match:
+                            match_year = match.group(1)
+                        else:
+                            match_year = ''
+                        
+                        if not year or not match_year or year == match_year:
+                            result = {'title': match_title, 'year': match_year, 'url': self._pathify_url(match_url)}
+                            results.append(result)
 
         return results
 

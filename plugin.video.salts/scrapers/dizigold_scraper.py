@@ -120,12 +120,12 @@ class Dizigold_Scraper(scraper.Scraper):
         return self._default_get_episode_url(show_url, video, episode_pattern, title_pattern)
 
     def search(self, video_type, title, year):
-        html = self._http_get(self.base_url, cache_limit=8)
+        html = self._http_get(self.base_url, cache_limit=48)
         results = []
         fragment = dom_parser.parse_dom(html, 'div', {'class': 'dizis'})
         norm_title = self._normalize_title(title)
         if fragment:
-            for match in re.finditer('href="([^"]+)">([^<]+)', fragment[0]):
+            for match in re.finditer('href="([^"]+)[^>]+>([^<]+)', fragment[0]):
                 url, match_title = match.groups()
                 if norm_title in self._normalize_title(match_title):
                     result = {'url': self._pathify_url(url), 'title': match_title, 'year': ''}

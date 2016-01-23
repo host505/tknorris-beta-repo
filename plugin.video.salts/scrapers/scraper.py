@@ -813,6 +813,7 @@ class Scraper(object):
         url = url.replace(strip, '')
         if not url.startswith('/'): url = '/' + url
         url = url.replace('/./', '/')
+        url = url.replace('&amp;', '&')
         return url
     
     def create_db_connection(self):
