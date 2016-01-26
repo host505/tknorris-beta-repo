@@ -32,6 +32,7 @@ import urllib
 import urllib2
 import xml.etree.ElementTree as ET
 import kodi
+import utils2
 from constants import *
 from trans_utils import i18n
 from scrapers import *  # import all scrapers into this namespace
@@ -263,7 +264,7 @@ def make_people(item):
     return people
 
 def make_air_date(first_aired):
-    utc_air_time = iso_2_utc(first_aired)
+    utc_air_time = utils2.iso_2_utc(first_aired)
     try: air_date = time.strftime('%Y-%m-%d', time.localtime(utc_air_time))
     except ValueError:  # windows throws a ValueError on negative values to localtime
         d = datetime.datetime.fromtimestamp(0) + datetime.timedelta(seconds=utc_air_time)
@@ -457,7 +458,7 @@ def test_stream(hoster):
     opener = urllib2.build_opener(urllib2.HTTPRedirectHandler)
     urllib2.install_opener(opener)
     #  set urlopen timeout to 1 seconds
-    try: http_code = urllib2.urlopen(request, timeout=1).getcode()
+    try: http_code = urllib2.urlopen(request, timeout=2).getcode()
     except urllib2.URLError as e:
         # treat an unhandled url type as success
         if hasattr(e, 'reason') and 'unknown url type' in str(e.reason).lower():
@@ -608,43 +609,6 @@ def make_time(utc_ts):
         time_str = time.strftime(time_format, local_time)
         if time_str[0] == '0': time_str = time_str[1:]
     return time_str
-
-def iso_2_utc(iso_ts):
-    if not iso_ts or iso_ts is None: return 0
-    delim = -1
-    if not iso_ts.endswith('Z'):
-        delim = iso_ts.rfind('+')
-        if delim == -1: delim = iso_ts.rfind('-')
-
-    if delim > -1:
-        ts = iso_ts[:delim]
-        sign = iso_ts[delim]
-        tz = iso_ts[delim + 1:]
-    else:
-        ts = iso_ts
-        tz = None
-
-    if ts.find('.') > -1:
-        ts = ts[:ts.find('.')]
-
-    try: d = datetime.datetime.strptime(ts, '%Y-%m-%dT%H:%M:%S')
-    except TypeError: d = datetime.datetime(*(time.strptime(ts, '%Y-%m-%dT%H:%M:%S')[0:6]))
-
-    dif = datetime.timedelta()
-    if tz:
-        hours, minutes = tz.split(':')
-        hours = int(hours)
-        minutes = int(minutes)
-        if sign == '-':
-            hours = -hours
-            minutes = -minutes
-        dif = datetime.timedelta(minutes=minutes, hours=hours)
-    utc_dt = d - dif
-    epoch = datetime.datetime.utcfromtimestamp(0)
-    delta = utc_dt - epoch
-    try: seconds = delta.total_seconds()  # works only on 2.7
-    except: seconds = delta.seconds + delta.days * 24 * 3600  # close enough
-    return seconds
 
 def format_sub_label(sub):
     label = '%s - [%s] - (' % (sub['language'], sub['version'])
@@ -919,15 +883,15 @@ def sort_progress(episodes, sort_order):
     if sort_order == TRAKT_SORT.TITLE:
         return sorted(episodes, key=lambda x: title_key(x['show']['title']))
     elif sort_order == TRAKT_SORT.ACTIVITY:
-        return sorted(episodes, key=lambda x: iso_2_utc(x['last_watched_at']), reverse=True)
+        return sorted(episodes, key=lambda x: utils2.iso_2_utc(x['last_watched_at']), reverse=True)
     elif sort_order == TRAKT_SORT.LEAST_COMPLETED:
         return sorted(episodes, key=lambda x: (x['percent_completed'], x['completed']))
     elif sort_order == TRAKT_SORT.MOST_COMPLETED:
         return sorted(episodes, key=lambda x: (x['percent_completed'], x['completed']), reverse=True)
     elif sort_order == TRAKT_SORT.PREVIOUSLY_AIRED:
-        return sorted(episodes, key=lambda x: iso_2_utc(x['episode']['first_aired']))
+        return sorted(episodes, key=lambda x: utils2.iso_2_utc(x['episode']['first_aired']))
     elif sort_order == TRAKT_SORT.RECENTLY_AIRED:
-        return sorted(episodes, key=lambda x: iso_2_utc(x['episode']['first_aired']), reverse=True)
+        return sorted(episodes, key=lambda x: utils2.iso_2_utc(x['episode']['first_aired']), reverse=True)
     else:  # default sort set to activity
         return sorted(episodes, key=lambda x: x['last_watched_at'], reverse=True)
 

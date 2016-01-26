@@ -72,7 +72,7 @@ class MovieTV_Scraper(scraper.Scraper):
                 source_url += '&_=%s' % (str(int(time.time()) * 1000))
                 source_url += '&token=%s' % (self.__get_token())
             url = urlparse.urljoin(self.base_url, source_url)
-            html = self._http_get(url, headers=headers, cache_limit=1)
+            html = self._http_get(url, headers=headers, cache_limit=.25)
             sources = {}
             if video.video_type == VIDEO_TYPES.MOVIE:
                 for match in re.finditer('var\s+(videolink[^\s]*)\s*=\s*"([^"]+)', html):
@@ -90,7 +90,7 @@ class MovieTV_Scraper(scraper.Scraper):
             for source in sources:
                 if not source.lower().startswith('http'): continue
                 stream_url = re.sub('&end=\d+', '', source)
-                stream_url += '|Referer=%s&Cookie=%s' % (urllib.quote(url), self.__get_stream_cookies())
+                stream_url += '|User-Agent=%s&Referer=%s&Cookie=%s' % (self._get_ua(), urllib.quote(url), self.__get_stream_cookies())
                 hoster = {'multi-part': False, 'host': self._get_direct_hostname(stream_url), 'class': self, 'url': stream_url, 'quality': sources[source], 'views': None, 'rating': None, 'direct': True}
                 hosters.append(hoster)
 
@@ -151,7 +151,7 @@ class MovieTV_Scraper(scraper.Scraper):
     def __get_token(self):
         if self.token is None:
             headers = {'Referer': self.def_ref}
-            html = self._cached_http_get(self.base_url, self.base_url, self.timeout, headers=headers, cache_limit=8)
+            html = self._cached_http_get(self.base_url, self.base_url, self.timeout, headers=headers, cache_limit=1)
             match = re.search('var\s+token_key\s*=\s*"([^"]+)', html)
             if match:
                 self.token = match.group(1)

@@ -1,3 +1,13 @@
+[B]Version 1.0.107[/B]
+- Add tvwtvs scraper
+- Fix MovieTV scraper
+- Fix Dizibox scraper
+- Fix Dizipas scraper
+- Fix Liked List Pagination
+- Add dynamic caching for watched history; collection; and lists
+- Disable video play from SF
+- Don't allow SF to override context menu
+
 [B]Version 1.0.106[/B]
 - Fix movietv
 - Fix HDMovie14 scraper

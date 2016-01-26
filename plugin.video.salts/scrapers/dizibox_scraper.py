@@ -54,7 +54,7 @@ class Dizibox_Scraper(scraper.Scraper):
         if source_url and source_url != FORCE_NO_MATCH:
             page_url = urlparse.urljoin(self.base_url, source_url)
             html = self._http_get(page_url, cache_limit=.25)
-            match = re.search('<option[^>]+value\s*=\s*["\']([^"\']+)[^>]*>(?:1|Altyaz.{1,3}s.{1,3}z)', html)
+            match = re.search('<option[^>]+value\s*=\s*["\']([^"\']+)[^>]*>(?:1|Altyaz.{1,3}s.{1,3}z)<', html)
             if match:
                 option_url = urlparse.urljoin(self.base_url, match.group(1))
                 html = self._http_get(option_url, cache_limit=.25)

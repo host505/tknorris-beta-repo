@@ -31,6 +31,7 @@ from salts_lib.url_dispatcher import URL_Dispatcher
 from salts_lib.srt_scraper import SRT_Scraper
 from salts_lib.trakt_api import Trakt_API, TransientTraktError, TraktNotFoundError, TraktError, TraktAuthError
 from salts_lib import utils
+from salts_lib import utils2
 from salts_lib.trans_utils import i18n
 from salts_lib import log_utils
 from salts_lib import gui_utils
@@ -84,6 +85,38 @@ def settings_menu():
     kodi.create_item({'mode': MODES.BROWSE_URLS}, i18n('remove_cached_urls'), thumb=utils.art('settings.png'), fanart=utils.art('fanart.jpg'))
     kodi.end_of_directory()
 
+@url_dispatcher.register(MODES.BROWSE, ['section'])
+def browse_menu(section):
+    section_params = utils.get_section_params(section)
+    section_label = section_params['label_plural']
+    section_label2 = section_params['label_single']
+    if utils.menu_on('trending'): kodi.create_item({'mode': MODES.TRENDING, 'section': section}, i18n('trending') % (section_label), thumb=utils.art('trending.png'), fanart=utils.art('fanart.jpg'))
+    if utils.menu_on('popular'): kodi.create_item({'mode': MODES.POPULAR, 'section': section}, i18n('popular') % (section_label), thumb=utils.art('popular.png'), fanart=utils.art('fanart.jpg'))
+    if utils.menu_on('recent'): kodi.create_item({'mode': MODES.RECENT, 'section': section}, i18n('recently_updated') % (section_label), thumb=utils.art('recent.png'), fanart=utils.art('fanart.jpg'))
+    if utils.menu_on('mosts'): kodi.create_item({'mode': MODES.MOSTS, 'section': section}, i18n('mosts') % (section_label2), thumb=utils.art('mosts.png'), fanart=utils.art('fanart.jpg'))
+    add_section_lists(section)
+    if TOKEN:
+        if utils.menu_on('on_deck'): kodi.create_item({'mode': MODES.SHOW_BOOKMARKS, 'section': section}, i18n('trakt_on_deck'), thumb=utils.art('on_deck.png'), fanart=utils.art('fanart.jpg'))
+        if utils.menu_on('recommended'): kodi.create_item({'mode': MODES.RECOMMEND, 'section': section}, i18n('recommended') % (section_label), thumb=utils.art('recommended.png'), fanart=utils.art('fanart.jpg'))
+        if utils.menu_on('collection'): add_refresh_item({'mode': MODES.SHOW_COLLECTION, 'section': section}, i18n('my_collection') % (section_label), utils.art('collection.png'), utils.art('fanart.jpg'))
+        if utils.menu_on('history'): kodi.create_item({'mode': MODES.SHOW_HISTORY, 'section': section}, i18n('watched_history'), thumb=utils.art('watched_history.png'), fanart=utils.art('fanart.jpg'))
+        if utils.menu_on('favorites'): kodi.create_item({'mode': MODES.SHOW_FAVORITES, 'section': section}, i18n('my_favorites'), thumb=utils.art('my_favorites.png'), fanart=utils.art('fanart.jpg'))
+        if utils.menu_on('subscriptions'): kodi.create_item({'mode': MODES.MANAGE_SUBS, 'section': section}, i18n('my_subscriptions'), thumb=utils.art('my_subscriptions.png'), fanart=utils.art('fanart.jpg'))
+        if utils.menu_on('watchlist'): kodi.create_item({'mode': MODES.SHOW_WATCHLIST, 'section': section}, i18n('my_watchlist'), thumb=utils.art('my_watchlist.png'), fanart=utils.art('fanart.jpg'))
+        if utils.menu_on('my_lists'): kodi.create_item({'mode': MODES.MY_LISTS, 'section': section}, i18n('my_lists'), thumb=utils.art('my_lists.png'), fanart=utils.art('fanart.jpg'))
+        if utils.menu_on('liked_lists'): add_refresh_item({'mode': MODES.LIKED_LISTS, 'section': section}, i18n('liked_lists'), utils.art('liked_lists.png'), utils.art('fanart.jpg'))
+    if utils.menu_on('other_lists'): kodi.create_item({'mode': MODES.OTHER_LISTS, 'section': section}, i18n('other_lists'), thumb=utils.art('other_lists.png'), fanart=utils.art('fanart.jpg'))
+    if section == SECTIONS.TV:
+        if TOKEN:
+            if utils.menu_on('progress'): add_refresh_item({'mode': MODES.SHOW_PROGRESS}, i18n('my_next_episodes'), utils.art('my_progress.png'), utils.art('fanart.jpg'))
+            if utils.menu_on('my_cal'): add_refresh_item({'mode': MODES.MY_CAL}, i18n('my_calendar'), utils.art('my_calendar.png'), utils.art('fanart.jpg'))
+        if utils.menu_on('general_cal'): add_refresh_item({'mode': MODES.CAL}, i18n('general_calendar'), utils.art('calendar.png'), utils.art('fanart.jpg'))
+        if utils.menu_on('premiere_cal'): add_refresh_item({'mode': MODES.PREMIERES}, i18n('premiere_calendar'), utils.art('premiere_calendar.png'), utils.art('fanart.jpg'))
+    if utils.menu_on('search'): kodi.create_item({'mode': MODES.SEARCH, 'section': section}, i18n('search'), thumb=utils.art(section_params['search_img']), fanart=utils.art('fanart.jpg'))
+    if utils.menu_on('search'): add_search_item({'mode': MODES.RECENT_SEARCH, 'section': section}, i18n('recent_searches'), utils.art(section_params['search_img']), MODES.CLEAR_RECENT)
+    if utils.menu_on('search'): add_search_item({'mode': MODES.SAVED_SEARCHES, 'section': section}, i18n('saved_searches'), utils.art(section_params['search_img']), MODES.CLEAR_SAVED)
+    kodi.end_of_directory()
+
 @url_dispatcher.register(MODES.SHOW_BOOKMARKS, ['section'])
 def view_bookmarks(section):
     section_params = utils.get_section_params(section)
@@ -105,7 +138,7 @@ def view_bookmarks(section):
         pause_label = ''
         if kodi.get_setting('trakt_bookmark') == 'true':
             pause_label = '[COLOR blue]%.2f%%[/COLOR] %s ' % (bookmark['progress'], i18n('on'))
-        paused_at = time.strftime('%Y-%m-%d', time.localtime(utils.iso_2_utc(bookmark['paused_at'])))
+        paused_at = time.strftime('%Y-%m-%d', time.localtime(utils2.iso_2_utc(bookmark['paused_at'])))
         pause_label += '[COLOR deeppink]%s[/COLOR]' % (paused_at)
         label = '[%s] %s ' % (pause_label, label.decode('utf-8', 'replace'))
         liz.setLabel(label)
@@ -184,38 +217,6 @@ def reset_base_url():
 def auto_conf():
     gui_utils.do_auto_config()
     
-@url_dispatcher.register(MODES.BROWSE, ['section'])
-def browse_menu(section):
-    section_params = utils.get_section_params(section)
-    section_label = section_params['label_plural']
-    section_label2 = section_params['label_single']
-    if utils.menu_on('trending'): kodi.create_item({'mode': MODES.TRENDING, 'section': section}, i18n('trending') % (section_label), thumb=utils.art('trending.png'), fanart=utils.art('fanart.jpg'))
-    if utils.menu_on('popular'): kodi.create_item({'mode': MODES.POPULAR, 'section': section}, i18n('popular') % (section_label), thumb=utils.art('popular.png'), fanart=utils.art('fanart.jpg'))
-    if utils.menu_on('recent'): kodi.create_item({'mode': MODES.RECENT, 'section': section}, i18n('recently_updated') % (section_label), thumb=utils.art('recent.png'), fanart=utils.art('fanart.jpg'))
-    if utils.menu_on('mosts'): kodi.create_item({'mode': MODES.MOSTS, 'section': section}, i18n('mosts') % (section_label2), thumb=utils.art('mosts.png'), fanart=utils.art('fanart.jpg'))
-    add_section_lists(section)
-    if TOKEN:
-        if utils.menu_on('on_deck'): kodi.create_item({'mode': MODES.SHOW_BOOKMARKS, 'section': section}, i18n('trakt_on_deck'), thumb=utils.art('on_deck.png'), fanart=utils.art('fanart.jpg'))
-        if utils.menu_on('recommended'): kodi.create_item({'mode': MODES.RECOMMEND, 'section': section}, i18n('recommended') % (section_label), thumb=utils.art('recommended.png'), fanart=utils.art('fanart.jpg'))
-        if utils.menu_on('collection'): add_refresh_item({'mode': MODES.SHOW_COLLECTION, 'section': section}, i18n('my_collection') % (section_label2), utils.art('collection.png'), utils.art('fanart.jpg'))
-        if utils.menu_on('history'): kodi.create_item({'mode': MODES.SHOW_HISTORY, 'section': section}, i18n('watched_history'), thumb=utils.art('watched_history.png'), fanart=utils.art('fanart.jpg'))
-        if utils.menu_on('favorites'): kodi.create_item({'mode': MODES.SHOW_FAVORITES, 'section': section}, i18n('my_favorites'), thumb=utils.art('my_favorites.png'), fanart=utils.art('fanart.jpg'))
-        if utils.menu_on('subscriptions'): kodi.create_item({'mode': MODES.MANAGE_SUBS, 'section': section}, i18n('my_subscriptions'), thumb=utils.art('my_subscriptions.png'), fanart=utils.art('fanart.jpg'))
-        if utils.menu_on('watchlist'): kodi.create_item({'mode': MODES.SHOW_WATCHLIST, 'section': section}, i18n('my_watchlist'), thumb=utils.art('my_watchlist.png'), fanart=utils.art('fanart.jpg'))
-        if utils.menu_on('my_lists'): kodi.create_item({'mode': MODES.MY_LISTS, 'section': section}, i18n('my_lists'), thumb=utils.art('my_lists.png'), fanart=utils.art('fanart.jpg'))
-        if utils.menu_on('liked_lists'): add_refresh_item({'mode': MODES.LIKED_LISTS, 'section': section}, i18n('liked_lists'), utils.art('liked_lists.png'), utils.art('fanart.jpg'))
-    if utils.menu_on('other_lists'): kodi.create_item({'mode': MODES.OTHER_LISTS, 'section': section}, i18n('other_lists'), thumb=utils.art('other_lists.png'), fanart=utils.art('fanart.jpg'))
-    if section == SECTIONS.TV:
-        if TOKEN:
-            if utils.menu_on('progress'): add_refresh_item({'mode': MODES.SHOW_PROGRESS}, i18n('my_next_episodes'), utils.art('my_progress.png'), utils.art('fanart.jpg'))
-            if utils.menu_on('my_cal'): add_refresh_item({'mode': MODES.MY_CAL}, i18n('my_calendar'), utils.art('my_calendar.png'), utils.art('fanart.jpg'))
-        if utils.menu_on('general_cal'): add_refresh_item({'mode': MODES.CAL}, i18n('general_calendar'), utils.art('calendar.png'), utils.art('fanart.jpg'))
-        if utils.menu_on('premiere_cal'): add_refresh_item({'mode': MODES.PREMIERES}, i18n('premiere_calendar'), utils.art('premiere_calendar.png'), utils.art('fanart.jpg'))
-    if utils.menu_on('search'): kodi.create_item({'mode': MODES.SEARCH, 'section': section}, i18n('search'), thumb=utils.art(section_params['search_img']), fanart=utils.art('fanart.jpg'))
-    if utils.menu_on('search'): add_search_item({'mode': MODES.RECENT_SEARCH, 'section': section}, i18n('recent_searches'), utils.art(section_params['search_img']), MODES.CLEAR_RECENT)
-    if utils.menu_on('search'): add_search_item({'mode': MODES.SAVED_SEARCHES, 'section': section}, i18n('saved_searches'), utils.art(section_params['search_img']), MODES.CLEAR_SAVED)
-    kodi.end_of_directory()
-
 def add_section_lists(section):
     main_list = []
     main_str = kodi.get_setting('%s_main' % (section))
@@ -461,7 +462,7 @@ def show_history(section, page=1):
             liz.setLabel(label)
             
         label = liz.getLabel()
-        watched_at = time.strftime('%Y-%m-%d', time.localtime(utils.iso_2_utc(item['watched_at'])))
+        watched_at = time.strftime('%Y-%m-%d', time.localtime(utils2.iso_2_utc(item['watched_at'])))
         header = '[COLOR deeppink]%s[/COLOR]' % (watched_at)
         label = '[%s] %s' % (header, label.decode('utf-8', 'ignore'))
         liz.setLabel(label)
@@ -523,13 +524,19 @@ def add_list_item(section, user_list, total_items=0):
     kodi.create_item(queries, user_list['name'], thumb=utils.art('list.png'), fanart=utils.art('fanart.jpg'), is_folder=True,
                      total_items=total_items, menu_items=menu_items, replace_menu=False)
 
-@url_dispatcher.register(MODES.LIKED_LISTS, ['section'])
-def browse_liked_lists(section):
-    liked_lists = trakt_api.get_liked_lists()
+@url_dispatcher.register(MODES.LIKED_LISTS, ['section'], ['page'])
+def browse_liked_lists(section, page=1):
+    liked_lists = trakt_api.get_liked_lists(page=page)
     total_items = len(liked_lists)
     for liked_list in liked_lists:
         list_item = (liked_list['list']['user']['username'], liked_list['list']['ids']['slug'])
         add_other_list_item(MODES.LIKED_LISTS, section, list_item, total_items)
+
+    query = {'mode': MODES.LIKED_LISTS, 'section': section}
+    if query and page and total_items >= int(kodi.get_setting('list_size')):
+        query['page'] = int(page) + 1
+        label = '%s >>' % (i18n('next_page'))
+        kodi.create_item(query, label, thumb=utils.art('nextpage.png'), fanart=utils.art('fanart.jpg'), is_folder=True)
     kodi.end_of_directory()
 
 @url_dispatcher.register(MODES.OTHER_LISTS, ['section'])
@@ -777,7 +784,7 @@ def show_progress():
         workers, progress = get_progress()
         for episode in progress:
             log_utils.log('Episode: Sort Keys: Tile: |%s| Last Watched: |%s| Percent: |%s%%| Completed: |%s|' % (episode['show']['title'], episode['last_watched_at'], episode['percent_completed'], episode['completed']), xbmc.LOGDEBUG)
-            first_aired_utc = utils.iso_2_utc(episode['episode']['first_aired'])
+            first_aired_utc = utils2.iso_2_utc(episode['episode']['first_aired'])
             if kodi.get_setting('show_unaired_next') == 'true' or first_aired_utc <= time.time():
                 show = episode['show']
                 fanart = show['images']['fanart']['full']
@@ -975,7 +982,7 @@ def browse_episodes(trakt_id, season):
     totalItems = len(episodes)
     now = time.time()
     for episode in episodes:
-        utc_air_time = utils.iso_2_utc(episode['first_aired'])
+        utc_air_time = utils2.iso_2_utc(episode['first_aired'])
         if kodi.get_setting('show_unaired') == 'true' or utc_air_time <= now:
             if kodi.get_setting('show_unknown') == 'true' or utc_air_time:
                 liz, liz_url = make_episode_item(show, episode)
@@ -988,6 +995,9 @@ def browse_episodes(trakt_id, season):
 @url_dispatcher.register(MODES.DOWNLOAD_SOURCE, ['mode', 'video_type', 'title', 'year', 'trakt_id'], ['season', 'episode', 'ep_title', 'ep_airdate', 'dialog'])
 @url_dispatcher.register(MODES.AUTOPLAY, ['mode', 'video_type', 'title', 'year', 'trakt_id'], ['season', 'episode', 'ep_title', 'ep_airdate', 'dialog'])
 def get_sources(mode, video_type, title, year, trakt_id, season='', episode='', ep_title='', ep_airdate='', dialog=None):
+    if 'super.fav' in xbmc.getInfoLabel('Container.PluginName'):
+        return False
+    
     timeout = max_timeout = int(kodi.get_setting('source_timeout'))
     if max_timeout == 0: timeout = None
     max_results = int(kodi.get_setting('source_results'))
@@ -1812,7 +1822,7 @@ def add_to_library(video_type, title, year, trakt_id):
                     if utils.show_requires_source(trakt_id):
                         require_source = True
                     else:
-                        if (episode['first_aired'] != None and utils.iso_2_utc(episode['first_aired']) <= time.time()) or (include_unknown and episode['first_aired'] == None):
+                        if (episode['first_aired'] != None and utils2.iso_2_utc(episode['first_aired']) <= time.time()) or (include_unknown and episode['first_aired'] == None):
                             require_source = False
                         else:
                             continue
@@ -2025,7 +2035,7 @@ def make_dir_from_cal(mode, start_date, days):
         episode = item['episode']
         show = item['show']
         fanart = show['images']['fanart']['full']
-        utc_secs = utils.iso_2_utc(episode['first_aired'])
+        utc_secs = utils2.iso_2_utc(episode['first_aired'])
         show_date = datetime.date.fromtimestamp(utc_secs)
 
         try: episode['watched'] = watched[show['ids']['trakt']][episode['season']][episode['number']]
@@ -2099,7 +2109,7 @@ def make_episode_item(show, episode, show_subs=True, menu_items=None):
     else:
         label = '%sx%s %s' % (episode['season'], episode['number'], episode['title'])
 
-    if 'first_aired' in episode: utc_air_time = utils.iso_2_utc(episode['first_aired'])
+    if 'first_aired' in episode: utc_air_time = utils2.iso_2_utc(episode['first_aired'])
     try: time_str = time.asctime(time.localtime(utc_air_time))
     except: time_str = i18n('unavailable')
 

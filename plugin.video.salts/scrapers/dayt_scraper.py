@@ -27,7 +27,7 @@ from salts_lib import kodi
 
 BASE_URL = 'http://dayt.se'
 
-class Dizigold_Scraper(scraper.Scraper):
+class DayT_Scraper(scraper.Scraper):
     base_url = BASE_URL
 
     def __init__(self, timeout=scraper.DEFAULT_TIMEOUT):

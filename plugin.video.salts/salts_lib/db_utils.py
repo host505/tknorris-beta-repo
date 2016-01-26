@@ -102,13 +102,13 @@ class DB_Connection():
         self.__execute(sql, (trakt_id, season, episode))
 
     def cache_url(self, url, body, data=''):
+        now = time.time()
         if data is None: data = ''
         # truncate data if running mysql and greater than col size
         if self.db_type == DB_TYPES.MYSQL and len(url) > MYSQL_URL_SIZE:
             url = url[:MYSQL_URL_SIZE]
         if self.db_type == DB_TYPES.MYSQL and len(data) > MYSQL_DATA_SIZE:
             data = data[:MYSQL_DATA_SIZE]
-        now = time.time()
         sql = 'REPLACE INTO url_cache (url,data,response,timestamp) VALUES(?, ?, ?, ?)'
         self.__execute(sql, (url, data, body, now))
 

@@ -17,6 +17,7 @@
 """
 import xbmc
 import xbmcgui
+import xbmcaddon
 from salts_lib import kodi
 from salts_lib import log_utils
 from salts_lib import utils
@@ -128,6 +129,22 @@ class Service(xbmc.Player):
 monitor = Service()
 utils.do_startup_task(MODES.UPDATE_SUBS)
 
+was_on = False
+def disable_global_cx():
+    global was_on
+    if xbmc.getCondVisibility('System.HasAddon(plugin.program.super.favourites)'):
+        active_plugin = xbmc.getInfoLabel('Container.PluginName')
+        sf = xbmcaddon.Addon('plugin.program.super.favourites')
+        if active_plugin == kodi.get_id():
+            if sf.getSetting('CONTEXT') == 'true':
+                log_utils.log('Disabling Global CX while SALTS is active', log_utils.LOGDEBUG)
+                was_on = True
+                sf.setSetting('CONTEXT', 'false')
+        elif was_on:
+            log_utils.log('Re-enabling Global CX while SALTS is not active', log_utils.LOGDEBUG)
+            sf.setSetting('CONTEXT', 'true')
+            was_on = False
+    
 errors = 0
 while not xbmc.abortRequested:
     try:
@@ -146,4 +163,6 @@ while not xbmc.abortRequested:
         errors = 0
 
     xbmc.sleep(1000)
+    disable_global_cx()
+    
 log_utils.log('Service: shutting down...')
