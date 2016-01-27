@@ -1,3 +1,9 @@
+[B]Version 1.0.108[/B]
+- Add MovieXK scraper
+- Add mqm scraper
+- Add MovieSub Scraper
+- Fix list sorting (requires DB re-init)
+
 [B]Version 1.0.107[/B]
 - Add tvwtvs scraper
 - Fix MovieTV scraper

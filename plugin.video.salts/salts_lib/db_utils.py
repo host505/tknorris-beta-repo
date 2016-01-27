@@ -18,6 +18,7 @@
 import os
 import time
 import csv
+import json
 import xbmcvfs
 import xbmcgui
 import log_utils
@@ -101,16 +102,18 @@ class DB_Connection():
         sql = 'DELETE FROM bookmark WHERE slug=? and season=? and episode=?'
         self.__execute(sql, (trakt_id, season, episode))
 
-    def cache_url(self, url, body, data=''):
+    def cache_url(self, url, body, data=None, res_header=None):
         now = time.time()
         if data is None: data = ''
+        if res_header is None: res_header = []
+        res_header = json.dumps(res_header)
         # truncate data if running mysql and greater than col size
         if self.db_type == DB_TYPES.MYSQL and len(url) > MYSQL_URL_SIZE:
             url = url[:MYSQL_URL_SIZE]
         if self.db_type == DB_TYPES.MYSQL and len(data) > MYSQL_DATA_SIZE:
             data = data[:MYSQL_DATA_SIZE]
-        sql = 'REPLACE INTO url_cache (url,data,response,timestamp) VALUES(?, ?, ?, ?)'
-        self.__execute(sql, (url, data, body, now))
+        sql = 'REPLACE INTO url_cache (url, data, response, res_header, timestamp) VALUES(?, ?, ?, ?, ?)'
+        self.__execute(sql, (url, data, body, res_header, now))
 
     def delete_cached_url(self, url, data=''):
         if data is None: data = ''
@@ -126,19 +129,21 @@ class DB_Connection():
         if self.db_type == DB_TYPES.MYSQL and len(data) > MYSQL_DATA_SIZE:
             data = data[:MYSQL_DATA_SIZE]
         html = ''
+        res_header = []
         created = 0
         now = time.time()
         limit = 60 * 60 * cache_limit
-        sql = 'SELECT timestamp, response FROM url_cache WHERE url = ? and data=?'
+        sql = 'SELECT timestamp, response, res_header FROM url_cache WHERE url = ? and data=?'
         rows = self.__execute(sql, (url, data))
 
         if rows:
             created = float(rows[0][0])
+            res_header = json.loads(rows[0][2])
             age = now - created
             if age < limit:
                 html = rows[0][1]
         log_utils.log('DB Cache: Url: %s, Data: %s, Cache Hit: %s, created: %s, age: %s, limit: %s' % (url, data, bool(html), created, now - created, limit), log_utils.LOGDEBUG)
-        return created, html
+        return created, res_header, html
 
     def get_all_urls(self, include_response=False, order_matters=False):
         sql = 'SELECT url, data'
@@ -346,7 +351,7 @@ class DB_Connection():
     
             log_utils.log('Building SALTS Database', log_utils.LOGDEBUG)
             if self.db_type == DB_TYPES.MYSQL:
-                self.__execute('CREATE TABLE IF NOT EXISTS url_cache (url VARBINARY(%s) NOT NULL, data VARBINARY(%s) NOT NULL, response MEDIUMBLOB, timestamp TEXT, PRIMARY KEY(url, data))' % (MYSQL_URL_SIZE, MYSQL_DATA_SIZE))
+                self.__execute('CREATE TABLE IF NOT EXISTS url_cache (url VARBINARY(%s) NOT NULL, data VARBINARY(%s) NOT NULL, response MEDIUMBLOB, res_header TEXT, timestamp TEXT, PRIMARY KEY(url, data))' % (MYSQL_URL_SIZE, MYSQL_DATA_SIZE))
                 self.__execute('CREATE TABLE IF NOT EXISTS db_info (setting VARCHAR(255) NOT NULL, value TEXT, PRIMARY KEY(setting))')
                 self.__execute('CREATE TABLE IF NOT EXISTS rel_url \
                 (video_type VARCHAR(15) NOT NULL, title VARCHAR(255) NOT NULL, year VARCHAR(4) NOT NULL, season VARCHAR(5) NOT NULL, episode VARCHAR(5) NOT NULL, source VARCHAR(49) NOT NULL, rel_url VARCHAR(255), \
@@ -360,7 +365,7 @@ class DB_Connection():
             else:
                 self.__create_sqlite_db()
                 self.__execute('PRAGMA journal_mode=WAL')
-                self.__execute('CREATE TABLE IF NOT EXISTS url_cache (url VARCHAR(255) NOT NULL, data VARCHAR(255), response, timestamp, PRIMARY KEY(url, data))')
+                self.__execute('CREATE TABLE IF NOT EXISTS url_cache (url VARCHAR(255) NOT NULL, data VARCHAR(255), response, res_header, timestamp, PRIMARY KEY(url, data))')
                 self.__execute('CREATE TABLE IF NOT EXISTS db_info (setting VARCHAR(255), value TEXT, PRIMARY KEY(setting))')
                 self.__execute('CREATE TABLE IF NOT EXISTS rel_url \
                 (video_type TEXT NOT NULL, title TEXT NOT NULL, year TEXT NOT NULL, season TEXT NOT NULL, episode TEXT NOT NULL, source TEXT NOT NULL, rel_url TEXT, \

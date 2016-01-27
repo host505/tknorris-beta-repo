@@ -409,10 +409,11 @@ class Trakt_API():
         if params: url = url + '?' + urllib.urlencode(params)
 
         db_connection = DB_Connection()
-        created, cached_result = db_connection.get_cached_url(url, json_data, db_cache_limit)
+        created, cached_headers, cached_result = db_connection.get_cached_url(url, json_data, db_cache_limit)
         if cached_result and (time.time() - created) < (60 * 60 * cache_limit):
             result = cached_result
-            log_utils.log('Returning cached result for: %s' % (url), log_utils.LOGDEBUG)
+            res_headers = dict(cached_headers)
+            log_utils.log('Got cached result (%s) for: %s' % (created, url), log_utils.LOGDEBUG)
         else:
             auth_retry = False
             while True:
@@ -429,7 +430,7 @@ class Trakt_API():
                         result += data
                     res_headers = dict(response.info().items())
 
-                    db_connection.cache_url(url, result, json_data)
+                    db_connection.cache_url(url, result, json_data, response.info().items())
                     break
                 except (ssl.SSLError, socket.timeout) as e:
                     if cached_result:
@@ -490,4 +491,3 @@ class Trakt_API():
 
         # log_utils.log('Trakt Response: %s' % (response), xbmc.LOGDEBUG)
         return js_data
-

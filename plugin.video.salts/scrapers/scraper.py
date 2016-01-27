@@ -268,7 +268,7 @@ class Scraper(object):
             data = multipart_data
 
         self.create_db_connection()
-        _, html = self.db_connection.get_cached_url(url, data, cache_limit)
+        _created, _res_header, html = self.db_connection.get_cached_url(url, data, cache_limit)
         if html:
             log_utils.log('Returning cached result for: %s' % (url), log_utils.LOGDEBUG)
             return html
