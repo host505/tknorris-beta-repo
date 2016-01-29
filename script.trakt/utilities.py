@@ -52,7 +52,7 @@ def showSettings():
     __addon__.openSettings()
 
 def getSetting(setting):
-    return __addon__.getSetting(setting).strip().decode('utf-8')
+    return __addon__.getSetting(setting).strip()
 
 def setSetting(setting, value):
     __addon__.setSetting(setting, str(value))
@@ -116,76 +116,30 @@ def checkExclusion(fullpath):
     if not fullpath:
         return True
 
-    # Live TV exclusion
-    if fullpath.startswith("pvr://") and getSettingAsBool('ExcludeLiveTV'):
+    if (fullpath.find("pvr://") > -1) and getSettingAsBool('ExcludeLiveTV'):
         logger.debug("checkExclusion(): Video is playing via Live TV, which is currently set as excluded location.")
         return True
 
-    # HTTP exclusion
-    if (fullpath.startswith("http://") or fullpath.startswith("https://")) and getSettingAsBool('ExcludeHTTP'):
+    if (fullpath.find("http://") > -1) and getSettingAsBool('ExcludeHTTP'):
         logger.debug("checkExclusion(): Video is playing via HTTP source, which is currently set as excluded location.")
         return True
 
-    # Path exclusions
-    ExcludePath = getSetting('ExcludePath').encode('utf-8') # Encode this as fullpath is already encoded
+    ExcludePath = getSetting('ExcludePath')
     if ExcludePath != "" and getSettingAsBool('ExcludePathOption'):
-        if fullpath.startswith(ExcludePath):
+        if fullpath.find(ExcludePath) > -1:
             logger.debug("checkExclusion(): Video is from location, which is currently set as excluded path 1.")
             return True
+
     ExcludePath2 = getSetting('ExcludePath2')
     if ExcludePath2 != "" and getSettingAsBool('ExcludePathOption2'):
-        if fullpath.startswith(ExcludePath2):
+        if fullpath.find(ExcludePath2) > -1:
             logger.debug("checkExclusion(): Video is from location, which is currently set as excluded path 2.")
             return True
+
     ExcludePath3 = getSetting('ExcludePath3')
     if ExcludePath3 != "" and getSettingAsBool('ExcludePathOption3'):
-        if fullpath.startswith(ExcludePath3):
+        if fullpath.find(ExcludePath3) > -1:
             logger.debug("checkExclusion(): Video is from location, which is currently set as excluded path 3.")
-            return True
-    ExcludePath4 = getSetting('ExcludePath4')
-    if ExcludePath4 != "" and getSettingAsBool('ExcludePathOption4'):
-        if fullpath.startswith(ExcludePath4):
-            logger.debug("checkExclusion(): Video is from location, which is currently set as excluded path 4.")
-            return True
-    ExcludePath5 = getSetting('ExcludePath5')
-    if ExcludePath5 != "" and getSettingAsBool('ExcludePathOption5'):
-        if fullpath.startswith(ExcludePath5):
-            logger.debug("checkExclusion(): Video is from location, which is currently set as excluded path 5.")
-            return True
-    ExcludePath6 = getSetting('ExcludePath6')
-    if ExcludePath6 != "" and getSettingAsBool('ExcludePathOption6'):
-        if fullpath.startswith(ExcludePath6):
-            logger.debug("checkExclusion(): Video is from location, which is currently set as excluded path 6.")
-            return True
-    ExcludePath7 = getSetting('ExcludePath7')
-    if ExcludePath7 != "" and getSettingAsBool('ExcludePathOption7'):
-        if fullpath.startswith(ExcludePath7):
-            logger.debug("checkExclusion(): Video is from location, which is currently set as excluded path 7.")
-            return True
-    ExcludePath8 = getSetting('ExcludePath8')
-    if ExcludePath8 != "" and getSettingAsBool('ExcludePathOption8'):
-        if fullpath.startswith(ExcludePath8):
-            logger.debug("checkExclusion(): Video is from location, which is currently set as excluded path 8.")
-            return True
-    ExcludePath9 = getSetting('ExcludePath9')
-    if ExcludePath9 != "" and getSettingAsBool('ExcludePathOption9'):
-        if fullpath.startswith(ExcludePath9):
-            logger.debug("checkExclusion(): Video is from location, which is currently set as excluded path 9.")
-            return True
-    ExcludePath10 = getSetting('ExcludePath10')
-    if ExcludePath10 != "" and getSettingAsBool('ExcludePathOption10'):
-        if fullpath.startswith(ExcludePath10):
-            logger.debug("checkExclusion(): Video is from location, which is currently set as excluded path 10.")
-            return True
-    ExcludePath11 = getSetting('ExcludePath11')
-    if ExcludePath11 != "" and getSettingAsBool('ExcludePathOption11'):
-        if fullpath.startswith(ExcludePath11):
-            logger.debug("checkExclusion(): Video is from location, which is currently set as excluded path 11.")
-            return True
-    ExcludePath12 = getSetting('ExcludePath12')
-    if ExcludePath12 != "" and getSettingAsBool('ExcludePathOption12'):
-        if fullpath.startswith(ExcludePath12):
-            logger.debug("checkExclusion(): Video is from location, which is currently set as excluded path 12.")
             return True
 
     return False
@@ -382,7 +336,6 @@ def kodiRpcToTraktMediaObject(type, data, mode='collected'):
     if type == 'show':
         id = data.pop('imdbnumber')
         data['ids'] = parseIdToTraktIds(id, type)[0]
-        data['rating'] = data['userrating'] if 'userrating' in data and data['userrating'] > 0 else 0
         del(data['label'])
         return data
     elif type == 'episode':
@@ -400,15 +353,14 @@ def kodiRpcToTraktMediaObject(type, data, mode='collected'):
             watched = 0
 
         episode = {'season': data['season'], 'number': data['episode'], 'title': data['label'],
-                   'ids': {'tvdb': data['uniqueid']['unknown'], 'episodeid': data['episodeid']}, 'watched': watched,
-                   'plays': plays, 'collected': 1}
+                    'ids': {'tvdb': data['uniqueid']['unknown'], 'episodeid': data['episodeid']}, 'watched': watched, 'plays': plays}
+        episode['collected'] = 1  # this is in our kodi so it should be collected
         if 'lastplayed' in data:
             episode['watched_at'] = convertDateTimeToUTC(data['lastplayed'])
         if 'dateadded' in data:
             episode['collected_at'] = convertDateTimeToUTC(data['dateadded'])
         if 'runtime' in data:
             episode['runtime'] = data['runtime']
-        episode['rating'] = data['userrating'] if 'userrating' in data and data['userrating'] > 0 else 0
         if mode == 'watched' and episode['watched']:
             return episode
         elif mode == 'collected' and episode['collected']:
@@ -427,7 +379,6 @@ def kodiRpcToTraktMediaObject(type, data, mode='collected'):
             data['plays'] = 0
         else:
             data['plays'] = data.pop('playcount')
-        data['rating'] = data['userrating'] if 'userrating' in data and data['userrating'] > 0 else 0
         data['collected'] = 1  # this is in our kodi so it should be collected
         data['watched'] = 1 if data['plays'] > 0 else 0
         id = data.pop('imdbnumber')
@@ -480,14 +431,17 @@ def kodiRpcToTraktMediaObjects(data, mode='collected'):
 def convertDateTimeToUTC(toConvert):
     if toConvert:
         dateFormat = "%Y-%m-%d %H:%M:%S"
-        try: naive = datetime.strptime(toConvert, dateFormat)
-        except TypeError: naive = datetime(*(time.strptime(toConvert, dateFormat)[0:6]))
-        if naive.year < 1970 or naive.year > 2038:
+        try:
+            naive = datetime.strptime(toConvert, dateFormat)
+        except TypeError:
+            naive = datetime(*(time.strptime(toConvert, dateFormat)[0:6]))
+        if 2038 < naive.year  or 1970 > naive.year:
             logger.debug('convertDateTimeToUTC() Movie/show was collected/watched outside of the unix timespan. Fallback to datetime now')
-            naive = datetime.now()
+            naive = datetime.strptime(str(datetime.now()).split(".")[0], dateFormat)
         local = naive.replace(tzinfo=tzlocal())
         utc = local.astimezone(tzutc())
         return unicode(utc)
+
     else:
         return toConvert
 
@@ -495,11 +449,12 @@ def convertUtcToDateTime(toConvert):
     if toConvert:
         dateFormat = "%Y-%m-%d %H:%M:%S"
         naive = dateutil.parser.parse(toConvert)
-        if naive.year < 1970 or naive.year > 2038:
+        if 2038 < naive.year  or 1970 > naive.year:
             logger.debug('convertUtcToDateTime() Movie/show was collected/watched outside of the unix timespan. Fallback to datetime now')
-            naive = datetime.now()
+            naive = datetime.strptime(str(datetime.now()).split(".")[0], dateFormat)
         utc = naive.replace(tzinfo=tzutc())
         local = utc.astimezone(tzlocal())
+
         return local.strftime(dateFormat)
     else:
         return toConvert
@@ -568,14 +523,14 @@ def getMediaType():
 
 def best_id(ids):
     if 'trakt' in ids:
-        return ids['trakt'], 'trakt'
+        return ids['trakt']
     elif 'imdb' in ids:
-        return ids['imdb'], 'imdb'
+        return ids['imdb']
     elif 'tmdb' in ids:
-        return ids['tmdb'], 'tmdb'
+        return ids['tmdb']
     elif 'tvdb' in ids:
-        return ids['tvdb'], 'tvdb'
+        return ids['tvdb']
     elif 'tvrage' in ids:
-        return ids['tvrage'], 'tvrage'
+        return ids['tvrage']
     elif 'slug' in ids:
-        return ids['slug'], 'slug'
+        return ids['slug']
