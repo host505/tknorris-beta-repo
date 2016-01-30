@@ -15,15 +15,18 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import scraper
 import re
 import urlparse
+
 from salts_lib import dom_parser
+from salts_lib import kodi
 from salts_lib import log_utils
-from salts_lib.constants import VIDEO_TYPES
+from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
-from salts_lib import kodi
+from salts_lib.constants import VIDEO_TYPES
+import scraper
+
 
 BASE_URL = 'http://tvwatchtvseries.com'
 LINK_URL = '/plugins/gkpluginsphp.php'
@@ -62,7 +65,7 @@ class TVWTVS_Scraper(scraper.Scraper):
             
             for source in sources:
                 host = self._get_direct_hostname(source)
-                stream_url = source + '|User-Agent=%s' % (self._get_ua())
+                stream_url = source + '|User-Agent=%s' % (scraper_utils.get_ua())
                 hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': sources[source], 'views': None, 'rating': None, 'url': stream_url, 'direct': True}
                 hosters.append(hoster)
     
@@ -76,9 +79,9 @@ class TVWTVS_Scraper(scraper.Scraper):
                 stream_url, height = match.groups()
                 stream_url = re.sub('; .*', '', stream_url)
                 if self._get_direct_hostname(stream_url) == 'gvideo':
-                    quality = self._gv_get_quality(stream_url)
+                    quality = scraper_utils.gv_get_quality(stream_url)
                 else:
-                    quality = self._height_get_quality(height)
+                    quality = scraper_utils.height_get_quality(height)
                 sources[stream_url] = quality
         return sources
     
@@ -90,14 +93,14 @@ class TVWTVS_Scraper(scraper.Scraper):
             url = urlparse.urljoin(self.base_url, LINK_URL)
             headers = {'Referer': page_url}
             html = self._http_get(url, data=data, headers=headers, cache_limit=.25)
-            js_data = self._parse_json(html, url)
+            js_data = scraper_utils.parse_json(html, url)
             if 'link' in js_data:
                 for link in js_data['link']:
                     if 'type' in link and link['type'] == 'mp4' and 'link' in link:
                         if self._get_direct_hostname(link['link']) == 'gvideo':
-                            quality = self._gv_get_quality(link['link'])
+                            quality = scraper_utils.gv_get_quality(link['link'])
                         elif 'label' in link:
-                            quality = self._height_get_quality(link['label'])
+                            quality = scraper_utils.height_get_quality(link['label'])
                         else:
                             quality = QUALITIES.HIGH
                         sources[link['link']] = quality
@@ -115,7 +118,7 @@ class TVWTVS_Scraper(scraper.Scraper):
                     for fragment in dom_parser.parse_dom(html, 'div', {'class': 'bp-head'}):
                         match = re.search('href="([^"]+)[^>]+>(.*?)</a>', fragment)
                         if match and re.search('\s+Episode\s+%s( |$)' % (video.episode), match.group(2)):
-                            return self._pathify_url(match.group(1))
+                            return scraper_utils.pathify_url(match.group(1))
 
     def search(self, video_type, title, year):
         results = self.__search(video_type, title, year)
@@ -126,16 +129,15 @@ class TVWTVS_Scraper(scraper.Scraper):
         url = urlparse.urljoin(self.base_url, '/categoryy')
         html = self._http_get(url, cache_limit=48)
         results = []
-        norm_title = self._normalize_title(title)
+        norm_title = scraper_utils.normalize_title(title)
         fragment = dom_parser.parse_dom(html, 'div', {'class': 'tagindex'})
         if fragment:
             for match in re.finditer('href="([^"]+)[^>]+>(.*?)</a>', fragment[0]):
                 url, match_title = match.groups()
                 match_title = re.sub('\s+\(\d+\)$', '', match_title)
                 match_title = match_title.replace('&amp;', '&')
-                if norm_title in self._normalize_title(match_title):
-                    result = {'url': self._pathify_url(url), 'title': match_title, 'year': ''}
+                if norm_title in scraper_utils.normalize_title(match_title):
+                    result = {'url': scraper_utils.pathify_url(url), 'title': match_title, 'year': ''}
                     results.append(result)
 
         return results
-        

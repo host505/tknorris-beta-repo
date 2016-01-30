@@ -63,8 +63,6 @@
         <setting id="trakt_timeout" type="slider" label="30549" default="30" range="0,120" option="int"/>
         <setting id="list_size" type="slider" label="30550" default="30" range="1,100" option="int"/>
         <setting id="trakt_bookmark" type="bool" label="30552" default="false"/>
-        <setting id="cache_watched" type="bool" label="30553" default="true"/>
-        <setting id="cache_collection" type="bool" label="30554" default="true"/>
         <setting id="include_people" type="bool" label="30555" default="false"/>
         <setting id="image_size" type="enum" label="30556" values="Full (HD)|Medium (SD)|Thumb (Mobile)" default="1"/>
         <setting id="TV_sub_slug" type="text" visible="false"/>
@@ -310,7 +308,7 @@
          <setting id="LosMovies-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="LosMovies_last_results" type="number" default="0" visible="false"/>
          <setting id="MerDB-enable" type="bool" label="MerDB Enabled" default="true" visible="true"/>
-         <setting id="MerDB-base_url" type="text" label="    Base Url" default="http://www.merdb.mx" visible="eq(-1,true)"/>
+         <setting id="MerDB-base_url" type="text" label="    Base Url" default="http://www.merdb.club" visible="eq(-1,true)"/>
          <setting id="MerDB-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="MerDB_last_results" type="number" default="0" visible="false"/>
          <setting id="MintMovies-enable" type="bool" label="MintMovies Enabled" default="true" visible="true"/>

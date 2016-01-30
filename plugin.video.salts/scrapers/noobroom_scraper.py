@@ -15,17 +15,20 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import scraper
 import re
 import urllib
 import urllib2
 import urlparse
+
 from salts_lib import kodi
 from salts_lib import log_utils
-from salts_lib.trans_utils import i18n
-from salts_lib.constants import VIDEO_TYPES
+from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
+from salts_lib.constants import VIDEO_TYPES
+from salts_lib.utils2 import i18n
+import scraper
+
 
 BASE_URL = 'http://superchillin.com'
 
@@ -56,7 +59,7 @@ class NoobRoom_Scraper(scraper.Scraper):
             stream_url = urlparse.urljoin(self.base_url, file_link)
             cj = self._set_cookies(self.base_url, {})
             request = urllib2.Request(stream_url)
-            request.add_header('User-Agent', self._get_ua())
+            request.add_header('User-Agent', scraper_utils.get_ua())
             request.add_unredirected_header('Host', request.get_host())
             request.add_unredirected_header('Referer', url)
             cj.add_cookie_header(request)
@@ -130,7 +133,7 @@ class NoobRoom_Scraper(scraper.Scraper):
             for match in re.finditer(pattern, container):
                 url, match_title, match_year = match.groups('')
                 if not year or not match_year or year == match_year:
-                    result = {'url': self._pathify_url(url), 'title': match_title, 'year': match_year}
+                    result = {'url': scraper_utils.pathify_url(url), 'title': match_title, 'year': match_year}
                     results.append(result)
 
         return results

@@ -15,19 +15,22 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import scraper
-import urlparse
-import re
-from salts_lib import kodi
-import time
 import base64
+import re
+import time
 import urllib
+import urlparse
+
+from salts_lib import kodi
 from salts_lib import log_utils
-from salts_lib.trans_utils import i18n
-from salts_lib.constants import VIDEO_TYPES
+from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
+from salts_lib.constants import VIDEO_TYPES
 from salts_lib.constants import XHR
+from salts_lib.utils2 import i18n
+import scraper
+
 
 BASE_URL = 'http://www.flixanity.is'
 EMBED_URL = '/ajax/embeds.php'
@@ -86,12 +89,12 @@ class Flixanity_Scraper(scraper.Scraper):
                     host = self._get_direct_hostname(url)
                     if host == 'gvideo':
                         direct = True
-                        quality = self._gv_get_quality(url)
+                        quality = scraper_utils.gv_get_quality(url)
                     else:
                         if 'vk.com' in url and url.endswith('oid='): continue  # skip bad vk.com links
                         direct = False
                         host = urlparse.urlparse(url).hostname
-                        quality = self._get_quality(video, host, QUALITIES.HD720)
+                        quality = scraper_utils.get_quality(video, host, QUALITIES.HD720)
     
                     source = {'multi-part': False, 'url': url, 'host': host, 'class': self, 'quality': quality, 'views': None, 'rating': None, 'direct': direct}
                     sources.append(source)
@@ -113,11 +116,11 @@ class Flixanity_Scraper(scraper.Scraper):
         else:
             media_type = 'MOVIE'
 
-        for item in self._parse_json(html, search_url):
+        for item in scraper_utils.parse_json(html, search_url):
             if item['meta'].upper().startswith(media_type):
                 match_year = str(item['year']) if 'year' in item and item['year'] else ''
                 if not year or not match_year or year == match_year:
-                    result = {'title': item['title'], 'url': self._pathify_url(item['permalink']), 'year': match_year}
+                    result = {'title': item['title'], 'url': scraper_utils.pathify_url(item['permalink']), 'year': match_year}
                     results.append(result)
 
         return results

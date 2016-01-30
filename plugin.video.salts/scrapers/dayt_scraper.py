@@ -15,15 +15,18 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import scraper
 import re
-import urlparse
 import urllib
+import urlparse
+
 from salts_lib import dom_parser
-from salts_lib import log_utils
-from salts_lib.constants import VIDEO_TYPES
-from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib import kodi
+from salts_lib import log_utils
+from salts_lib import scraper_utils
+from salts_lib.constants import FORCE_NO_MATCH
+from salts_lib.constants import VIDEO_TYPES
+import scraper
+
 
 BASE_URL = 'http://dayt.se'
 
@@ -60,7 +63,7 @@ class DayT_Scraper(scraper.Scraper):
             iframes = dom_parser.parse_dom(html, 'iframe', ret='src')
             for iframe_url in iframes:
                 if 'docs.google.com' in iframe_url:
-                    sources = self.__parse_fmt(iframe_url)
+                    sources = self._parse_gdocs(iframe_url)
                     break
                 elif 'banner' in iframe_url or not iframe_url.startswith('http'):
                     pass
@@ -70,25 +73,10 @@ class DayT_Scraper(scraper.Scraper):
 
             for source in sources:
                 host = self._get_direct_hostname(source)
-                hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': self._gv_get_quality(source), 'views': None, 'rating': None, 'url': source, 'direct': True}
+                hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': scraper_utils.gv_get_quality(source), 'views': None, 'rating': None, 'url': source, 'direct': True}
                 hosters.append(hoster)
     
         return hosters
-
-    def __parse_fmt(self, link):
-        urls = {}
-        html = self._http_get(link, cache_limit=.5)
-        for match in re.finditer('\[\s*"([^"]+)"\s*,\s*"([^"]+)"\s*\]', html):
-            key, value = match.groups()
-            if key == 'fmt_stream_map':
-                items = value.split(',')
-                for item in items:
-                    source_fmt, source_url = item.split('|')
-                    source_url = source_url.replace('\\u003d', '=').replace('\\u0026', '&')
-                    source_url = urllib.unquote(source_url)
-                    urls[source_url] = source_fmt
-                    
-        return urls
 
     def get_url(self, video):
         return self._default_get_url(video)
@@ -102,13 +90,13 @@ class DayT_Scraper(scraper.Scraper):
         results = []
         url = urlparse.urljoin(self.base_url, '/forum/forum.php')
         html = self._http_get(url, cache_limit=48)
-        norm_title = self._normalize_title(title)
+        norm_title = scraper_utils.normalize_title(title)
         for span in dom_parser.parse_dom(html, 'span', {'class': 'sectiontitle'}):
             match = re.search('href="([^"]+)[^>]+>([^<]+)', span)
             if match:
                 url, match_title = match.groups()
-                if norm_title in self._normalize_title(match_title):
-                    result = {'url': self._pathify_url(url), 'title': match_title, 'year': ''}
+                if norm_title in scraper_utils.normalize_title(match_title):
+                    result = {'url': scraper_utils.pathify_url(url), 'title': match_title, 'year': ''}
                     results.append(result)
 
         return results

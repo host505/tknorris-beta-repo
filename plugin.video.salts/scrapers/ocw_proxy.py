@@ -15,9 +15,11 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import scraper
-from salts_lib.trans_utils import i18n
 from salts_lib import log_utils
+from salts_lib.utils2 import i18n
+import scraper
+
+
 try:
     from ocw_scraper import OCW_Scraper as real_scraper
 except Exception as e:

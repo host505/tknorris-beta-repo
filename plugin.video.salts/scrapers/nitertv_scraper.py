@@ -15,16 +15,19 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import scraper
+import re
 import urllib
 import urlparse
-import re
+
 from salts_lib import kodi
 from salts_lib import log_utils
-from salts_lib.trans_utils import i18n
-from salts_lib.constants import VIDEO_TYPES
+from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
+from salts_lib.constants import VIDEO_TYPES
+from salts_lib.utils2 import i18n
+import scraper
+
 
 BASE_URL = 'http://niter.co'
 PHP_URL = BASE_URL + '/player/pk/pk/plugins/player_p2.php'
@@ -68,17 +71,17 @@ class Niter_Scraper(scraper.Scraper):
                         stream_url = 'http://www.vidbux.com/%s' % (stream_url[3:])
                         host = 'vidbux.com'
                         direct = False
-                        quality = self._get_quality(video, host, QUALITIES.HD1080)
+                        quality = scraper_utils.get_quality(video, host, QUALITIES.HD1080)
                     elif stream_url.startswith('pic='):
                         data = {'url': stream_url[4:]}
                         html = self._http_get(PHP_URL, data=data, auth=False, cache_limit=1)
-                        js_data = self._parse_json(html, PHP_URL)
+                        js_data = scraper_utils.parse_json(html, PHP_URL)
                         host = self._get_direct_hostname(stream_url)
                         direct = True
                         for item in js_data:
                             if 'medium' in item and item['medium'] == 'video':
                                 stream_url = item['url']
-                                quality = self._width_get_quality(item['width'])
+                                quality = scraper_utils.width_get_quality(item['width'])
                                 break
                         else:
                             continue
@@ -86,7 +89,7 @@ class Niter_Scraper(scraper.Scraper):
                         stream_url = stream_url.replace('emb=', '')
                         host = urlparse.urlparse(stream_url).hostname
                         direct = False
-                        quality = self._get_quality(video, host, QUALITIES.HD720)
+                        quality = scraper_utils.get_quality(video, host, QUALITIES.HD720)
                     else:
                         continue
 
@@ -105,7 +108,7 @@ class Niter_Scraper(scraper.Scraper):
         pattern = 'data-name="([^"]+).*?href="([^"]+)'
         for match in re.finditer(pattern, html, re.DOTALL):
             match_title, url = match.groups()
-            result = {'title': match_title, 'year': '', 'url': self._pathify_url(url)}
+            result = {'title': match_title, 'year': '', 'url': scraper_utils.pathify_url(url)}
             results.append(result)
         return results
 

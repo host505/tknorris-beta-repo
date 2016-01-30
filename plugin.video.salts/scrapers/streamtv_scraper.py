@@ -15,12 +15,15 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import scraper
 import re
 import urlparse
+
 from salts_lib import kodi
-from salts_lib.constants import VIDEO_TYPES
+from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
+from salts_lib.constants import VIDEO_TYPES
+import scraper
+
 
 BASE_URL = 'http://stream-tv2.co'
 BASE_EP_URL = 'http://stream-tv-series.info'
@@ -57,7 +60,7 @@ class StreamTV_Scraper(scraper.Scraper):
             for match in re.finditer('postTabs_titles.*?iframe.*?src="([^"]+)', html, re.I | re.DOTALL):
                 stream_url = match.group(1)
                 host = urlparse.urlparse(stream_url).hostname
-                hoster = {'multi-part': False, 'host': host, 'class': self, 'url': stream_url, 'quality': self._get_quality(video, host, None), 'views': None, 'rating': None, 'direct': False}
+                hoster = {'multi-part': False, 'host': host, 'class': self, 'url': stream_url, 'quality': scraper_utils.get_quality(video, host, None), 'views': None, 'rating': None, 'direct': False}
                 hosters.append(hoster)
 
         return hosters
@@ -70,19 +73,19 @@ class StreamTV_Scraper(scraper.Scraper):
         title_pattern = 'href="(?P<url>[^"]+)"\s+rel="nofollow.*</a>(?P<title>[^<]+)'
         ep_url = self._default_get_episode_url(show_url, video, episode_pattern, title_pattern)
         if ep_url:
-            return self._pathify_url(ep_url)
+            return scraper_utils.pathify_url(ep_url)
 
     def search(self, video_type, title, year):
         url = self.base_url
         html = self._http_get(url, cache_limit=8)
 
         results = []
-        norm_title = self._normalize_title(title)
+        norm_title = scraper_utils.normalize_title(title)
         pattern = 'li><a\s+href="([^"]+)">([^<]+)'
         for match in re.finditer(pattern, html):
             url, match_title = match.groups()
-            if norm_title in self._normalize_title(match_title):
-                result = {'url': self._pathify_url(url), 'title': match_title, 'year': ''}
+            if norm_title in scraper_utils.normalize_title(match_title):
+                result = {'url': scraper_utils.pathify_url(url), 'title': match_title, 'year': ''}
                 results.append(result)
 
         return results

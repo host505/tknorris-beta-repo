@@ -15,14 +15,17 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import scraper
+import re
 import urllib
 import urlparse
-import re
+
 from salts_lib import kodi
-from salts_lib.constants import VIDEO_TYPES
+from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
+from salts_lib.constants import VIDEO_TYPES
+import scraper
+
 
 QUALITY_MAP = {'HD': QUALITIES.HIGH, 'LOW': QUALITIES.LOW}
 BASE_URL = 'http://www.watchfree.to'
@@ -66,7 +69,7 @@ class WatchFree_Scraper(scraper.Scraper):
                         del sources[-1]  # remove Part 1 previous link added
                     continue
                 
-                source = {'multi-part': False, 'url': url, 'host': host, 'class': self, 'quality': self._get_quality(video, host, QUALITIES.HIGH), 'views': None, 'rating': None, 'direct': False}
+                source = {'multi-part': False, 'url': url, 'host': host, 'class': self, 'quality': scraper_utils.get_quality(video, host, QUALITIES.HIGH), 'views': None, 'rating': None, 'direct': False}
                 sources.append(source)
 
         return sources
@@ -88,7 +91,7 @@ class WatchFree_Scraper(scraper.Scraper):
         for match in re.finditer('class="item".*?href="([^"]+)"\s*title="Watch (.*?)(?:\s+\((\d{4})\))?"', html):
             url, res_title, res_year = match.groups('')
             if url_marker in url and (not year or not res_year or year == res_year):
-                result = {'title': res_title, 'url': self._pathify_url(url), 'year': res_year}
+                result = {'title': res_title, 'url': scraper_utils.pathify_url(url), 'year': res_year}
                 results.append(result)
         return results
 

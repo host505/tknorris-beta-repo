@@ -15,16 +15,19 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import scraper
+import re
 import urllib
 import urlparse
-import re
-from salts_lib import log_utils
-from salts_lib import kodi
+
 from salts_lib import dom_parser
-from salts_lib.constants import VIDEO_TYPES
+from salts_lib import kodi
+from salts_lib import log_utils
+from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
+from salts_lib.constants import VIDEO_TYPES
+import scraper
+
 
 BASE_URL = 'http://www.moviesub.net'
 LINK_URL = '/Htplugins/Loader.php'
@@ -62,7 +65,7 @@ class MovieSub_Scraper(scraper.Scraper):
             
             for source in sources:
                 host = self._get_direct_hostname(source)
-                stream_url = source + '|User-Agent=%s' % (self._get_ua())
+                stream_url = source + '|User-Agent=%s' % (scraper_utils.get_ua())
                 hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': sources[source], 'views': None, 'rating': None, 'url': stream_url, 'direct': True}
                 hosters.append(hoster)
 
@@ -76,11 +79,11 @@ class MovieSub_Scraper(scraper.Scraper):
             url = urlparse.urljoin(self.base_url, LINK_URL)
             headers = {'Referer': page_url}
             html = self._http_get(url, data=data, headers=headers, cache_limit=.25)
-            js_data = self._parse_json(html, url)
+            js_data = scraper_utils.parse_json(html, url)
             if 'l' in js_data:
                 for link in js_data['l']:
                     if self._get_direct_hostname(link) == 'gvideo':
-                        quality = self._gv_get_quality(link)
+                        quality = scraper_utils.gv_get_quality(link)
                     else:
                         quality = QUALITIES.HIGH
                     sources[link] = quality
@@ -104,7 +107,7 @@ class MovieSub_Scraper(scraper.Scraper):
                     match_year = ''
                 
                 if not year or not match_year or year == match_year:
-                    result = {'title': match_title.strip(), 'year': match_year, 'url': self._pathify_url(match_url)}
+                    result = {'title': match_title.strip(), 'year': match_year, 'url': scraper_utils.pathify_url(match_url)}
                     results.append(result)
 
         return results

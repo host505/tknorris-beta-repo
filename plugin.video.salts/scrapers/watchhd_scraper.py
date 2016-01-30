@@ -15,20 +15,24 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import scraper
+import base64
+import re
 import urllib
 import urlparse
-import re
-import base64
+
 import xbmcgui
-from salts_lib import log_utils
-from salts_lib import kodi
+
 from salts_lib import dom_parser
-from salts_lib.trans_utils import i18n
-from salts_lib.constants import VIDEO_TYPES
+from salts_lib import kodi
+from salts_lib import log_utils
+from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
 from salts_lib.constants import Q_ORDER
+from salts_lib.constants import VIDEO_TYPES
+from salts_lib.utils2 import i18n
+import scraper
+
 
 BASE_URL = 'http://watch1080p.com'
 
@@ -81,8 +85,8 @@ class WatchHD_Scraper(scraper.Scraper):
                         best_q = 0
                         for stream in streams:
                             stream_url, label = stream
-                            if Q_ORDER[self._height_get_quality(label)] > best_q:
-                                best_q = Q_ORDER[self._height_get_quality(label)]
+                            if Q_ORDER[scraper_utils.height_get_quality(label)] > best_q:
+                                best_q = Q_ORDER[scraper_utils.height_get_quality(label)]
                                 best_stream = stream_url
                         
                         if best_stream:
@@ -118,21 +122,14 @@ class WatchHD_Scraper(scraper.Scraper):
                         stream_url, name = match.groups()
                         match = re.search('(\d+)', name)
                         if match:
-                            quality = self._height_get_quality(match.group(1))
+                            quality = scraper_utils.height_get_quality(match.group(1))
                         else:
                             quality = QUALITIES.HIGH
-                        stream_url += '|User-Agent=%s&Referer=%s&Cookie=%s' % (self._get_ua(), url, self.__get_stream_cookies())
+                        stream_url += '|User-Agent=%s&Referer=%s&Cookie=%s' % (scraper_utils.get_ua(), url, self._get_stream_cookies())
                         hoster = {'multi-part': False, 'host': self._get_direct_hostname(stream_url), 'class': self, 'quality': quality, 'views': views, 'rating': None, 'url': stream_url, 'direct': True}
                         hoster['title'] = title
                         hosters.append(hoster)
         return hosters
-
-    def __get_stream_cookies(self):
-        cj = self._set_cookies(self.base_url, {})
-        cookies = []
-        for cookie in cj:
-            cookies.append('%s=%s' % (cookie.name, cookie.value))
-        return urllib.quote(';'.join(cookies))
 
     def get_url(self, video):
         return self._default_get_url(video)
@@ -154,7 +151,7 @@ class WatchHD_Scraper(scraper.Scraper):
                     match_year = ''
                 
                 if not year or not match_year or year == match_year:
-                    result = {'title': match_title, 'year': match_year, 'url': self._pathify_url(url)}
+                    result = {'title': match_title, 'year': match_year, 'url': scraper_utils.pathify_url(url)}
                     results.append(result)
 
         return results

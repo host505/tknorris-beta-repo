@@ -15,21 +15,24 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import scraper
-import urlparse
+import random
 import re
 import time
-import random
+import urlparse
+
 from salts_lib import kodi
 from salts_lib import log_utils
-from salts_lib.constants import VIDEO_TYPES
+from salts_lib import scraper_utils
+from salts_lib.constants import BR_VERS
+from salts_lib.constants import FEATURES
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
-from salts_lib.constants import XHR
-from salts_lib.constants import BR_VERS
-from salts_lib.constants import WIN_VERS
-from salts_lib.constants import FEATURES
 from salts_lib.constants import RAND_UAS
+from salts_lib.constants import VIDEO_TYPES
+from salts_lib.constants import WIN_VERS
+from salts_lib.constants import XHR
+import scraper
+
 
 BASE_URL = 'http://twomovies.us'
 AJAX_URL = '/Xajax/aj0001'
@@ -69,11 +72,11 @@ class TwoMovies_Scraper(scraper.Scraper):
         source_url = self.get_url(video)
         if source_url and source_url != FORCE_NO_MATCH:
             url = urlparse.urljoin(self.base_url, source_url)
-            html = self._http_get(url, cache_limit=.5)
+            html = self._http_get(url, cache_limit=1)
             pattern = 'class="playDiv3".*?href="([^"]+).*?>(.*?)</a>'
             for match in re.finditer(pattern, html, re.DOTALL | re.I):
                 url, host = match.groups()
-                source = {'multi-part': False, 'url': self._pathify_url(url), 'host': host, 'class': self, 'quality': self._get_quality(video, host, QUALITIES.HIGH), 'rating': None, 'views': None, 'direct': False}
+                source = {'multi-part': False, 'url': scraper_utils.pathify_url(url), 'host': host, 'class': self, 'quality': scraper_utils.get_quality(video, host, QUALITIES.HIGH), 'rating': None, 'views': None, 'direct': False}
                 sources.append(source)
         return sources
 
@@ -82,7 +85,7 @@ class TwoMovies_Scraper(scraper.Scraper):
 
     def search(self, video_type, title, year):
         results = []
-        html = self._http_get(self.base_url, cache_limit=.25)
+        html = self._http_get(self.base_url, cache_limit=2)
         match = re.search('xajax.config.requestURI\s*=\s*"([^"]+)', html)
         if match:
             ajax_url = match.group(1)
@@ -112,7 +115,7 @@ class TwoMovies_Scraper(scraper.Scraper):
                 match_year = ''
             
             if not year or not match_year or year == match_year:
-                result = {'url': self._pathify_url(url), 'title': match_title, 'year': match_year}
+                result = {'url': scraper_utils.pathify_url(url), 'title': match_title, 'year': match_year}
                 results.append(result)
 
         return results

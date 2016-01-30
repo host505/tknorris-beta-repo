@@ -15,14 +15,17 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import scraper
 import re
-import urlparse
-from salts_lib import kodi
 import urllib
-from salts_lib.constants import VIDEO_TYPES
+import urlparse
+
+from salts_lib import kodi
+from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
+from salts_lib.constants import VIDEO_TYPES
+import scraper
+
 
 BASE_URL = 'http://streamallthis.is'
 
@@ -81,31 +84,13 @@ class Stream_Scraper(scraper.Scraper):
                 if match:
                     new_url = match.group(1)
                     html = self._http_get(new_url, cache_limit=.5)
-                    js_data = self._parse_json(html, new_url)
+                    js_data = scraper_utils.parse_json(html, new_url)
                     if 'videos' in js_data:
                         for video in js_data['videos']:
-                            stream_url = video['url'] + '|Cookie=%s' % (self.__get_stream_cookies())
-                            hoster = {'multi-part': False, 'host': self._get_direct_hostname(stream_url), 'class': self, 'url': stream_url, 'quality': self.__set_quality(video['key'][:-1]), 'views': None, 'rating': None, 'direct': True}
+                            stream_url = video['url'] + '|Cookie=%s' % (self._get_stream_cookies())
+                            hoster = {'multi-part': False, 'host': self._get_direct_hostname(stream_url), 'class': self, 'url': stream_url, 'quality': scraper_utils.height_get_quality(video['key']), 'views': None, 'rating': None, 'direct': True}
                             hosters.append(hoster)
         return hosters
-
-    def __get_stream_cookies(self):
-        cj = self._set_cookies(self.base_url, {})
-        cookies = []
-        for cookie in cj:
-            if 'mail.ru' in cookie.domain:
-                cookies.append('%s=%s' % (cookie.name, cookie.value))
-        return urllib.quote(';'.join(cookies))
-
-    def __set_quality(self, height):
-        height = int(height)
-        if height >= 720:
-            quality = QUALITIES.HD720
-        elif height >= 480:
-            quality = QUALITIES.HIGH
-        else:
-            quality = QUALITIES.MEDIUM
-        return quality
 
     def get_url(self, video):
         return self._default_get_url(video)
@@ -119,12 +104,12 @@ class Stream_Scraper(scraper.Scraper):
         html = self._http_get(url, cache_limit=8)
 
         results = []
-        norm_title = self._normalize_title(title)
+        norm_title = scraper_utils.normalize_title(title)
         pattern = 'href="([^"]+)"\s+class="lc">\s*(.*?)\s*<'
         for match in re.finditer(pattern, html):
             url, match_title = match.groups()
-            if norm_title in self._normalize_title(match_title):
-                result = {'url': self._pathify_url(url), 'title': match_title, 'year': ''}
+            if norm_title in scraper_utils.normalize_title(match_title):
+                result = {'url': scraper_utils.pathify_url(url), 'title': match_title, 'year': ''}
                 results.append(result)
 
         return results

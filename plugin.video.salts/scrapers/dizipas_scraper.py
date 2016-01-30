@@ -15,15 +15,18 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import scraper
 import re
-import urlparse
 import urllib
-from salts_lib import kodi
+import urlparse
+
 from salts_lib import dom_parser
+from salts_lib import kodi
 from salts_lib import log_utils
-from salts_lib.constants import VIDEO_TYPES
+from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
+from salts_lib.constants import VIDEO_TYPES
+import scraper
+
 
 BASE_URL = 'http://dizipas.com'
 
@@ -61,14 +64,14 @@ class Dizipas_Scraper(scraper.Scraper):
                 post_url, vid_id = match.groups()
                 data = {'id': vid_id, 'type': 'new'}
                 html = self._http_get(post_url, data=data, cache_limit=.5)
-                js_result = self._parse_json(html, post_url)
+                js_result = scraper_utils.parse_json(html, post_url)
                 for key in js_result:
                     stream_url = js_result[key]
                     host = self._get_direct_hostname(stream_url)
                     if host == 'gvideo':
-                        quality = self._gv_get_quality(stream_url)
+                        quality = scraper_utils.gv_get_quality(stream_url)
                     else:
-                        quality = self._height_get_quality(key)
+                        quality = scraper_utils.height_get_quality(key)
                         
                     hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': quality, 'views': None, 'rating': None, 'url': stream_url, 'direct': True}
                     hosters.append(hoster)
@@ -107,7 +110,7 @@ class Dizipas_Scraper(scraper.Scraper):
                 match_title = ''
             
             if url and match_title and (not year or not match_year or year == match_year):
-                result = {'url': self._pathify_url(url), 'title': match_title, 'year': match_year}
+                result = {'url': scraper_utils.pathify_url(url), 'title': match_title, 'year': match_year}
                 results.append(result)
 
         return results

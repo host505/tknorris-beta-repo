@@ -15,18 +15,19 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import scraper
+import re
 import urllib
 import urlparse
-import re
-import time
-from salts_lib import log_utils
-from salts_lib import kodi
+
 from salts_lib import dom_parser
-from salts_lib.constants import VIDEO_TYPES
+from salts_lib import kodi
+from salts_lib import log_utils
+from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
-from salts_lib.constants import XHR
+from salts_lib.constants import VIDEO_TYPES
+import scraper
+
 
 BASE_URL = 'http://movieswatchmovie.com'
 LINK_URL = '/watchmovieplayer/gkpluginsphp.php'
@@ -65,7 +66,7 @@ class MWM_Scraper(scraper.Scraper):
             
             for source in sources:
                 host = self._get_direct_hostname(source)
-                stream_url = source + '|User-Agent=%s' % (self._get_ua())
+                stream_url = source + '|User-Agent=%s' % (scraper_utils.get_ua())
                 hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': sources[source], 'views': None, 'rating': None, 'url': stream_url, 'direct': True}
                 hosters.append(hoster)
 
@@ -79,9 +80,9 @@ class MWM_Scraper(scraper.Scraper):
                 stream_url, height = match.groups()
                 stream_url = re.sub('; .*', '', stream_url)
                 if self._get_direct_hostname(stream_url) == 'gvideo':
-                    quality = self._gv_get_quality(stream_url)
+                    quality = scraper_utils.gv_get_quality(stream_url)
                 else:
-                    quality = self._height_get_quality(height)
+                    quality = scraper_utils.height_get_quality(height)
                 sources[stream_url] = quality
         return sources
     
@@ -93,14 +94,14 @@ class MWM_Scraper(scraper.Scraper):
             url = urlparse.urljoin(self.base_url, LINK_URL)
             headers = {'Referer': page_url}
             html = self._http_get(url, data=data, headers=headers, cache_limit=.25)
-            js_data = self._parse_json(html, url)
+            js_data = scraper_utils.parse_json(html, url)
             if 'link' in js_data:
                 for link in js_data['link']:
                     if 'type' in link and link['type'] == 'mp4' and 'link' in link:
                         if self._get_direct_hostname(link['link']) == 'gvideo':
-                            quality = self._gv_get_quality(link['link'])
+                            quality = scraper_utils.gv_get_quality(link['link'])
                         elif 'label' in link:
-                            quality = self._height_get_quality(link['label'])
+                            quality = scraper_utils.height_get_quality(link['label'])
                         else:
                             quality = QUALITIES.HIGH
                         sources[link['link']] = quality
@@ -129,7 +130,7 @@ class MWM_Scraper(scraper.Scraper):
                     if any((item for item in results if item['title'] == match_title and item['year'] == match_year)):
                         continue
                     
-                    result = {'title': match_title.strip(), 'year': match_year, 'url': self._pathify_url(match_url)}
+                    result = {'title': match_title.strip(), 'year': match_year, 'url': scraper_utils.pathify_url(match_url)}
                     results.append(result)
 
         return results

@@ -15,13 +15,16 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import scraper
 import re
 import urlparse
+
 from salts_lib import kodi
-from salts_lib.constants import VIDEO_TYPES
+from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
+from salts_lib.constants import VIDEO_TYPES
+import scraper
+
 
 BASE_URL = 'http://projectfreetv.so'
 
@@ -62,7 +65,7 @@ class PFTV_Scraper(scraper.Scraper):
 
             for match in re.finditer('<td>\s*<a\s+href="([^"]+)(?:[^>]+>){2}\s*(?:&nbsp;)*\s*([^<]+)', html):
                 url, host = match.groups()
-                hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': self._get_quality(video, host, QUALITIES.HIGH), 'views': None, 'rating': None, 'url': self._pathify_url(url), 'direct': False}
+                hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': scraper_utils.get_quality(video, host, QUALITIES.HIGH), 'views': None, 'rating': None, 'url': scraper_utils.pathify_url(url), 'direct': False}
                 hosters.append(hoster)
 
         return hosters
@@ -85,12 +88,12 @@ class PFTV_Scraper(scraper.Scraper):
         url = urlparse.urljoin(self.base_url, '/watch-tv-series')
         html = self._http_get(url, cache_limit=8)
         results = []
-        norm_title = self._normalize_title(title)
+        norm_title = scraper_utils.normalize_title(title)
         pattern = 'li>\s*<a\s+title="([^"]+)"\s+href="([^"]+)'
         for match in re.finditer(pattern, html):
             match_title, url = match.groups()
-            if norm_title in self._normalize_title(match_title):
-                result = {'url': self._pathify_url(url), 'title': match_title, 'year': ''}
+            if norm_title in scraper_utils.normalize_title(match_title):
+                result = {'url': scraper_utils.pathify_url(url), 'title': match_title, 'year': ''}
                 results.append(result)
 
         return results

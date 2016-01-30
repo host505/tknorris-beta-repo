@@ -15,18 +15,21 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import scraper
-import urllib
-import urlparse
 import json
 import re
-import xml.etree.ElementTree as ET
+import urllib
+import urlparse
+
 from salts_lib import kodi
 from salts_lib import log_utils
-from salts_lib.trans_utils import i18n
-from salts_lib.constants import VIDEO_TYPES
+from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
+from salts_lib.constants import VIDEO_TYPES
+from salts_lib.utils2 import i18n
+import scraper
+import xml.etree.ElementTree as ET
+
 
 BASE_URL = 'http://www.furk.net'
 SEARCH_URL = '/api/plugins/metasearch'
@@ -118,15 +121,15 @@ class Furk_Scraper(scraper.Scraper):
                 match = re.search('(\d{3,})\s?x\s?(\d{3,})', item['video_info'])
                 if match:
                     width, _ = match.groups()
-                    quality = self._width_get_quality(width)
+                    quality = scraper_utils.width_get_quality(width)
                 else:
                     if video.video_type == VIDEO_TYPES.MOVIE:
-                        _, _, height, _ = self._parse_movie_link(item['name'])
-                        quality = self._height_get_quality(height)
+                        _, _, height, _ = scraper_utils.parse_movie_link(item['name'])
+                        quality = scraper_utils.height_get_quality(height)
                     elif video.video_type == VIDEO_TYPES.EPISODE:
-                        _, _, _, height, _ = self._parse_episode_link(item['name'])
+                        _, _, _, height, _ = scraper_utils.parse_episode_link(item['name'])
                         if int(height) > -1:
-                            quality = self._height_get_quality(height)
+                            quality = scraper_utils.height_get_quality(height)
                         else:
                             quality = QUALITIES.HIGH
                     else:
@@ -135,7 +138,7 @@ class Furk_Scraper(scraper.Scraper):
                 stream_url = item['url_pls']
                 host = self._get_direct_hostname(stream_url)
                 hoster = {'multi-part': False, 'class': self, 'views': None, 'url': stream_url, 'rating': None, 'host': host, 'quality': quality, 'direct': True}
-                hoster['size'] = self._format_size(int(item['size']), 'B')
+                hoster['size'] = scraper_utils.format_size(int(item['size']), 'B')
                 hoster['extra'] = item['name']
                 hosters.append(hoster)
         return hosters
@@ -162,7 +165,7 @@ class Furk_Scraper(scraper.Scraper):
     @classmethod
     def get_settings(cls):
         settings = super(cls, cls).get_settings()
-        settings = cls._disable_sub_check(settings)
+        settings = scraper_utils.disable_sub_check(settings)
         name = cls.get_name()
         settings.append('         <setting id="%s-username" type="text" label="     %s" default="" visible="eq(-4,true)"/>' % (name, i18n('username')))
         settings.append('         <setting id="%s-password" type="text" label="     %s" option="hidden" default="" visible="eq(-5,true)"/>' % (name, i18n('password')))
@@ -173,6 +176,7 @@ class Furk_Scraper(scraper.Scraper):
         if not self.username or not self.password:
             return {}
         
+        js_result = {}
         result = super(self.__class__, self)._http_get(url, data=data, allow_redirect=allow_redirect, cache_limit=cache_limit)
         if result:
             try:
@@ -193,8 +197,9 @@ class Furk_Scraper(scraper.Scraper):
                         js_result = self._http_get(url, data=data, retry=False, allow_redirect=allow_redirect, cache_limit=0)
                     else:
                         log_utils.log('Error received from furk.net (%s)' % (js_result['error']), log_utils.LOGWARNING)
+                        js_result = {}
             
-            return js_result
+        return js_result
         
     def __login(self):
         url = urlparse.urljoin(self.base_url, LOGIN_URL)

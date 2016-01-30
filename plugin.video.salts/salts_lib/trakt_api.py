@@ -17,7 +17,6 @@
 """
 import json
 import urllib2
-from urllib2 import HTTPError
 import urllib
 import socket
 import ssl
@@ -273,13 +272,15 @@ class Trakt_API():
         cache_limit = self.__get_cache_limit(media, 'watched_at', cached)
         return self.__call_trakt(url, params=params, cache_limit=cache_limit, cached=cached)
 
-    def get_show_progress(self, show_id, full=False, hidden=False, specials=False, cached=True):
+    def get_show_progress(self, show_id, full=False, hidden=False, specials=False, cached=True, cache_limit=None):
+        if cache_limit is None:
+            cache_limit = self.__get_cache_limit('episodes', 'watched_at', cached)
         url = '/shows/%s/progress/watched' % (show_id)
         params = {}
         if full: params['extended'] = 'full,images'
         if hidden: params['hidden'] = 'true'
         if specials: params['specials'] = 'true'
-        return self.__call_trakt(url, params=params, cached=cached)
+        return self.__call_trakt(url, params=params, cache_limit=cache_limit, cached=cached)
 
     def get_hidden_progress(self, cached=True):
         url = '/users/hidden/progress_watched'
@@ -413,7 +414,7 @@ class Trakt_API():
         if cached_result and (time.time() - created) < (60 * 60 * cache_limit):
             result = cached_result
             res_headers = dict(cached_headers)
-            log_utils.log('Got cached result (%s) for: %s' % (created, url), log_utils.LOGDEBUG)
+            log_utils.log('Got cached result for: %s' % (url), log_utils.LOGDEBUG)
         else:
             auth_retry = False
             while True:

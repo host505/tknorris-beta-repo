@@ -15,13 +15,16 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import scraper
+import re
 import urllib
 import urlparse
-import re
+
 from salts_lib import kodi
-from salts_lib.constants import VIDEO_TYPES
+from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
+from salts_lib.constants import VIDEO_TYPES
+import scraper
+
 
 BASE_URL = 'https://afdah.org'
 INFO_URL = BASE_URL + '/video_info'
@@ -58,36 +61,12 @@ class AfdahOrg_Scraper(scraper.Scraper):
                 video_id = match.group(1)
                 data = {'video_id': video_id}
                 html = self._http_get(INFO_URL, data=data, cache_limit=.5)
-                sources = self.__parse_fmt(html)
-                for width in sources:
-                    hoster = {'multi-part': False, 'host': self._get_direct_hostname(sources[width]), 'class': self, 'quality': self._width_get_quality(width), 'views': None, 'rating': None, 'url': sources[width], 'direct': True}
+                sources = self._parse_gdocs(html)
+                for source in sources:
+                    host = self._get_direct_hostname(source)
+                    hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': scraper_utils.gv_get_quality(source), 'views': None, 'rating': None, 'url': source, 'direct': True}
                     hosters.append(hoster)
         return hosters
-
-    def __parse_fmt(self, js_data):
-        urls = {}
-        formats = {}
-        for match in re.finditer('&?([^=]+)=([^&$]+)', js_data):
-            key, value = match.groups()
-            value = urllib.unquote(value)
-            if key == 'fmt_stream_map':
-                items = value.split(',')
-                for item in items:
-                    source_fmt, source_url = item.split('|')
-                    urls[source_url] = source_fmt
-            elif key == 'fmt_list':
-                items = value.split(',')
-                for item in items:
-                    format_key, q_str, _ = item.split('/', 2)
-                    w, _ = q_str.split('x')
-                    formats[format_key] = int(w)
-                    
-        sources = {}
-        for url in urls:
-            if urls[url] in formats:
-                width = formats[urls[url]]
-                sources[width] = url
-        return sources
 
     def get_url(self, video):
         return self._default_get_url(video)
@@ -101,6 +80,6 @@ class AfdahOrg_Scraper(scraper.Scraper):
         for match in re.finditer(pattern, html, re.DOTALL):
             url, match_title, match_year = match.groups()
             if not year or not match_year or year == match_year:
-                result = {'title': match_title, 'year': match_year, 'url': self._pathify_url(url)}
+                result = {'title': match_title, 'year': match_year, 'url': scraper_utils.pathify_url(url)}
                 results.append(result)
         return results

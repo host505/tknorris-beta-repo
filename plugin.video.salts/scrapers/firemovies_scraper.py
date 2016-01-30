@@ -15,16 +15,19 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import scraper
+import re
 import urllib
 import urlparse
-import re
-from salts_lib import log_utils
-from salts_lib import kodi
+
 from salts_lib import dom_parser
-from salts_lib.constants import VIDEO_TYPES
+from salts_lib import kodi
+from salts_lib import log_utils
+from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
+from salts_lib.constants import VIDEO_TYPES
+import scraper
+
 
 BASE_URL = 'http://firemovieshd.com'
 Q_MAP = {'TS': QUALITIES.LOW, 'CAM': QUALITIES.LOW, 'HDTS': QUALITIES.LOW, 'HD 720P': QUALITIES.HD720}
@@ -68,7 +71,7 @@ class FireMovies_Scraper(scraper.Scraper):
                         source_url = urlparse.urljoin(self.base_url, source)
                         redir_url = self._http_get(source_url, allow_redirect=False, cache_limit=.5)
                         if redir_url.startswith('http'):
-                            sources[redir_url] = self._gv_get_quality(redir_url)
+                            sources[redir_url] = scraper_utils.gv_get_quality(redir_url)
                         else:
                             sources[source_url] = QUALITIES.HIGH
                     
@@ -97,7 +100,7 @@ class FireMovies_Scraper(scraper.Scraper):
                     match_year = ''
                 
                 if not year or not match_year or year == match_year:
-                    result = {'title': match_title, 'year': match_year, 'url': self._pathify_url(match_url)}
+                    result = {'title': match_title, 'year': match_year, 'url': scraper_utils.pathify_url(match_url)}
                     results.append(result)
 
         return results

@@ -15,19 +15,21 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import scraper
+import random
 import re
-import urlparse
 import time
 import urllib
-import random
-from salts_lib import kodi
+import urlparse
+
 from salts_lib import dom_parser
+from salts_lib import kodi
 from salts_lib import log_utils
-from salts_lib.constants import VIDEO_TYPES
+from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
+from salts_lib.constants import VIDEO_TYPES
 from salts_lib.constants import XHR
+import scraper
 
 
 BASE_URL = 'http://movietv.to'
@@ -83,25 +85,18 @@ class MovieTV_Scraper(scraper.Scraper):
                         quality = QUALITIES.HD720
                     sources[stream_url] = quality
             else:
-                js_data = self._parse_json(html, url)
+                js_data = scraper_utils.parse_json(html, url)
                 if 'url' in js_data:
                     sources[js_data['url']] = QUALITIES.HD720
                 
             for source in sources:
                 if not source.lower().startswith('http'): continue
                 stream_url = re.sub('&end=\d+', '', source)
-                stream_url += '|User-Agent=%s&Referer=%s&Cookie=%s' % (self._get_ua(), urllib.quote(url), self.__get_stream_cookies())
+                stream_url += '|User-Agent=%s&Referer=%s&Cookie=%s' % (scraper_utils.get_ua(), urllib.quote(url), self._get_stream_cookies())
                 hoster = {'multi-part': False, 'host': self._get_direct_hostname(stream_url), 'class': self, 'url': stream_url, 'quality': sources[source], 'views': None, 'rating': None, 'direct': True}
                 hosters.append(hoster)
 
         return hosters
-
-    def __get_stream_cookies(self):
-        cj = self._set_cookies(self.base_url, {})
-        cookies = []
-        for cookie in cj:
-            cookies.append('%s=%s' % (cookie.name, cookie.value))
-        return urllib.quote(';'.join(cookies))
 
     def get_url(self, video):
         return self._default_get_url(video)
@@ -115,17 +110,17 @@ class MovieTV_Scraper(scraper.Scraper):
             season_url = SEASON_URL % (show_id, video.season, str(int(time.time()) * 1000), self.__get_token())
             season_url = urlparse.urljoin(self.base_url, season_url)
             html = self._http_get(season_url, cache_limit=1)
-            js_data = self._parse_json(html, season_url)
-            force_title = self._force_title(video)
+            js_data = scraper_utils.parse_json(html, season_url)
+            force_title = scraper_utils.force_title(video)
             if not force_title:
                 for episode in js_data:
                         if int(episode['episode_number']) == int(video.episode):
                             return LINK_URL % (show_id, video.season, episode['episode_number'], show_url)
             
             if (force_title or kodi.get_setting('title-fallback') == 'true') and video.ep_title:
-                norm_title = self._normalize_title(video.ep_title)
+                norm_title = scraper_utils.normalize_title(video.ep_title)
                 for episode in js_data:
-                    if norm_title == self._normalize_title(episode['title']):
+                    if norm_title == scraper_utils.normalize_title(episode['title']):
                         return LINK_URL % (show_id, video.season, episode['episode_number'], show_url)
         
     def search(self, video_type, title, year):
@@ -143,7 +138,7 @@ class MovieTV_Scraper(scraper.Scraper):
             if match:
                 link, match_title, match_year = match.groups()
                 if not year or not match_year or int(year) == int(match_year):
-                    result = {'url': self._pathify_url(link), 'title': match_title, 'year': match_year}
+                    result = {'url': scraper_utils.pathify_url(link), 'title': match_title, 'year': match_year}
                     results.append(result)
 
         return results
@@ -163,4 +158,4 @@ class MovieTV_Scraper(scraper.Scraper):
         if 'Referer' not in headers: headers['Referer'] = self.def_ref
         return self._cached_http_get(url, self.base_url, self.timeout, cookies=cookies, data=data, multipart_data=multipart_data,
                                      headers=headers, allow_redirect=allow_redirect, cache_limit=cache_limit)
-    
+

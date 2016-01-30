@@ -15,15 +15,18 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import scraper
+import re
 import urllib
 import urlparse
-import re
+
+from salts_lib import dom_parser
 from salts_lib import kodi
 from salts_lib import log_utils
-from salts_lib.constants import VIDEO_TYPES
+from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
-from salts_lib import dom_parser
+from salts_lib.constants import VIDEO_TYPES
+import scraper
+
 
 BASE_URL = 'http://yss.rocks'
 GK_URL = '/plugins/gkpluginsphp.php'
@@ -63,15 +66,15 @@ class YifyStreaming_Scraper(scraper.Scraper):
                 headers = {'Referer': iframe_url}
                 gk_url = urlparse.urljoin(self.base_url, GK_URL)
                 html = self._http_get(gk_url, data=data, headers=headers, cache_limit=.5)
-                js_data = self._parse_json(html, gk_url)
+                js_data = scraper_utils.parse_json(html, gk_url)
                 if 'link' in js_data:
                     for link in js_data['link']:
                         stream_url = link['link']
                         host = self._get_direct_hostname(stream_url)
                         if host == 'gvideo':
-                            quality = self._gv_get_quality(stream_url)
+                            quality = scraper_utils.gv_get_quality(stream_url)
                         else:
-                            quality = self._height_get_quality(link['label'])
+                            quality = scraper_utils.height_get_quality(link['label'])
                         hoster = {'multi-part': False, 'url': stream_url, 'class': self, 'quality': quality, 'host': host, 'rating': None, 'views': None, 'direct': True}
                         hosters.append(hoster)
         return hosters
@@ -98,7 +101,7 @@ class YifyStreaming_Scraper(scraper.Scraper):
                     match_year = ''
                 
                 if not year or not match_year or year == match_year:
-                    result = {'title': match_title, 'year': match_year, 'url': self._pathify_url(url)}
+                    result = {'title': match_title, 'year': match_year, 'url': scraper_utils.pathify_url(url)}
                     results.append(result)
 
         return results

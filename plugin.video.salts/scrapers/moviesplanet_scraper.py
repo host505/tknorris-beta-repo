@@ -15,18 +15,21 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import scraper
-import urlparse
-import re
-from salts_lib import kodi
-import time
 import base64
+import re
+import time
+import urlparse
+
+from salts_lib import kodi
 from salts_lib import log_utils
-from salts_lib.trans_utils import i18n
-from salts_lib.constants import VIDEO_TYPES
+from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
+from salts_lib.constants import VIDEO_TYPES
 from salts_lib.constants import XHR
+from salts_lib.utils2 import i18n
+import scraper
+
 
 BASE_URL = 'http://www.moviesplanet.is'
 GK_KEY = base64.urlsafe_b64decode('MllVcmlZQmhTM2swYU9BY0lmTzQ=')
@@ -71,7 +74,7 @@ class MoviesPlanet_Scraper(scraper.Scraper):
                         if match:
                             proxy_link = match.group(1)
                             proxy_link = proxy_link.split('*', 1)[-1]
-                            picasa_url = self._gk_decrypt(GK_KEY, proxy_link)
+                            picasa_url = scraper_utils.gk_decrypt(self.get_name(), GK_KEY, proxy_link)
                             stream_urls += self._parse_google(picasa_url)
                     else:
                         html = self._http_get(iframe_url, cache_limit=0)
@@ -87,10 +90,10 @@ class MoviesPlanet_Scraper(scraper.Scraper):
         for stream_url in list(set(stream_urls)):
             host = self._get_direct_hostname(stream_url)
             if host == 'gvideo':
-                quality = self._gv_get_quality(stream_url)
+                quality = scraper_utils.gv_get_quality(stream_url)
             else:
                 quality = QUALITY_MAP.get(label, QUALITIES.HIGH)
-            stream_url += '|User-Agent=%s' % (self._get_ua())
+            stream_url += '|User-Agent=%s' % (scraper_utils.get_ua())
             source = {'multi-part': False, 'url': stream_url, 'host': host, 'class': self, 'quality': quality, 'views': None, 'rating': None, 'direct': True}
             sources.append(source)
 
@@ -110,10 +113,10 @@ class MoviesPlanet_Scraper(scraper.Scraper):
         else:
             media_type = 'MOVIE'
 
-        js_data = self._parse_json(html, search_url)
+        js_data = scraper_utils.parse_json(html, search_url)
         for item in js_data:
             if item['meta'].upper().startswith(media_type):
-                result = {'title': item['title'], 'url': self._pathify_url(item['permalink']), 'year': ''}
+                result = {'title': item['title'], 'url': scraper_utils.pathify_url(item['permalink']), 'year': ''}
                 results.append(result)
 
         return results

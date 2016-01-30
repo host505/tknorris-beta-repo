@@ -15,16 +15,19 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import scraper
 import re
 import urlparse
+
 from salts_lib import dom_parser
+from salts_lib import kodi
 from salts_lib import log_utils
-from salts_lib.constants import VIDEO_TYPES
+from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
+from salts_lib.constants import VIDEO_TYPES
 from salts_lib.constants import XHR
-from salts_lib import kodi
+import scraper
+
 
 BASE_URL = 'http://yshow.me'
 LINK_URL = '/link/'
@@ -66,7 +69,7 @@ class YShows_Scraper(scraper.Scraper):
             hosts = dom_parser.parse_dom(html, 'a', {'class': '[^"]*list-group-item[^"]*'})
             for source in zip(data_ids, hosts):
                 host = re.sub('<img[^>]+>\s*', '', source[1]).lower()
-                hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': self._get_quality(video, host, QUALITIES.HIGH), 'views': None, 'rating': None, 'url': source[0], 'direct': False}
+                hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': scraper_utils.get_quality(video, host, QUALITIES.HIGH), 'views': None, 'rating': None, 'url': source[0], 'direct': False}
                 hosters.append(hoster)
         return hosters
 
@@ -90,6 +93,6 @@ class YShows_Scraper(scraper.Scraper):
         results = []
         for match in re.finditer('class="list-group-item"\s+href="([^"]+)">([^<]+)', html):
             url, match_title = match.groups()
-            result = {'url': self._pathify_url(url), 'title': match_title, 'year': ''}
+            result = {'url': scraper_utils.pathify_url(url), 'title': match_title, 'year': ''}
             results.append(result)
         return results

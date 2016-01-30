@@ -15,17 +15,20 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import scraper
-import urllib
-import urlparse
 import re
 import string
-from salts_lib import kodi
+import urllib
+import urlparse
+
 from salts_lib import dom_parser
+from salts_lib import kodi
 from salts_lib import log_utils
-from salts_lib.constants import VIDEO_TYPES
+from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
+from salts_lib.constants import VIDEO_TYPES
+import scraper
+
 
 QUALITY_MAP = {'HD': QUALITIES.HIGH, 'LOW': QUALITIES.LOW}
 QUALITY_ICONS = {'fullhdbr.png': QUALITIES.HIGH, 'Blu-Ray.gif': QUALITIES.HIGH}
@@ -86,7 +89,7 @@ class UFlix_Scraper(scraper.Scraper):
 
                 up = int(up)
                 down = int(down)
-                source = {'multi-part': False, 'url': url, 'host': host, 'class': self, 'quality': self._get_quality(video, host, quality), 'up': up, 'down': down, 'direct': False}
+                source = {'multi-part': False, 'url': url, 'host': host, 'class': self, 'quality': scraper_utils.get_quality(video, host, quality), 'up': up, 'down': down, 'direct': False}
                 rating = up * 100 / (up + down) if (up > 0 or down > 0) else None
                 source['rating'] = rating
                 source['views'] = up + down
@@ -120,7 +123,7 @@ class UFlix_Scraper(scraper.Scraper):
                     if match_title.endswith(' Online'): match_title = match_title.replace(' Online', '')
                     
                     if not year or not match_year or year == match_year:
-                        result = {'title': match_title, 'url': self._pathify_url(url), 'year': match_year}
+                        result = {'title': match_title, 'url': scraper_utils.pathify_url(url), 'year': match_year}
                         results.append(result)
         return results
 

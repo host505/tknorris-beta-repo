@@ -16,18 +16,21 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import scraper
+import random
 import re
-import urlparse
+import time
 import urllib
 import urllib2
-import time
-import random
-from salts_lib import log_utils
-from salts_lib.constants import VIDEO_TYPES
-from salts_lib.constants import FORCE_NO_MATCH
-from salts_lib.constants import XHR
+import urlparse
+
 from salts_lib import kodi
+from salts_lib import log_utils
+from salts_lib import scraper_utils
+from salts_lib.constants import FORCE_NO_MATCH
+from salts_lib.constants import VIDEO_TYPES
+from salts_lib.constants import XHR
+import scraper
+
 
 BASE_URL = 'http://sezonlukdizi.com'
 SEARCH_URL = '/service/search?q=%s&_=%s'
@@ -93,7 +96,7 @@ class SezonLukDizi_Scraper(scraper.Scraper):
         video_url = urlparse.urljoin(self.base_url, GET_VIDEO_URL)
         data = {'video_id': video_id, 'part_name': part_name, 'page': page}
         html = self._http_get(video_url, data=data, headers=XHR, cache_limit=.25)
-        js_result = self._parse_json(html, video_url)
+        js_result = scraper_utils.parse_json(html, video_url)
         if 'part_count' in js_result:
             part_count = js_result['part_count']
             
@@ -121,12 +124,12 @@ class SezonLukDizi_Scraper(scraper.Scraper):
                     if stream_redirect: stream_url = stream_redirect
 
                 if self._get_direct_hostname(stream_url) == 'gvideo':
-                    quality = self._gv_get_quality(stream_url)
+                    quality = scraper_utils.gv_get_quality(stream_url)
                 else:
-                    quality = self._height_get_quality(height)
+                    quality = scraper_utils.height_get_quality(height)
                         
                 host = self._get_direct_hostname(stream_url)
-                stream_url += '|User-Agent=%s&Referer=%s' % (self._get_ua(), urllib.quote(url))
+                stream_url += '|User-Agent=%s&Referer=%s' % (scraper_utils.get_ua(), urllib.quote(url))
                 hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': quality, 'views': None, 'rating': None, 'url': stream_url, 'direct': True}
                 sources.append(hoster)
         return sources
@@ -144,10 +147,10 @@ class SezonLukDizi_Scraper(scraper.Scraper):
         search_url = urlparse.urljoin(self.base_url, SEARCH_URL)
         search_url = search_url % (urllib.quote_plus(title), str(int(time.time() * 1000)))
         html = self._http_get(search_url, headers=XHR, cache_limit=1)
-        js_result = self._parse_json(html, search_url)
+        js_result = scraper_utils.parse_json(html, search_url)
         if js_result:
             for item in js_result:
-                result = {'url': self._pathify_url(item['url']), 'title': item['name'], 'year': ''}
+                result = {'url': scraper_utils.pathify_url(item['url']), 'title': item['name'], 'year': ''}
                 results.append(result)
 
         return results

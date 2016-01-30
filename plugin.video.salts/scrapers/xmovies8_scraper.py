@@ -15,17 +15,20 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import scraper
+import random
+import re
 import urllib
 import urlparse
-import re
-import random
+
+from salts_lib import dom_parser
 from salts_lib import kodi
 from salts_lib import log_utils
-from salts_lib import dom_parser
-from salts_lib.constants import VIDEO_TYPES
+from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
+from salts_lib.constants import VIDEO_TYPES
 from salts_lib.constants import XHR
+import scraper
+
 
 VIDEO_URL = '/video_info/html5'
 
@@ -67,8 +70,8 @@ class XMovies8_Scraper(scraper.Scraper):
                 headers['Referer'] = page_url
                 html = self._http_get(url, data=data, headers=headers, cache_limit=.25)
                 for match in re.finditer('<source\s+data-res="([^"]+)"\s+src="([^"]+)', html):
-                    stream_url = urlparse.urljoin(self.base_url, match.group(2)) + '|User-Agent=%s' % (self._get_ua())
-                    quality = self._height_get_quality(match.group(1))
+                    stream_url = urlparse.urljoin(self.base_url, match.group(2)) + '|User-Agent=%s' % (scraper_utils.get_ua())
+                    quality = scraper_utils.height_get_quality(match.group(1))
                     hoster = {'multi-part': False, 'host': self._get_direct_hostname(stream_url), 'class': self, 'quality': quality, 'views': None, 'rating': None, 'url': stream_url, 'direct': True}
                     hosters.append(hoster)
             
@@ -97,7 +100,7 @@ class XMovies8_Scraper(scraper.Scraper):
                         match_year = ''
 
                 if not year or not match_year or year == match_year:
-                    result = {'url': self._pathify_url(url), 'title': match_title, 'year': match_year}
+                    result = {'url': scraper_utils.pathify_url(url), 'title': match_title, 'year': match_year}
                     results.append(result)
         return results
 

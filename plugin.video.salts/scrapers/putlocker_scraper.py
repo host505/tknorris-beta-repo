@@ -15,14 +15,18 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import scraper
 import re
 import urllib
 import urlparse
+
 import xbmcaddon
-from salts_lib.constants import VIDEO_TYPES
+
+from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
+from salts_lib.constants import VIDEO_TYPES
+import scraper
+
 
 BASE_URL = 'http://putlocker.is'
 
@@ -58,7 +62,7 @@ class Putlocker_Scraper(scraper.Scraper):
             for match in re.finditer('<a[^>]+href="([^"]+)[^>]+>(Version \d+)<', html):
                 url, version = match.groups()
                 host = urlparse.urlsplit(url).hostname.replace('embed.', '')
-                hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': self._get_quality(video, host, QUALITIES.HIGH), 'views': None, 'rating': None, 'url': url, 'direct': False}
+                hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': scraper_utils.get_quality(video, host, QUALITIES.HIGH), 'views': None, 'rating': None, 'url': url, 'direct': False}
                 hoster['version'] = version
                 hosters.append(hoster)
 
@@ -92,7 +96,7 @@ class Putlocker_Scraper(scraper.Scraper):
                         match_title = title_year
                         match_year = ''
                     
-                    result = {'url': self._pathify_url(url), 'title': match_title, 'year': match_year}
+                    result = {'url': scraper_utils.pathify_url(url), 'title': match_title, 'year': match_year}
                     results.append(result)
         results = dict((result['url'], result) for result in results).values()
         return results

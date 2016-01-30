@@ -15,17 +15,21 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import scraper
 import re
 import urlparse
+
 import xbmc
+
 from salts_lib import kodi
 from salts_lib import log_utils
-from salts_lib.trans_utils import i18n
-from salts_lib.constants import VIDEO_TYPES
+from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
+from salts_lib.constants import VIDEO_TYPES
 from salts_lib.constants import XHR
+from salts_lib.utils2 import i18n
+import scraper
+
 
 BASE_URL = 'http://ororo.tv'
 LANDING_URL = '/nl'
@@ -76,7 +80,7 @@ class OroroTV_Scraper(scraper.Scraper):
             for match in re.finditer(pattern, html):
                 stream_url = match.group(1)
                 stream_url = stream_url.replace('&amp;', '&')
-                stream_url = stream_url + '|User-Agent=%s' % (self._get_ua())
+                stream_url = stream_url + '|User-Agent=%s' % (scraper_utils.get_ua())
                 hoster = {'multi-part': False, 'host': self._get_direct_hostname(stream_url), 'class': self, 'url': stream_url, 'quality': quality, 'views': None, 'rating': None, 'direct': True}
                 hosters.append(hoster)
         return hosters
@@ -85,8 +89,8 @@ class OroroTV_Scraper(scraper.Scraper):
         return self._default_get_url(video)
 
     def _get_episode_url(self, show_url, video):
-        episode_pattern = 'data-href="([^"]+)[^>]*class="episode"\s+href="#%s-%s"' % (video.season, video.episode)
-        title_pattern = 'data-href="(?P<url>[^"]+)[^>]+class="episode"[^>]+>.\d+\s+(?P<title>[^<]+)'
+        episode_pattern = 'data-href="([^"]+)[^>]*class="[^"]*episode[^"]*"\s+href="#%s-%s"' % (video.season, video.episode)
+        title_pattern = 'data-href="(?P<url>[^"]+)[^>]+class="[^"]*episode[^"]*[^>]+>.\d+\s+(?P<title>[^<]+)'
         return self._default_get_episode_url(show_url, video, episode_pattern, title_pattern)
 
     def search(self, video_type, title, year):
@@ -95,15 +99,15 @@ class OroroTV_Scraper(scraper.Scraper):
             url += '/movies'
         html = self._http_get(url, cache_limit=.25)
         results = []
-        norm_title = self._normalize_title(title)
+        norm_title = scraper_utils.normalize_title(title)
         include_paid = kodi.get_setting('%s-include_premium' % (self.get_name())) == 'true'
         for match in re.finditer('<span class=\'value\'>(\d{4})(.*?)href="([^"]+)[^>]+>([^<]+)', html, re.DOTALL):
             match_year, middle, url, match_title = match.groups()
             if not include_paid and video_type == VIDEO_TYPES.MOVIE and 'paid accounts' in middle:
                 continue
 
-            if norm_title in self._normalize_title(match_title) and (not year or not match_year or year == match_year):
-                result = {'url': self._pathify_url(url), 'title': match_title, 'year': match_year}
+            if norm_title in scraper_utils.normalize_title(match_title) and (not year or not match_year or year == match_year):
+                result = {'url': scraper_utils.pathify_url(url), 'title': match_title, 'year': match_year}
                 results.append(result)
 
         return results

@@ -19,11 +19,13 @@ import os
 import time
 import csv
 import json
+import hashlib
+import cPickle
 import xbmcvfs
 import xbmcgui
 import log_utils
 import kodi
-from trans_utils import i18n
+from utils2 import i18n
 
 def enum(**enums):
     return type('Enum', (), enums)
@@ -36,6 +38,7 @@ CSV_MARKERS = enum(REL_URL='***REL_URL***', OTHER_LISTS='***OTHER_LISTS***', SAV
 MAX_TRIES = 5
 MYSQL_DATA_SIZE = 512
 MYSQL_URL_SIZE = 255
+MYSQL_MAX_BLOB_SIZE = 16777215
 
 class DB_Connection():
     def __init__(self):
@@ -153,6 +156,33 @@ class DB_Connection():
         rows = self.__execute(sql)
         return rows
 
+    def cache_function(self, name, args=None, kwargs=None, result=None):
+        now = time.time()
+        if args is None: args = []
+        if kwargs is None: kwargs = {}
+        pickle_result = cPickle.dumps(result)
+        # do not cache a partial result
+        if self.db_type == DB_TYPES.MYSQL and len(pickle_result) > MYSQL_MAX_BLOB_SIZE:
+            return
+
+        arg_hash = hashlib.md5(str(args)).hexdigest() + hashlib.md5(str(kwargs)).hexdigest()
+        sql = 'REPLACE INTO function_cache (name, args, result, timestamp) VALUES(?, ?, ?, ?)'
+        self.__execute(sql, (name, arg_hash, pickle_result, now))
+        log_utils.log('Function Cached: |%s|%s|%s| -> |%s|' % (name, args, kwargs, len(pickle_result)), log_utils.LOGDEBUG)
+
+    def get_cached_function(self, name, args=None, kwargs=None, cache_limit=60 * 60):
+        max_age = time.time() - cache_limit
+        if args is None: args = []
+        if kwargs is None: kwargs = {}
+        arg_hash = hashlib.md5(str(args)).hexdigest() + hashlib.md5(str(kwargs)).hexdigest()
+        sql = 'SELECT result FROM function_cache WHERE name = ? and args = ? and timestamp >= ?'
+        rows = self.__execute(sql, (name, arg_hash, max_age))
+        if rows:
+            log_utils.log('Function Cache Hit: |%s|%s|%s| -> |%d|' % (name, args, kwargs, len(rows[0][0])), log_utils.LOGDEBUG)
+            return True, cPickle.loads(rows[0][0])
+        else:
+            return False, None
+        
     def add_other_list(self, section, username, slug, name=None):
         sql = 'REPLACE INTO other_lists (section, username, slug, name) VALUES (?, ?, ?, ?)'
         self.__execute(sql, (section, username, slug, name))
@@ -352,6 +382,7 @@ class DB_Connection():
             log_utils.log('Building SALTS Database', log_utils.LOGDEBUG)
             if self.db_type == DB_TYPES.MYSQL:
                 self.__execute('CREATE TABLE IF NOT EXISTS url_cache (url VARBINARY(%s) NOT NULL, data VARBINARY(%s) NOT NULL, response MEDIUMBLOB, res_header TEXT, timestamp TEXT, PRIMARY KEY(url, data))' % (MYSQL_URL_SIZE, MYSQL_DATA_SIZE))
+                self.__execute('CREATE TABLE IF NOT EXISTS function_cache (name VARCHAR(255) NOT NULL, args VARCHAR(64), result MEDIUMBLOB, timestamp TEXT, PRIMARY KEY(name, args))')
                 self.__execute('CREATE TABLE IF NOT EXISTS db_info (setting VARCHAR(255) NOT NULL, value TEXT, PRIMARY KEY(setting))')
                 self.__execute('CREATE TABLE IF NOT EXISTS rel_url \
                 (video_type VARCHAR(15) NOT NULL, title VARCHAR(255) NOT NULL, year VARCHAR(4) NOT NULL, season VARCHAR(5) NOT NULL, episode VARCHAR(5) NOT NULL, source VARCHAR(49) NOT NULL, rel_url VARCHAR(255), \
@@ -366,6 +397,7 @@ class DB_Connection():
                 self.__create_sqlite_db()
                 self.__execute('PRAGMA journal_mode=WAL')
                 self.__execute('CREATE TABLE IF NOT EXISTS url_cache (url VARCHAR(255) NOT NULL, data VARCHAR(255), response, res_header, timestamp, PRIMARY KEY(url, data))')
+                self.__execute('CREATE TABLE IF NOT EXISTS function_cache (name VARCHAR(255) NOT NULL, args VARCHAR(64), result, timestamp, PRIMARY KEY(name, args))')
                 self.__execute('CREATE TABLE IF NOT EXISTS db_info (setting VARCHAR(255), value TEXT, PRIMARY KEY(setting))')
                 self.__execute('CREATE TABLE IF NOT EXISTS rel_url \
                 (video_type TEXT NOT NULL, title TEXT NOT NULL, year TEXT NOT NULL, season TEXT NOT NULL, episode TEXT NOT NULL, source TEXT NOT NULL, rel_url TEXT, \
@@ -427,7 +459,7 @@ class DB_Connection():
     def attempt_db_recovery(self):
         header = i18n('recovery_header')
         if xbmcgui.Dialog().yesno(header, i18n('rec_mig_1'), i18n('rec_mig_2')):
-            try: self.init_database('0.0.0')
+            try: self.init_database('Unknown')
             except Exception as e:
                 log_utils.log('DB Migration Failed: %s' % (e), log_utils.LOGWARNING)
                 if self.db_type == DB_TYPES.SQLITE:
@@ -465,10 +497,12 @@ class DB_Connection():
                     self.db = None
                     self.__connect_to_db()
                 elif any(s for s in ['no such table', 'no such column'] if s in str(e)):
+                    self.db.rollback()
                     raise DatabaseRecoveryError(e)
                 else:
                     raise
             except DatabaseError as e:
+                self.db.rollback()
                 raise DatabaseRecoveryError(e)
 
     # purpose is to save the current db with an export, drop the db, recreate it, then connect to it

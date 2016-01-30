@@ -1,3 +1,15 @@
+[B]Version 1.0.109[/B]
+- Add new caching method to MNE
+- Remove cache watched and collection options
+- Fix debrid sort key
+- Fix ororo scraper
+- Fix furk scraper
+- Fix merdb scraper
+- Fix twomovies scraper
+- Fix MySQL DB Migration
+- Replace default fanart with mjbxx's
+- Lots of Code cleanup
+
 [B]Version 1.0.108[/B]
 - Add MovieXK scraper
 - Add mqm scraper

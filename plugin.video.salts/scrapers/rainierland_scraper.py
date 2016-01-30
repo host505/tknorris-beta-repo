@@ -15,14 +15,17 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import scraper
+import re
 import urllib
 import urlparse
-import re
-from salts_lib import kodi
+
 from salts_lib import dom_parser
-from salts_lib.constants import VIDEO_TYPES
+from salts_lib import kodi
+from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
+from salts_lib.constants import VIDEO_TYPES
+import scraper
+
 
 BASE_URL = 'http://rainierland.com'
 PAGE_LIMIT = 5
@@ -65,11 +68,11 @@ class Rainierland_Scraper(scraper.Scraper):
                         stream_url = match.group(1)
                         host = self._get_direct_hostname(stream_url)
                         if host == 'gvideo':
-                            quality = self._gv_get_quality(stream_url)
+                            quality = scraper_utils.gv_get_quality(stream_url)
                         else:
-                            _, _, height, _ = self._parse_movie_link(stream_url)
-                            quality = self._height_get_quality(height)
-                            stream_url += '|User-Agent=%s' % (self._get_ua())
+                            _, _, height, _ = scraper_utils.parse_movie_link(stream_url)
+                            quality = scraper_utils.height_get_quality(height)
+                            stream_url += '|User-Agent=%s' % (scraper_utils.get_ua())
                             
                         hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': quality, 'views': None, 'rating': None, 'url': stream_url, 'direct': True}
                         hosters.append(hoster)
@@ -103,7 +106,7 @@ class Rainierland_Scraper(scraper.Scraper):
             html = self._http_get(self.base_url, cache_limit=8)
             matches = re.findall('<li\s+class="cat-item[^>]+>\s*<a\s+href="([^"]+)[^>]+>([^<]+)', html)
                 
-        norm_title = self._normalize_title(title)
+        norm_title = scraper_utils.normalize_title(title)
         for item in matches:
             url, match_title_year = item
             match = re.search('(.*?)\s+\(?(\d{4})\)?', match_title_year)
@@ -113,8 +116,8 @@ class Rainierland_Scraper(scraper.Scraper):
                 match_title = match_title_year
                 match_year = ''
             
-            if norm_title in self._normalize_title(match_title) and (not year or not match_year or year == match_year):
-                result = {'title': match_title, 'year': match_year, 'url': self._pathify_url(url)}
+            if norm_title in scraper_utils.normalize_title(match_title) and (not year or not match_year or year == match_year):
+                result = {'title': match_title, 'year': match_year, 'url': scraper_utils.pathify_url(url)}
                 results.append(result)
 
         return results

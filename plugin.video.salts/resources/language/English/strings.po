@@ -1240,13 +1240,8 @@ msgctxt "#30552"
 msgid "Use Trakt Bookmarks"
 msgstr ""
 
-msgctxt "#30553"
-msgid "Cache watched status"
-msgstr ""
-
-msgctxt "#30554"
-msgid "Cache Collection"
-msgstr ""
+# 30553 Removed
+# 30554 Removed
 
 msgctxt "#30555"
 msgid "Include People"

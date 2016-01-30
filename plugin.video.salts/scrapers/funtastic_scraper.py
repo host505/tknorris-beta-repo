@@ -15,15 +15,18 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import scraper
 import re
-import urlparse
 import urllib
+import urlparse
+
 from salts_lib import dom_parser
-from salts_lib import log_utils
-from salts_lib.constants import VIDEO_TYPES
-from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib import kodi
+from salts_lib import log_utils
+from salts_lib import scraper_utils
+from salts_lib.constants import FORCE_NO_MATCH
+from salts_lib.constants import VIDEO_TYPES
+import scraper
+
 
 BASE_URL = 'http://funtastic-vids.com'
 
@@ -69,7 +72,7 @@ class Funtastic_Scraper(scraper.Scraper):
             if fragment:
                 for source in dom_parser.parse_dom(fragment[0], 'iframe', ret='src'):
                     host = urlparse.urlparse(source).hostname
-                    quality = self._blog_get_quality(video, q_str, host)
+                    quality = scraper_utils.blog_get_quality(video, q_str, host)
                     hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': quality, 'views': None, 'rating': None, 'url': source, 'direct': False}
                     hosters.append(hoster)
 
@@ -86,7 +89,7 @@ class Funtastic_Scraper(scraper.Scraper):
         for match in re.finditer('href="([^"]+).*?<td>(.*?)</td>\s*</tr>', fragment, re.DOTALL):
             stream_url, q_str = match.groups()
             host = urlparse.urlparse(stream_url).hostname
-            quality = self._blog_get_quality(video, q_str, host)
+            quality = scraper_utils.blog_get_quality(video, q_str, host)
             hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': quality, 'views': None, 'rating': None, 'url': stream_url, 'direct': False}
             hosters.append(hoster)
         return hosters
@@ -113,7 +116,7 @@ class Funtastic_Scraper(scraper.Scraper):
         
         for result in temp_results:
             if not year or not result['year'] or year == result['year']:
-                result['url'] = self._pathify_url(result['url'])
+                result['url'] = scraper_utils.pathify_url(result['url'])
                 results.append(result)
 
         return results

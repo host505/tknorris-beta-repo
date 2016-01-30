@@ -21,6 +21,7 @@ import xbmcaddon
 from salts_lib import kodi
 from salts_lib import log_utils
 from salts_lib import utils
+from salts_lib import utils2
 from salts_lib.constants import MODES
 from salts_lib.constants import TRIG_DB_UPG
 from salts_lib.db_utils import DB_Connection
@@ -108,8 +109,8 @@ class Service(xbmc.Player):
             playedTime = float(self._lastPos)
             try: percent_played = int((playedTime / self._totalTime) * 100)
             except: percent_played = 0  # guard div by zero
-            pTime = utils.format_time(playedTime)
-            tTime = utils.format_time(self._totalTime)
+            pTime = utils2.format_time(playedTime)
+            tTime = utils2.format_time(self._totalTime)
             log_utils.log('Service: Played %s of %s total = %s%%' % (pTime, tTime, percent_played), log_utils.LOGDEBUG)
             if playedTime == 0 and self._totalTime == 999999:
                 log_utils.log('Kodi silently failed to start playback', log_utils.LOGWARNING)

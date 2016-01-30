@@ -15,18 +15,21 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import scraper
 import re
 import urllib
 import urlparse
-from salts_lib import kodi
+
 from salts_lib import dom_parser
-from salts_lib.constants import VIDEO_TYPES
+from salts_lib import kodi
+from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
+from salts_lib.constants import VIDEO_TYPES
+import scraper
+
 
 QUALITY_MAP = {'DVD': QUALITIES.HIGH, 'TS': QUALITIES.MEDIUM, 'CAM': QUALITIES.LOW}
-BASE_URL = 'http://www.merdb.mx'
+BASE_URL = 'http://www.merdb.club'
 
 class MerDB_Scraper(scraper.Scraper):
     base_url = BASE_URL
@@ -73,7 +76,7 @@ class MerDB_Scraper(scraper.Scraper):
 
                     item = {'host': host.decode('base-64'), 'url': url.decode('base-64'), 'class': self, 'direct': False}
                     item['verified'] = source.group(0).find('star.gif') > -1
-                    item['quality'] = self._get_quality(video, item['host'], QUALITY_MAP.get(qual.upper()))
+                    item['quality'] = scraper_utils.get_quality(video, item['host'], QUALITY_MAP.get(qual.upper()))
                     item['views'] = int(views)
                     if item['views'] > max_views:
                         max_index = i
@@ -123,7 +126,7 @@ class MerDB_Scraper(scraper.Scraper):
                     match_year = ''
                 
                 if not year or not match_year or year == match_year:
-                    result = {'url': self._pathify_url(url), 'title': match_title, 'year': match_year}
+                    result = {'url': scraper_utils.pathify_url(url), 'title': match_title, 'year': match_year}
                     results.append(result)
         return results
 

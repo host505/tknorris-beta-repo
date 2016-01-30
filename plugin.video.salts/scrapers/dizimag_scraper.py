@@ -16,15 +16,18 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import scraper
 import re
-import urlparse
 import urllib
+import urlparse
+
 from salts_lib import dom_parser
-from salts_lib.constants import VIDEO_TYPES
-from salts_lib.constants import FORCE_NO_MATCH
-from salts_lib.constants import XHR
 from salts_lib import kodi
+from salts_lib import scraper_utils
+from salts_lib.constants import FORCE_NO_MATCH
+from salts_lib.constants import VIDEO_TYPES
+from salts_lib.constants import XHR
+import scraper
+
 
 BASE_URL = 'http://dizimag.co'
 
@@ -70,10 +73,10 @@ class Dizimag_Scraper(scraper.Scraper):
                     stream_url = stream_url.replace('\\/', '/')
                     host = self._get_direct_hostname(stream_url)
                     if host == 'gvideo':
-                        quality = self._gv_get_quality(stream_url)
+                        quality = scraper_utils.gv_get_quality(stream_url)
                     else:
-                        quality = self._height_get_quality(height)
-                        stream_url += '|User-Agent=%s&Referer=%s' % (self._get_ua(), urllib.quote(page_url))
+                        quality = scraper_utils.height_get_quality(height)
+                        stream_url += '|User-Agent=%s&Referer=%s' % (scraper_utils.get_ua(), urllib.quote(page_url))
 
                     hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': quality, 'views': None, 'rating': None, 'url': stream_url, 'direct': True}
                     hosters.append(hoster)
@@ -92,12 +95,12 @@ class Dizimag_Scraper(scraper.Scraper):
         html = self._http_get(self.base_url, cache_limit=8)
         results = []
         fragment = dom_parser.parse_dom(html, 'div', {'id': 'fil'})
-        norm_title = self._normalize_title(title)
+        norm_title = scraper_utils.normalize_title(title)
         if fragment:
             for match in re.finditer('href="([^"]+)"\s+title="([^"]+)', fragment[0]):
                 url, match_title = match.groups()
-                if norm_title in self._normalize_title(match_title):
-                    result = {'url': self._pathify_url(url), 'title': match_title, 'year': ''}
+                if norm_title in scraper_utils.normalize_title(match_title):
+                    result = {'url': scraper_utils.pathify_url(url), 'title': match_title, 'year': ''}
                     results.append(result)
 
         return results

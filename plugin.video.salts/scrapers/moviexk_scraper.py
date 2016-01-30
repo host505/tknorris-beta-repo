@@ -15,16 +15,19 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import scraper
-import urlparse
-import urllib
 import re
+import urllib
+import urlparse
+
+from salts_lib import dom_parser
 from salts_lib import kodi
 from salts_lib import log_utils
-from salts_lib import dom_parser
-from salts_lib.constants import VIDEO_TYPES
+from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
+from salts_lib.constants import VIDEO_TYPES
+import scraper
+
 
 BASE_URL = 'http://www.moviexk.net'
 
@@ -71,16 +74,16 @@ class MoxieXK_Scraper(scraper.Scraper):
                 
                 host = self._get_direct_hostname(stream_url)
                 if host == 'gvideo':
-                    quality = self._gv_get_quality(stream_url)
+                    quality = scraper_utils.gv_get_quality(stream_url)
                 else:
                     match = re.search('data-res\s*=\s*["\']([^"\']+)', extra)
                     if match:
                         height = re.sub('(hd|px)', '', match.group(1))
-                        quality = self._height_get_quality(height)
+                        quality = scraper_utils.height_get_quality(height)
                     else:
                         quality = QUALITIES.HIGH
                 
-                stream_url += '|User-Agent=%s' % (self._get_ua())
+                stream_url += '|User-Agent=%s' % (scraper_utils.get_ua())
                 source = {'multi-part': False, 'url': stream_url, 'host': host, 'class': self, 'quality': quality, 'views': None, 'rating': None, 'direct': True}
                 sources.append(source)
 
@@ -120,7 +123,7 @@ class MoxieXK_Scraper(scraper.Scraper):
                                 match_year = year_text[0].strip()
     
                     if not year or not match_year or year == match_year:
-                        result = {'title': match_title, 'url': self._pathify_url(match_url), 'year': match_year}
+                        result = {'title': match_title, 'url': scraper_utils.pathify_url(match_url), 'year': match_year}
                         results.append(result)
 
         return results
