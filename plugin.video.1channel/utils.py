@@ -128,7 +128,9 @@ def format_tvshow_year(year):
 def format_tvshow_episode(info):
     episode_format = _1CH.get_setting('format-tvshow-episode')
     label = re.sub('\{s\}', str(info['season']), episode_format)
+    label = re.sub('\{0s\}', str(info['season']).zfill(2), episode_format)
     label = re.sub('\{e\}', str(info['episode']), label)
+    label = re.sub('\{0e\}', str(info['episode']).zfill(2), label)
     label = re.sub('\{t\}', info['title'], label)
     label = re.sub('\{st\}', info['TVShowTitle'], label)
     return label
@@ -264,6 +266,7 @@ def rank_host(source):
     ranking = _1CH.get_setting('host-rank').split(',')
     host = host.lower()
     for tier in ranking:
+        tier = tier.replace(' ', '')
         tier = tier.lower()
         if host in tier.split('|'):
             return ranking.index(tier) + 1
