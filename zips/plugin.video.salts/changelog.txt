@@ -1,3 +1,13 @@
+[B]Version 1.0.110[/B]
+- Fix rlssource scraper
+- Fix twts ep matching
+- Fix moviexk scraper
+- Improve dizipas video get
+- Fix streamallthis scraper
+- Fix xmovies8
+- Fix merdb
+- Fix afdah.org
+
 [B]Version 1.0.109[/B]
 - Add new caching method to MNE
 - Remove cache watched and collection options

@@ -26,7 +26,6 @@ from salts_lib.constants import VIDEO_TYPES
 import scraper
 import xml.etree.ElementTree as ET
 
-
 try:
     from xml.parsers.expat import ExpatError
 except ImportError:
@@ -86,7 +85,7 @@ class Dizilab_Scraper(scraper.Scraper):
 
     def search(self, video_type, title, year):
         results = []
-        xml_url = urlparse.urljoin(self.base_url, 'diziler.xml')
+        xml_url = urlparse.urljoin(self.base_url, '/diziler.xml')
         xml = self._http_get(xml_url, cache_limit=24)
         if xml:
             norm_title = scraper_utils.normalize_title(title)

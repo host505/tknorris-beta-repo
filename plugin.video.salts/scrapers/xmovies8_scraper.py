@@ -29,8 +29,7 @@ from salts_lib.constants import VIDEO_TYPES
 from salts_lib.constants import XHR
 import scraper
 
-
-VIDEO_URL = '/video_info/html5'
+VIDEO_URL = '/video_info/iframe'
 
 class XMovies8_Scraper(scraper.Scraper):
     def __init__(self, timeout=scraper.DEFAULT_TIMEOUT):
@@ -62,21 +61,29 @@ class XMovies8_Scraper(scraper.Scraper):
         if source_url and source_url != FORCE_NO_MATCH:
             page_url = urlparse.urljoin(self.base_url, source_url)
             html = self._http_get(page_url, cache_limit=.5)
-            match = re.search('video_id\s*=\s*"([^"]+)', html)
+            match = re.search('var\s*video_id="([^"]+)', html)
             if match:
-                data = {'v': match.group(1)}
+                video_id = match.group(1)
                 url = urlparse.urljoin(self.base_url, VIDEO_URL)
+                data = {'v': video_id}
                 headers = XHR
                 headers['Referer'] = page_url
-                html = self._http_get(url, data=data, headers=headers, cache_limit=.25)
-                for match in re.finditer('<source\s+data-res="([^"]+)"\s+src="([^"]+)', html):
-                    stream_url = urlparse.urljoin(self.base_url, match.group(2)) + '|User-Agent=%s' % (scraper_utils.get_ua())
-                    quality = scraper_utils.height_get_quality(match.group(1))
-                    hoster = {'multi-part': False, 'host': self._get_direct_hostname(stream_url), 'class': self, 'quality': quality, 'views': None, 'rating': None, 'url': stream_url, 'direct': True}
-                    hosters.append(hoster)
-            
+                html = self._http_get(url, data=data, headers=headers, cache_limit=.5)
+                sources = scraper_utils.parse_json(html, url)
+                for source in sources:
+                    match = re.search('url=(.*)', sources[source])
+                    if match:
+                        stream_url = urllib.unquote(match.group(1))
+                        host = self._get_direct_hostname(stream_url)
+                        if host == 'gvideo':
+                            quality = scraper_utils.gv_get_quality(stream_url)
+                        else:
+                            quality = scraper_utils.height_get_quality(source)
+                        stream_url += '|User-Agent=%s' % (scraper_utils.get_ua())
+                        hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': quality, 'views': None, 'rating': None, 'url': stream_url, 'direct': True}
+                        hosters.append(hoster)
         return hosters
-
+        
     def get_url(self, video):
         return self._default_get_url(video)
 

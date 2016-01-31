@@ -26,7 +26,7 @@ from salts_lib.constants import VIDEO_TYPES
 import scraper
 
 
-BASE_URL = 'http://rlssource.net'
+BASE_URL = 'http://rlsblog.net'
 
 class RLSSource_Scraper(scraper.Scraper):
     base_url = BASE_URL

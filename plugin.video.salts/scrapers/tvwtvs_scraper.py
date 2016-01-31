@@ -110,22 +110,41 @@ class TVWTVS_Scraper(scraper.Scraper):
         return self._default_get_url(video)
 
     def _get_episode_url(self, show_url, video):
-        results = self.__search(video.video_type, '', video.year)
+        results = self.__search()
         for result in results:
             if result['url'].startswith(show_url) and re.search('\s+Season\s+%s( |$)' % (video.season), result['title'], re.I):
-                    url = urlparse.urljoin(self.base_url, result['url'])
-                    html = self._http_get(url, cache_limit=2)
-                    for fragment in dom_parser.parse_dom(html, 'div', {'class': 'bp-head'}):
-                        match = re.search('href="([^"]+)[^>]+>(.*?)</a>', fragment)
-                        if match and re.search('\s+Episode\s+%s( |$)' % (video.episode), match.group(2)):
-                            return scraper_utils.pathify_url(match.group(1))
+                pages = [result['url']]
+                pages += self.__get_pages(result['url'])
+                for page in pages:
+                    ep_url = self.__find_episode(page, video.episode)
+                    if ep_url: return ep_url
 
+    def __find_episode(self, url, episode):
+        url = urlparse.urljoin(self.base_url, url)
+        html = self._http_get(url, cache_limit=2)
+        fragment = dom_parser.parse_dom(html, 'ul', {'class': '[^"]*listing-videos[^"]*'})
+        if fragment:
+            for match in re.finditer('href="([^"]+)[^>]+>(.*?)</a>', fragment[0]):
+                url, label = match.groups()
+                label = re.sub('</?[^>]*>', '', label)
+                if re.search('\s+Episode\s+%s( |$)' % (episode), label):
+                    return scraper_utils.pathify_url(url)
+        
+    def __get_pages(self, url):
+        pages = []
+        url = urlparse.urljoin(self.base_url, url)
+        html = self._http_get(url, cache_limit=2)
+        fragment = dom_parser.parse_dom(html, 'div', {'class': 'pagination'})
+        if fragment:
+            pages = dom_parser.parse_dom(fragment[0], 'a', ret='href')
+        return pages
+    
     def search(self, video_type, title, year):
-        results = self.__search(video_type, title, year)
+        results = self.__search(title)
         results = [result for result in results if not re.search('-season-\d+$', result['url']) and not re.search('Season\s+\d+$', result['title'])]
         return results
 
-    def __search(self, video_type, title, year):
+    def __search(self, title=''):
         url = urlparse.urljoin(self.base_url, '/categoryy')
         html = self._http_get(url, cache_limit=48)
         results = []

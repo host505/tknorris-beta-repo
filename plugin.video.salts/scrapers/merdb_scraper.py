@@ -107,7 +107,7 @@ class MerDB_Scraper(scraper.Scraper):
         if video_type in [VIDEO_TYPES.TVSHOW, VIDEO_TYPES.EPISODE]:
             search_url += '/tvshow'
 
-        search_url += '/advanced_search.php?name='
+        search_url += '/advanced-search.php?search='
         search_url += urllib.quote_plus(title)
         search_url += '&year=' + urllib.quote_plus(str(year))
         search_url += '&advanced_search=Search'

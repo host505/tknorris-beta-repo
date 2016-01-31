@@ -21,6 +21,7 @@ import urlparse
 
 from salts_lib import kodi
 from salts_lib import scraper_utils
+from salts_lib import log_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
 from salts_lib.constants import VIDEO_TYPES
@@ -58,38 +59,32 @@ class Stream_Scraper(scraper.Scraper):
             url = urlparse.urljoin(self.base_url, source_url)
             html = self._http_get(url, cache_limit=.5)
 
-            # keep pulling till we find neither a /watch iframe nor a /watch href
+            new_url = ''
             while True:
-                match = re.search('iframe\s+src="(/watch[^"]+)', html)
+                match = re.search("location.href=['\"](/watch[^\"']+)", html)
                 if match:
                     new_url = match.group(1)
                     url = urlparse.urljoin(self.base_url, new_url)
                     html = self._http_get(url, cache_limit=.5)
                 else:
-                    match = re.search("location.href='(/watch[^']+)", html)
+                    match = re.search('<iframe[^>]*src=[\'"]((?!https?://streamallthis)[^\'"]+)', html)
                     if match:
                         new_url = match.group(1)
-                        url = urlparse.urljoin(self.base_url, new_url)
-                        html = self._http_get(url, cache_limit=.5)
+                        if '/watch/' in new_url:
+                            url = urlparse.urljoin(self.base_url, new_url)
+                            html = self._http_get(url, cache_limit=.5)
+                        else:
+                            url = new_url
+                            break
                     else:
+                        url = new_url
                         break
 
-            # assume we must be on the mail.ru link now
-            # TODO: Once mail.ru resolver is pushed, this code needs to be removed
-            match = re.search("iframe\s+src='([^']+)", html)
-            if match:
-                new_url = match.group(1)
-                html = self._http_get(new_url, cache_limit=.5)
-                match = re.search('metadataUrl"\s*:\s*"([^"]+)', html)
-                if match:
-                    new_url = match.group(1)
-                    html = self._http_get(new_url, cache_limit=.5)
-                    js_data = scraper_utils.parse_json(html, new_url)
-                    if 'videos' in js_data:
-                        for video in js_data['videos']:
-                            stream_url = video['url'] + '|Cookie=%s' % (self._get_stream_cookies())
-                            hoster = {'multi-part': False, 'host': self._get_direct_hostname(stream_url), 'class': self, 'url': stream_url, 'quality': scraper_utils.height_get_quality(video['key']), 'views': None, 'rating': None, 'direct': True}
-                            hosters.append(hoster)
+            if url:
+                stream_url = url
+                host = urlparse.urlparse(stream_url).hostname
+                hoster = {'multi-part': False, 'host': host, 'class': self, 'url': stream_url, 'quality': QUALITIES.HIGH, 'views': None, 'rating': None, 'direct': False}
+                hosters.append(hoster)
         return hosters
 
     def get_url(self, video):
