@@ -363,9 +363,10 @@ class Scraper(object):
             force_title = scraper_utils.force_title(video)
 
             if not force_title:
-                match = re.search(episode_pattern, html, re.DOTALL)
-                if match:
-                    return scraper_utils.pathify_url(match.group(1))
+                if episode_pattern:
+                    match = re.search(episode_pattern, html, re.DOTALL)
+                    if match:
+                        return scraper_utils.pathify_url(match.group(1))
 
                 if kodi.get_setting('airdate-fallback') == 'true' and airdate_pattern and video.ep_airdate:
                     airdate_pattern = airdate_pattern.replace('{year}', str(video.ep_airdate.year))

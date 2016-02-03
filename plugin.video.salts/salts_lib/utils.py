@@ -242,11 +242,11 @@ def get_bookmark(trakt_id, season, episode):
 
 def relevant_scrapers(video_type=None, include_disabled=False, order_matters=False):
     classes = scraper.Scraper.__class__.__subclasses__(scraper.Scraper)
+    classes += proxy.Proxy.__class__.__subclasses__(proxy.Proxy)
     relevant = []
     for cls in classes:
-        if video_type is None or video_type in cls.provides():
+        if cls.get_name() and not cls.has_proxy() and (video_type is None or video_type in cls.provides()):
             if include_disabled or utils2.scraper_enabled(cls.get_name()):
-                if not cls.has_proxy():
                     relevant.append(cls)
 
     if order_matters:
