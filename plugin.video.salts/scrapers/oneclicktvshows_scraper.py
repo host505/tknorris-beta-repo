@@ -50,9 +50,9 @@ class OCTV_Scraper(scraper.Scraper):
 
     def format_source_label(self, item):
         if 'format' in item:
-            label = '[%s] (%s) %s ' % (item['quality'], item['format'], item['host'])
+            label = '[%s] (%s) %s' % (item['quality'], item['format'], item['host'])
         else:
-            label = '[%s] %s ' % (item['quality'], item['host'])
+            label = '[%s] %s' % (item['quality'], item['host'])
         return label
 
     def get_sources(self, video):

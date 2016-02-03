@@ -16,9 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 from salts_lib import log_utils
-from salts_lib.utils2 import i18n
 import scraper
-
 
 try:
     from cyberreel_scraper import CyberReel_Scraper as real_scraper
@@ -52,11 +50,10 @@ class CyberReel_Proxy(scraper.Scraper):
     
     @classmethod
     def get_settings(cls):
-        name = cls.get_name()
-        settings = super(cls, cls).get_settings()
-        offset = 4
-        settings.append('         <setting id="%s-scraper_url" type="text" label="    %s" default="" visible="eq(-%d,true)"/>' % (name, i18n('scraper_location'), offset))
-        settings.append('         <setting id="%s-scraper_password" type="text" label="    %s" option="hidden" default="" visible="eq(-%d,true)"/>' % (name, i18n('scraper_key'), offset + 1))
+        try:
+            settings = real_scraper.get_settings()
+        except:
+            settings = super(cls, cls).get_settings()
         return settings
 
     def resolve_link(self, link):
@@ -84,5 +81,3 @@ class CyberReel_Proxy(scraper.Scraper):
     def _get_episode_url(self, show_url, video):
         if self.__scraper is not None:
             return self.__scraper._get_episode_url(show_url, video)
-
-CyberReel_Proxy._update_scraper_py('cyberreel_scraper.py')

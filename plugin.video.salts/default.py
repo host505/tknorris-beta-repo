@@ -60,7 +60,7 @@ def main_menu():
 
     kodi.create_item({'mode': MODES.BROWSE, 'section': SECTIONS.MOVIES}, i18n('movies'), thumb=utils2.art('movies.png'), fanart=utils2.art('fanart.jpg'))
     kodi.create_item({'mode': MODES.BROWSE, 'section': SECTIONS.TV}, i18n('tv_shows'), thumb=utils2.art('television.png'), fanart=utils2.art('fanart.jpg'))
-    kodi.create_item({'mode': MODES.SETTINGS}, i18n('settings'), thumb=utils2.art('settings.png'), fanart=utils2.art('fanart.jpg'))
+    if utils2.menu_on('settings'): kodi.create_item({'mode': MODES.SETTINGS}, i18n('settings'), thumb=utils2.art('settings.png'), fanart=utils2.art('fanart.jpg'))
 
     if not TOKEN:
         last_reminder = int(kodi.get_setting('last_reminder'))
@@ -1118,7 +1118,7 @@ def apply_urlresolver(hosters):
     
     import urlresolver.plugnplay
     resolvers = urlresolver.plugnplay.man.implementors(urlresolver.UrlResolver)
-    debrid_resolvers = [resolver for resolver in resolvers if resolver.isUniversal()]
+    debrid_resolvers = [resolver for resolver in resolvers if resolver.isUniversal() and resolver.get_setting('enabled') == 'true']
     filtered_hosters = []
     debrid_hosts = {}
     unk_hosts = {}
@@ -1201,7 +1201,8 @@ def download_subtitles(language, title, year, season, episode):
         return srt_scraper.download_subtitle(subs[index]['url'])
 
 def play_source(mode, hoster_url, direct, video_type, trakt_id, dialog, season='', episode=''):
-    if hoster_url is None:
+    if direct is not None and hoster_url is None:
+        kodi.notify(msg=i18n('resolve_failed') % (i18n('no_stream_found')), duration=7500)
         return False
 
     if direct:

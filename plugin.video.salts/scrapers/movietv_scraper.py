@@ -57,7 +57,7 @@ class MovieTV_Scraper(scraper.Scraper):
         return link
 
     def format_source_label(self, item):
-        label = '[%s] %s ' % (item['quality'], item['host'])
+        label = '[%s] %s' % (item['quality'], item['host'])
         return label
 
     def get_sources(self, video):
@@ -83,7 +83,17 @@ class MovieTV_Scraper(scraper.Scraper):
                         quality = QUALITIES.HD1080
                     else:
                         quality = QUALITIES.HD720
+                    pattern = '%s\.replace\(\s*"([^"]+)"\s*,\s*"([^"]+)"' % (var_name)
+                    match = re.search(pattern, html)
+                    if match:
+                        stream_url = stream_url.replace(match.group(1), match.group(2))
+                    
                     sources[stream_url] = quality
+                    
+                if not sources:
+                    source_url = dom_parser.parse_dom(html, 'source', {'type': 'video[^"]*'}, ret='src')
+                    if source_url:
+                        sources[source_url[0]] = QUALITIES.HD720
             else:
                 js_data = scraper_utils.parse_json(html, url)
                 if 'url' in js_data:

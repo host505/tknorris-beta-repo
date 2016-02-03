@@ -25,6 +25,7 @@ from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
 from salts_lib.constants import VIDEO_TYPES
+from salts_lib.constants import XHR
 import scraper
 import xml.etree.ElementTree as ET
 
@@ -66,11 +67,14 @@ class One23Movies_Scraper(scraper.Scraper):
             movie_id = dom_parser.parse_dom(page_html, 'div', {'id': 'media-player'}, 'movie-id')
             if movie_id:
                 server_url = SL_URL % (movie_id[0])
+                headers = XHR
+                headers['Referer'] = url
                 url = urlparse.urljoin(self.base_url, server_url)
-                html = self._http_get(url, cache_limit=.5)
+                html = self._http_get(url, headers=headers, cache_limit=0)
+                log_utils.log(html)
                 sources = {}
-                for match in re.finditer('loadEpisode\(\s*(\d+)\s*,\s*(\d+)\s*\).*?class="btn-eps[^>]*>([^<]+)', html, re.DOTALL):
-                    link_type, link_id, q_str = match.groups()
+                for match in re.finditer('loadEpisode\(\s*(\d+)\s*,\s*(\d+)\s*,\s*\'([^\']+)\'\s*\).*?class="btn-eps[^>]*>([^<]+)', html, re.DOTALL):
+                    link_type, link_id, _hash_id, q_str = match.groups()
                     if link_type in ['12', '13', '14']:
                         url = urlparse.urljoin(self.base_url, PLAYLIST_URL1 % (link_id))
                         sources.update(self.__get_link_from_json(url, q_str))

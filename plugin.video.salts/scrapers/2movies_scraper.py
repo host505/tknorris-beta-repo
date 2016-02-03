@@ -72,7 +72,7 @@ class TwoMovies_Scraper(scraper.Scraper):
         source_url = self.get_url(video)
         if source_url and source_url != FORCE_NO_MATCH:
             url = urlparse.urljoin(self.base_url, source_url)
-            html = self._http_get(url, cache_limit=1)
+            html = self._http_get(url, cache_limit=24)
             pattern = 'class="playDiv3".*?href="([^"]+).*?>(.*?)</a>'
             for match in re.finditer(pattern, html, re.DOTALL | re.I):
                 url, host = match.groups()
@@ -85,7 +85,7 @@ class TwoMovies_Scraper(scraper.Scraper):
 
     def search(self, video_type, title, year):
         results = []
-        html = self._http_get(self.base_url, cache_limit=2)
+        html = self._http_get(self.base_url, cache_limit=1)
         match = re.search('xajax.config.requestURI\s*=\s*"([^"]+)', html)
         if match:
             ajax_url = match.group(1)
@@ -96,7 +96,7 @@ class TwoMovies_Scraper(scraper.Scraper):
         xjxr = str(int(time.time() * 1000))
         search_arg = 'S<![CDATA[%s]]>' % (title)
         data = {'xjxfun': 'search_suggest', 'xjxr': xjxr, 'xjxargs[]': [search_arg, 'Stitle']}
-        html = self._http_get(search_url, data=data, headers=XHR, cache_limit=1)
+        html = self._http_get(search_url, data=data, headers=XHR, cache_limit=12)
         if video_type == VIDEO_TYPES.MOVIE:
             marker = '/watch_movie/'
         else:

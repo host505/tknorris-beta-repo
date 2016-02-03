@@ -20,7 +20,6 @@ import abc
 import cookielib
 import datetime
 import gzip
-import hashlib
 import os
 import re
 import threading
@@ -35,7 +34,6 @@ import xbmcgui
 from salts_lib import cloudflare
 from salts_lib import kodi
 from salts_lib import log_utils
-from salts_lib import pyaes
 from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import Q_ORDER
@@ -51,7 +49,6 @@ COOKIEPATH = kodi.translate_path(kodi.get_profile())
 MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 # Q_LIST = [item[0] for item in sorted(Q_ORDER.items(), key=lambda x:x[1])]
 MAX_RESPONSE = 1024 * 1024 * 2
-IV = '\0' * 16
 
 class NoRedirection(urllib2.HTTPErrorProcessor):
     def http_response(self, request, response):
@@ -591,36 +588,3 @@ class Scraper(object):
         if self.db_connection is None or self.worker_id != worker_id:
             self.db_connection = DB_Connection()
             self.worker_id = worker_id
-    
-    @classmethod
-    def _update_scraper_py(cls, filename):
-        try:
-            py_path = os.path.join(kodi.get_path(), 'scrapers', filename)
-            exists = os.path.exists(py_path)
-            scraper_url = kodi.get_setting('%s-scraper_url' % (cls.get_name()))
-            scraper_password = kodi.get_setting('%s-scraper_password' % (cls.get_name()))
-            if scraper_url and scraper_password and (not exists or os.path.getmtime(py_path) < time.time() - (24 * 60 * 60)):
-                try:
-                    req = urllib2.urlopen(scraper_url)
-                    cipher_text = req.read()
-                except Exception as e:
-                    log_utils.log('Failure during %s scraper get: %s' % (cls.get_name(), e), log_utils.LOGWARNING)
-                    return
-                
-                if cipher_text:
-                    scraper_key = hashlib.sha256(scraper_password).digest()
-                    decrypter = pyaes.Decrypter(pyaes.AESModeOfOperationCBC(scraper_key, IV))
-                    new_py = decrypter.feed(cipher_text)
-                    new_py += decrypter.feed()
-                    
-                    old_py = ''
-                    if os.path.exists(py_path):
-                        with open(py_path, 'r') as f:
-                            old_py = f.read()
-                    
-                    log_utils.log('%s path: %s, new_py: %s, match: %s' % (cls.get_name(), py_path, bool(new_py), new_py == old_py), log_utils.LOGDEBUG)
-                    if old_py != new_py:
-                        with open(py_path, 'w') as f:
-                            f.write(new_py)
-        except Exception as e:
-            log_utils.log('Failure during %s scraper update: %s' % (cls.get_name(), e), log_utils.LOGWARNING)

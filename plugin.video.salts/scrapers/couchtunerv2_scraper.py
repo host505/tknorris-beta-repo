@@ -58,7 +58,7 @@ class CouchTunerV2_Scraper(scraper.Scraper):
         return link
 
     def format_source_label(self, item):
-        label = '[%s] %s ' % (item['quality'], item['host'])
+        label = '[%s] %s' % (item['quality'], item['host'])
         return label
 
     def get_sources(self, video):

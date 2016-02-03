@@ -48,7 +48,7 @@ class Dizibox_Scraper(scraper.Scraper):
         return link
 
     def format_source_label(self, item):
-        label = '[%s] %s ' % (item['quality'], item['host'])
+        label = '[%s] %s' % (item['quality'], item['host'])
         return label
 
     def get_sources(self, video):
@@ -67,7 +67,7 @@ class Dizibox_Scraper(scraper.Scraper):
                     if iframe_url:
                         html = self._http_get(iframe_url[0], cache_limit=.25)
                         seen_urls = {}
-                        for match in re.finditer('"?file"?\s*:\s*"([^"]+)"\s*,\s*"?label"?\s*:\s*"(\d+)p?"', html):
+                        for match in re.finditer('"?file"?\s*:\s*"([^"]+)"\s*,\s*"?label"?\s*:\s*"(\d+)p?[^"]*"', html):
                             stream_url, height = match.groups()
                             if stream_url not in seen_urls:
                                 seen_urls[stream_url] = True

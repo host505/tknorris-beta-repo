@@ -25,12 +25,14 @@ from salts_lib import log_utils
 from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import VIDEO_TYPES
+from salts_lib.constants import QUALITIES
 import scraper
 
 
 BASE_URL = 'http://yss.rocks'
 GK_URL = '/plugins/gkpluginsphp.php'
 CATEGORIES = {VIDEO_TYPES.MOVIE: 'category-movies', VIDEO_TYPES.EPISODE: 'category-tv-series'}
+LOCAL_USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36'
 
 class YifyStreaming_Scraper(scraper.Scraper):
     base_url = BASE_URL
@@ -64,18 +66,25 @@ class YifyStreaming_Scraper(scraper.Scraper):
                 iframe_url, link_id = match.groups()
                 data = {'link': link_id}
                 headers = {'Referer': iframe_url}
+                headers['User-Agent'] = LOCAL_USER_AGENT
                 gk_url = urlparse.urljoin(self.base_url, GK_URL)
                 html = self._http_get(gk_url, data=data, headers=headers, cache_limit=.5)
                 js_data = scraper_utils.parse_json(html, gk_url)
                 if 'link' in js_data:
-                    for link in js_data['link']:
-                        stream_url = link['link']
-                        host = self._get_direct_hostname(stream_url)
-                        if host == 'gvideo':
-                            quality = scraper_utils.gv_get_quality(stream_url)
+                    if isinstance(js_data['link'], list):
+                        sources = dict((link['link'], scraper_utils.height_get_quality(link['label'])) for link in js_data['link'])
+                        direct = True
+                    else:
+                        sources = {js_data['link']: QUALITIES.HIGH}
+                        direct = False
+                    
+                    for source in sources:
+                        source = source.replace('\\/', '/')
+                        if direct:
+                            host = self._get_direct_hostname(source)
                         else:
-                            quality = scraper_utils.height_get_quality(link['label'])
-                        hoster = {'multi-part': False, 'url': stream_url, 'class': self, 'quality': quality, 'host': host, 'rating': None, 'views': None, 'direct': True}
+                            host = urlparse.urlparse(source).hostname
+                        hoster = {'multi-part': False, 'url': source, 'class': self, 'quality': sources[source], 'host': host, 'rating': None, 'views': None, 'direct': direct}
                         hosters.append(hoster)
         return hosters
 

@@ -173,15 +173,15 @@ def perform_auto_conf(responses):
     if responses[10]:
         tiers = ['Local', 'Furk.net', 'Premiumize.me', 'EasyNews', 'DD.tv', 'NoobRoom',
                  ['WatchHD', 'IFlix', 'MoviesPlanet', 'TVWTVS', '9Movies', '123Movies', 'niter.tv', 'HDMovie14', 'ororo.tv'],
-                 ['movietv.to', 'StreamLord', 'MWM', 'tunemovie', 'afdah.org', 'xmovies8', 'xmovies8.v2', 'MovieXK'],
+                 ['movietv.to', 'StreamLord', 'CyberReel', 'MWM', 'tunemovie', 'afdah.org', 'xmovies8', 'xmovies8.v2', 'MovieXK'],
                  ['torba.se', 'Rainierland', 'FardaDownload', 'zumvo.com', 'PutMV', 'MiraDeTodo', 'beinmovie', 'FireMoviesHD'],
                  ['IzlemeyeDeger', 'SezonLukDizi', 'Dizimag', 'Dizilab', 'Dizigold', 'Dizibox', 'Diziay', 'Dizipas', 'OneClickTVShows'],
                  ['DayT.se', 'DDLValley', 'ReleaseBB', 'MyVideoLinks.eu', 'OCW', 'RLSSource.net', 'TVRelease.Net', 'alluc.com'],
-                 ['IceFilms', 'PrimeWire', 'Flixanity', 'wso.ch', 'WatchSeries', 'UFlix.org', 'Putlocker', 'MovieSub', 'MovieHut'],
+                 ['IceFilms', 'WatchEpisodes', 'PrimeWire', 'SantaSeries', 'Flixanity', 'wso.ch', 'WatchSeries', 'UFlix.org', 'Putlocker'],
                  ['funtastic-vids', 'WatchFree.to', 'pftv', 'streamallthis.is', 'Movie4K', 'afdah', 'SolarMovie', 'yify-streaming'],
-                 ['CouchTunerV2', 'CouchTunerV1', 'Watch8Now', 'yshows', 'TwoMovies.us', 'iWatchOnline', 'vidics.ch', 'pubfilm'],
-                 ['OnlineMoviesIs', 'OnlineMoviesPro', 'ViewMovies', 'movie25', 'viooz.ac', 'view47', 'MoviesHD', 'wmo.ch'],
-                 ['ayyex', 'stream-tv.co', 'clickplay.to', 'MintMovies', 'MovieNight', 'cmz', 'ch131', 'filmikz.ch'],
+                 ['MovieSub', 'MovieHut', 'CouchTunerV2', 'CouchTunerV1', 'Watch8Now', 'yshows', 'TwoMovies.us', 'iWatchOnline'],
+                 ['vidics.ch', 'pubfilm', 'OnlineMoviesIs', 'OnlineMoviesPro', 'ViewMovies', 'movie25', 'viooz.ac', 'view47', 'MoviesHD'],
+                 ['wmo.ch', 'ayyex', 'stream-tv.co', 'clickplay.to', 'MintMovies', 'MovieNight', 'cmz', 'ch131', 'filmikz.ch'],
                  ['MovieTube', 'LosMovies', 'FilmStreaming.in', 'moviestorm.eu', 'MerDB']]
     
         sso = []
@@ -196,6 +196,10 @@ def perform_auto_conf(responses):
         kodi.set_setting('source_sort_order', '|'.join(sso))
     
     if responses[11]: reset_base_url()
+    trigger = [False, True, False, True, False, True, True, False, True, False, False, False]
+    if all([t == r for t, r in zip(trigger, responses)]):
+        kodi.set_setting('scraper_download', 'true')
+        
     kodi.notify(msg=i18n('auto_conf_complete'))
 
 def do_auto_config():

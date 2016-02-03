@@ -69,7 +69,10 @@ class WatchHD_Scraper(scraper.Scraper):
                 html = self._http_get(iframe_url[0], headers=headers, cache_limit=.5)
                 match = re.search("window\.atob\('([^']+)", html)
                 if match:
-                    html = base64.decodestring(match.group(1))
+                    func_count = len(re.findall('window\.atob', html))
+                    html = match.group(1)
+                    for _i in xrange(func_count):
+                        html = base64.decodestring(html)
                 
                 streams = []
                 for match in re.finditer('<source[^>]+src=["\']([^\'"]+)[^>]+label=[\'"]([^\'"]+)', html):

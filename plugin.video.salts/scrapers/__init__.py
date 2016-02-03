@@ -5,6 +5,7 @@ import time
 
 from salts_lib import kodi
 from salts_lib import log_utils
+from salts_lib import utils2
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import VIDEO_TYPES
 
@@ -20,7 +21,7 @@ __all__ = ['scraper', 'local_scraper', 'pw_scraper', 'uflix_scraper', 'watchseri
            'izlemeyedeger_scraper', 'movietube_scraper', 'funtastic_scraper', 'putlocker_scraper', 'yshows_scraper', 'diziay_scraper', 'viewmovies_scraper', 'furk_scraper',
            'miradetodo_scraper', 'dizipas_scraper', 'moviehut_scraper', 'xmovies8v2_scraper', 'moviesplanet_scraper', 'premiumize_scraper', 'putmv_scraper',
            '9movies_scraper', 'watchhd_scraper', 'iflix_proxy', 'firemovies_scraper', 'farda_scraper', 'hdmovie14_scraper', 'dayt_scraper', 'tvwtvs_scraper', 'moviexk_scraper',
-           'mwm_scraper', 'moviesub_scraper', 'cyberreel_proxy']
+           'mwm_scraper', 'moviesub_scraper', 'cyberreel_proxy', 'santaseries_scraper', 'watchepisodes_scraper']
 
 from . import *
     
@@ -91,4 +92,46 @@ def update_settings():
         else:
             log_utils.log('No Settings Update Needed', log_utils.LOGDEBUG)
 
+
+def update_all_scrapers():
+        try: last_check = int(kodi.get_setting('last_list_check'))
+        except: last_check = 0
+        now = time.time()
+        list_url = kodi.get_setting('scraper_url')
+        scraper_password = kodi.get_setting('scraper_password')
+        if list_url and scraper_password and last_check < (now - (24 * 60 * 60)):
+            scraper_list = utils2.get_and_decrypt(list_url, scraper_password)
+            if scraper_list:
+                kodi.set_setting('last_list_check', str(int(now)))
+                for line in scraper_list.split('\n'):
+                    line = line.replace(' ', '')
+                    if line:
+                        scraper_url, filename = line.split(',')
+                        if scraper_url.startswith('http'):
+                            update_scraper(filename, scraper_url)
+    
+def update_scraper(filename, scraper_url):
+    try:
+        if not filename: return
+        py_path = os.path.join(kodi.get_path(), 'scrapers', filename)
+        exists = os.path.exists(py_path)
+        scraper_password = kodi.get_setting('scraper_password')
+        if scraper_url and scraper_password:
+            new_py = utils2.get_and_decrypt(scraper_url, scraper_password)
+            if new_py:
+                if exists:
+                    with open(py_path, 'r') as f:
+                        old_py = f.read()
+                else:
+                    old_py = ''
+                
+                log_utils.log('%s path: %s, new_py: %s, match: %s' % (filename, py_path, bool(new_py), new_py == old_py), log_utils.LOGDEBUG)
+                if old_py != new_py:
+                    with open(py_path, 'w') as f:
+                        f.write(new_py)
+                        
+    except Exception as e:
+        log_utils.log('Failure during %s scraper update: %s' % (filename, e), log_utils.LOGWARNING)
+
 update_settings()
+update_all_scrapers()

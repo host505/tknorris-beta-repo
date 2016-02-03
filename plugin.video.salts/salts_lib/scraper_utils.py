@@ -28,7 +28,6 @@ from salts_lib import pyaes
 from salts_lib import log_utils
 from salts_lib.constants import *
 
-
 def disable_sub_check(settings):
     for i in reversed(xrange(len(settings))):
         if 'sub_check' in settings[i]:

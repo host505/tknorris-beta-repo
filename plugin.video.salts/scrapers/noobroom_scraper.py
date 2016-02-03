@@ -67,7 +67,7 @@ class NoobRoom_Scraper(scraper.Scraper):
             return response.geturl()
 
     def format_source_label(self, item):
-        label = '[%s] %s (%s/100) ' % (item['quality'], item['host'], item['rating'])
+        label = '[%s] %s (%s/100)' % (item['quality'], item['host'], item['rating'])
         return label
 
     def get_sources(self, video):

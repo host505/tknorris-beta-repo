@@ -63,19 +63,24 @@ class Rainierland_Scraper(scraper.Scraper):
                 js_src = dom_parser.parse_dom(fragment[0], 'script', ret='src')
                 if js_src:
                     js_url = urlparse.urljoin(self.base_url, js_src[0])
-                    js_data = self._http_get(js_url, cache_limit=.5)
-                    for match in re.finditer('<source[^>]+src="([^"]+)', js_data):
-                        stream_url = match.group(1)
-                        host = self._get_direct_hostname(stream_url)
-                        if host == 'gvideo':
-                            quality = scraper_utils.gv_get_quality(stream_url)
-                        else:
-                            _, _, height, _ = scraper_utils.parse_movie_link(stream_url)
-                            quality = scraper_utils.height_get_quality(height)
-                            stream_url += '|User-Agent=%s' % (scraper_utils.get_ua())
-                            
-                        hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': quality, 'views': None, 'rating': None, 'url': stream_url, 'direct': True}
-                        hosters.append(hoster)
+                    html = self._http_get(js_url, cache_limit=.5)
+                else:
+                    html = fragment[0]
+                    
+                for match in re.finditer('<source[^>]+src="([^"]+)', html):
+                    stream_url = match.group(1)
+                    host = self._get_direct_hostname(stream_url)
+                    if host == 'gvideo':
+                        quality = scraper_utils.gv_get_quality(stream_url)
+                    elif 'blogspot' in stream_url:
+                        quality = scraper_utils.gv_get_quality(stream_url)
+                    else:
+                        _, _, height, _ = scraper_utils.parse_movie_link(stream_url)
+                        quality = scraper_utils.height_get_quality(height)
+                        stream_url += '|User-Agent=%s' % (scraper_utils.get_ua())
+                        
+                    hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': quality, 'views': None, 'rating': None, 'url': stream_url, 'direct': True}
+                    hosters.append(hoster)
         return hosters
 
     def get_url(self, video):
