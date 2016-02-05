@@ -91,7 +91,7 @@ class OCTV_Scraper(scraper.Scraper):
         html = self._http_get(search_url, cache_limit=48)
         norm_title = scraper_utils.normalize_title(title)
         for item in dom_parser.parse_dom(html, 'li'):
-            match = re.search('href=["\']([^"\']+)[^>]+>([^<]+)', item)
+            match = re.search('''href=["']([^"']+)[^>]+>([^<]+)''', item)
             if match:
                 url, match_title = match.groups()
                 match = re.search('(.*?)\s*\(Season\s+\d+', match_title)

@@ -143,7 +143,8 @@ def view_bookmarks(section):
         label = '[%s] %s ' % (pause_label, label.decode('utf-8', 'replace'))
         liz.setLabel(label)
         xbmcplugin.addDirectoryItem(int(sys.argv[1]), liz_url, liz, isFolder=folder, totalItems=0)
-
+    content_type = CONTENT_TYPES.EPISODES if section == SECTIONS.TV else CONTENT_TYPES.MOVIES
+    utils2.set_view(content_type, False)
     kodi.end_of_directory()
 
 @url_dispatcher.register(MODES.DELETE_BOOKMARK, ['bookmark_id'])
@@ -471,7 +472,8 @@ def show_history(section, page=1):
         query = {'mode': MODES.SHOW_HISTORY, 'section': section, 'page': int(page) + 1}
         label = '%s >>' % (i18n('next_page'))
         kodi.create_item(query, label, thumb=utils2.art('nextpage.png'), fanart=utils2.art('fanart.jpg'), is_folder=True)
-
+    content_type = CONTENT_TYPES.EPISODES if section == SECTIONS.TV else CONTENT_TYPES.MOVIES
+    utils2.set_view(content_type, False)
     kodi.end_of_directory()
 
 @url_dispatcher.register(MODES.MY_CAL, ['mode'], ['start_date'])
@@ -806,6 +808,7 @@ def show_progress():
                 liz.setLabel(label)
     
                 xbmcplugin.addDirectoryItem(int(sys.argv[1]), liz_url, liz, isFolder=folder)
+        kodi.set_content(CONTENT_TYPES.EPISODES)
         kodi.end_of_directory(cache_to_disc=False)
     finally:
         utils2.reap_workers(workers, None)
@@ -1201,8 +1204,9 @@ def download_subtitles(language, title, year, season, episode):
         return srt_scraper.download_subtitle(subs[index]['url'])
 
 def play_source(mode, hoster_url, direct, video_type, trakt_id, dialog, season='', episode=''):
-    if direct is not None and hoster_url is None:
-        kodi.notify(msg=i18n('resolve_failed') % (i18n('no_stream_found')), duration=7500)
+    if hoster_url is None:
+        if direct is not None:
+            kodi.notify(msg=i18n('resolve_failed') % (i18n('no_stream_found')), duration=7500)
         return False
 
     if direct:
@@ -2073,6 +2077,7 @@ def make_dir_from_cal(mode, start_date, days):
 
     label = '%s >>' % (i18n('next_week'))
     kodi.create_item({'mode': mode, 'start_date': next_str}, label, thumb=utils2.art('next.png'), fanart=utils2.art('fanart.jpg'), is_folder=True)
+    kodi.set_content(CONTENT_TYPES.EPISODES)
     kodi.end_of_directory()
 
 def make_season_item(season, info, trakt_id, fanart):

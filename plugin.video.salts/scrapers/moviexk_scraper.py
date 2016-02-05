@@ -73,7 +73,7 @@ class MoxieXK_Scraper(scraper.Scraper):
                             url = urlparse.urljoin(self.base_url, url)
                             html = self._http_get(url, cache_limit=.5)
             
-            for match in re.finditer('<source[^>]+src=[\'"]([^\'"]+)([^>]+)', html):
+            for match in re.finditer('''<source[^>]+src=['"]([^'"]+)([^>]+)''', html):
                 stream_url, extra = match.groups()
                 if 'video.php' in stream_url:
                     redir_url = self._http_get(stream_url, allow_redirect=False, cache_limit=.25)
@@ -83,7 +83,7 @@ class MoxieXK_Scraper(scraper.Scraper):
                 if host == 'gvideo':
                     quality = scraper_utils.gv_get_quality(stream_url)
                 else:
-                    match = re.search('data-res\s*=\s*["\']([^"\']+)', extra)
+                    match = re.search('''data-res\s*=\s*["']([^"']+)''', extra)
                     if match:
                         height = re.sub('(hd|px)', '', match.group(1))
                         quality = scraper_utils.height_get_quality(height)

@@ -1,3 +1,12 @@
+[B]Version 1.0.113[/B]
+- Fix sezon scraper
+- Handle no stream_url notification
+- Set content type on calendars & MNE
+- Add title info to alluc
+- Fix stream-tv scraper
+- Fix yshows scraper
+- Remove movietv.to scraper
+
 [B]Version 1.0.112[/B]
 - Internal Code Improvements
 - Fix sezon scraper

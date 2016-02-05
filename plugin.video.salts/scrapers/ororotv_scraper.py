@@ -101,7 +101,7 @@ class OroroTV_Scraper(scraper.Scraper):
         results = []
         norm_title = scraper_utils.normalize_title(title)
         include_paid = kodi.get_setting('%s-include_premium' % (self.get_name())) == 'true'
-        for match in re.finditer('<span class=\'value\'>(\d{4})(.*?)href="([^"]+)[^>]+>([^<]+)', html, re.DOTALL):
+        for match in re.finditer('''<span class='value'>(\d{4})(.*?)href="([^"]+)[^>]+>([^<]+)''', html, re.DOTALL):
             match_year, middle, url, match_title = match.groups()
             if not include_paid and video_type == VIDEO_TYPES.MOVIE and 'paid accounts' in middle:
                 continue

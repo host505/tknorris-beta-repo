@@ -446,7 +446,8 @@ def scraper_enabled(name):
 def set_view(content, set_sort):
     # set content type so library shows more views and info
     if content:
-        xbmcplugin.setContent(int(sys.argv[1]), content)
+        kodi.set_content(content)
+        # xbmcplugin.setContent(int(sys.argv[1]), content)
 
     view = kodi.get_setting('%s_view' % (content))
     if view != '0':

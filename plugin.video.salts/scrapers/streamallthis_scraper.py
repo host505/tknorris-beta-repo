@@ -67,7 +67,7 @@ class Stream_Scraper(scraper.Scraper):
                     url = urlparse.urljoin(self.base_url, new_url)
                     html = self._http_get(url, cache_limit=.5)
                 else:
-                    match = re.search('<iframe[^>]*src=[\'"]((?!https?://streamallthis)[^\'"]+)', html)
+                    match = re.search('''<iframe[^>]*src=['"]((?!https?://streamallthis)[^'"]+)''', html)
                     if match:
                         new_url = match.group(1)
                         if '/watch/' in new_url:

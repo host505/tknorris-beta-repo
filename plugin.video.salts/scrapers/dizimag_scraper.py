@@ -63,7 +63,7 @@ class Dizimag_Scraper(scraper.Scraper):
             if re.search('Şu an fragman*', html, re.I):
                 return hosters
             
-            match = re.search('url\s*:\s*"([^"]+)"\s*,\s*data:\s*["\'](id=\d+)', html)
+            match = re.search('''url\s*:\s*"([^"]+)"\s*,\s*data:\s*["'](id=\d+)''', html)
             if match:
                 url, data = match.groups()
                 url = urlparse.urljoin(self.base_url, url)

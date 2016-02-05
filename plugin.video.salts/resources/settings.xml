@@ -366,10 +366,6 @@
          <setting id="MovieTube-base_url" type="text" label="    Base Url" default="http://www.movie-tube.co" visible="eq(-1,true)"/>
          <setting id="MovieTube-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="MovieTube_last_results" type="number" default="0" visible="false"/>
-         <setting id="movietv.to-enable" type="bool" label="movietv.to Enabled" default="true" visible="true"/>
-         <setting id="movietv.to-base_url" type="text" label="    Base Url" default="http://movietv.to" visible="eq(-1,true)"/>
-         <setting id="movietv.to-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
-         <setting id="movietv.to_last_results" type="number" default="0" visible="false"/>
          <setting id="MovieXK-enable" type="bool" label="MovieXK Enabled" default="true" visible="true"/>
          <setting id="MovieXK-base_url" type="text" label="    Base Url" default="http://www.moviexk.net" visible="eq(-1,true)"/>
          <setting id="MovieXK-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
@@ -432,13 +428,13 @@
          <setting id="Premiumize.me_last_results" type="number" default="0" visible="false"/>
          <setting id="Premiumize.me-username" type="text" label="     Username" default="" visible="eq(-4,true)"/>
          <setting id="Premiumize.me-password" type="text" label="     Password" option="hidden" default="" visible="eq(-5,true)"/>
-    </category>
-    
-    <category label="Scrapers 4">
          <setting id="PrimeWire-enable" type="bool" label="PrimeWire Enabled" default="true" visible="true"/>
          <setting id="PrimeWire-base_url" type="text" label="    Base Url" default="http://www.primewire.ag" visible="eq(-1,true)"/>
          <setting id="PrimeWire-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="PrimeWire_last_results" type="number" default="0" visible="false"/>
+    </category>
+    
+    <category label="Scrapers 4">
          <setting id="pubfilm-enable" type="bool" label="pubfilm Enabled" default="true" visible="true"/>
          <setting id="pubfilm-base_url" type="text" label="    Base Url" default="http://movie.pubfilmno1.com" visible="eq(-1,true)"/>
          <setting id="pubfilm-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
@@ -481,7 +477,7 @@
          <setting id="SolarMovie-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="SolarMovie_last_results" type="number" default="0" visible="false"/>
          <setting id="stream-tv.co-enable" type="bool" label="stream-tv.co Enabled" default="true" visible="true"/>
-         <setting id="stream-tv.co-base_url" type="text" label="    Base Url" default="http://stream-tv2.co" visible="eq(-1,true)"/>
+         <setting id="stream-tv.co-base_url" type="text" label="    Base Url" default="http://stream-tv2.ag" visible="eq(-1,true)"/>
          <setting id="stream-tv.co-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="stream-tv.co_last_results" type="number" default="0" visible="false"/>
          <setting id="streamallthis.is-enable" type="bool" label="streamallthis.is Enabled" default="true" visible="true"/>
@@ -526,13 +522,13 @@
          <setting id="view47-base_url" type="text" label="    Base Url" default="http://view47.com" visible="eq(-1,true)"/>
          <setting id="view47-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="view47_last_results" type="number" default="0" visible="false"/>
-    </category>
-
-    <category label="Scrapers 5">
          <setting id="ViewMovies-enable" type="bool" label="ViewMovies Enabled" default="true" visible="true"/>
          <setting id="ViewMovies-base_url" type="text" label="    Base Url" default="http://www.viewmovies.is" visible="eq(-1,true)"/>
          <setting id="ViewMovies-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="ViewMovies_last_results" type="number" default="0" visible="false"/>
+    </category>
+
+    <category label="Scrapers 5">
          <setting id="viooz.ac-enable" type="bool" label="viooz.ac Enabled" default="true" visible="true"/>
          <setting id="viooz.ac-base_url" type="text" label="    Base Url" default="http://viooz.ac" visible="eq(-1,true)"/>
          <setting id="viooz.ac-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>

@@ -103,7 +103,7 @@ class IceFilms_Scraper(scraper.Scraper):
                     else:
                         quality = None
 
-                    pattern = 'onclick=\'go\((\d+)\)\'>([^<]+)(<span.*?)</a>'
+                    pattern = '''onclick='go\((\d+)\)'>([^<]+)(<span.*?)</a>'''
                     for match in re.finditer(pattern, fragment):
                         link_id, label, host_fragment = match.groups()
                         source = {'multi-part': False, 'quality': quality, 'class': self, 'label': label, 'rating': None, 'views': None, 'direct': False}

@@ -66,7 +66,10 @@ class SezonLukDizi_Scraper(scraper.Scraper):
             return link
             
     def format_source_label(self, item):
-        return '[%s] %s' % (item['quality'], item['host'])
+        label = '[%s] %s' % (item['quality'], item['host'])
+        if 'subs' in item and item['subs']:
+            label += ' (Turkish subtitles)'
+        return label
 
     def get_sources(self, video):
         source_url = self.get_url(video)
@@ -80,6 +83,12 @@ class SezonLukDizi_Scraper(scraper.Scraper):
                     if iframe_url:
                         html = self._http_get(iframe_url[0], cache_limit=.25)
                         seen_urls = {}
+                        # if captions exist, then they aren't hardcoded
+                        if re.search('kind\s*:\s*"captions"', html):
+                            subs = False
+                        else:
+                            subs = True
+                            
                         for match in re.finditer('"?file"?\s*:\s*"([^"]+)"\s*,\s*"?label"?\s*:\s*"(\d+)p?[^"]*"', html):
                             stream_url, height = match.groups()
                             if stream_url not in seen_urls:
@@ -95,7 +104,8 @@ class SezonLukDizi_Scraper(scraper.Scraper):
                                     quality = scraper_utils.gv_get_quality(stream_url)
                                 else:
                                     quality = scraper_utils.height_get_quality(height)
-                                hoster = {'multi-part': False, 'host': self._get_direct_hostname(stream_url), 'class': self, 'quality': quality, 'views': None, 'rating': None, 'url': stream_url, 'direct': True}
+                                hoster = {'multi-part': False, 'host': self._get_direct_hostname(stream_url), 'class': self, 'quality': quality, 'views': None, 'rating': None, 'url': stream_url, 'direct': True, 'subs': subs}
+                                
                                 hosters.append(hoster)
         return hosters
     
@@ -114,7 +124,7 @@ class SezonLukDizi_Scraper(scraper.Scraper):
             title_pattern = '''href=['"](?P<url>[^'"]+)[^>]*>(?P<title>[^<]+)'''
             airdate_pattern = '''href=['"]([^"']+)[^>]*>[^<]*</a>\s*</td>\s*<td class="right aligned">{p_day}\.{p_month}\.{year}'''
             result = self._default_get_episode_url(season_url, video, episode_pattern, title_pattern, airdate_pattern)
-            if 'javascript:;' not in result:
+            if result and 'javascript:;' not in result:
                 return result
 
     def search(self, video_type, title, year):
@@ -122,21 +132,23 @@ class SezonLukDizi_Scraper(scraper.Scraper):
         search_url = urlparse.urljoin(self.base_url, SEARCH_URL)
         search_url += urllib.quote_plus(title)
         html = self._http_get(search_url, cache_limit=8)
-        for item in dom_parser.parse_dom(html, 'div', {'class': 'item'}):
-            match_url = dom_parser.parse_dom(item, 'a', {'class': 'header'}, ret='href')
-            match_title_year = dom_parser.parse_dom(item, 'a', {'class': 'header'})
-            if match_url and match_title_year:
-                match_url = match_url[0]
-                match_title_year = match_title_year[0]
-                r = re.search('(.*?)\s+\((\d{4})\)', match_title_year)
-                if r:
-                    match_title, match_year = r.groups()
-                else:
-                    match_title = match_title_year
-                    match_year = ''
-                
-                if not year or not match_year or year == match_year:
-                    result = {'url': scraper_utils.pathify_url(match_url), 'title': match_title, 'year': match_year}
-                    results.append(result)
+        fragment = dom_parser.parse_dom(html, 'div', {'class': '[^"]*items[^"]*'})
+        if fragment:
+            for item in dom_parser.parse_dom(fragment[0], 'div', {'class': 'item'}):
+                match_url = dom_parser.parse_dom(item, 'a', {'class': 'header'}, ret='href')
+                match_title_year = dom_parser.parse_dom(item, 'a', {'class': 'header'})
+                if match_url and match_title_year:
+                    match_url = match_url[0]
+                    match_title_year = match_title_year[0]
+                    r = re.search('(.*?)\s+\((\d{4})\)', match_title_year)
+                    if r:
+                        match_title, match_year = r.groups()
+                    else:
+                        match_title = match_title_year
+                        match_year = ''
+                    
+                    if not year or not match_year or year == match_year:
+                        result = {'url': scraper_utils.pathify_url(match_url), 'title': match_title, 'year': match_year}
+                        results.append(result)
 
         return results

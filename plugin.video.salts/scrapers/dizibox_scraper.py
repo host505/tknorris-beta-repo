@@ -57,7 +57,7 @@ class Dizibox_Scraper(scraper.Scraper):
         if source_url and source_url != FORCE_NO_MATCH:
             page_url = urlparse.urljoin(self.base_url, source_url)
             html = self._http_get(page_url, cache_limit=.25)
-            match = re.search('<option[^>]+value\s*=\s*["\']([^"\']+)[^>]*>(?:1|Altyaz.{1,3}s.{1,3}z)<', html)
+            match = re.search('''<option[^>]+value\s*=\s*["']([^"']+)[^>]*>(?:1|Altyaz.{1,3}s.{1,3}z)<''', html)
             if match:
                 option_url = urlparse.urljoin(self.base_url, match.group(1))
                 html = self._http_get(option_url, cache_limit=.25)
@@ -88,11 +88,11 @@ class Dizibox_Scraper(scraper.Scraper):
     def _get_episode_url(self, show_url, video):
         show_url = urlparse.urljoin(self.base_url, show_url)
         html = self._http_get(show_url, cache_limit=24)
-        pattern = 'href=[\'"]([^\'"]+)[^>]+>\s*%s\.\s*Sezon<' % (video.season)
+        pattern = '''href=['"]([^'"]+)[^>]+>\s*%s\.\s*Sezon<''' % (video.season)
         match = re.search(pattern, html)
         if match:
             season_url = urlparse.urljoin(self.base_url, match.group(1))
-            episode_pattern = 'href=[\'"]([^\'"]+-%s-sezon-%s-[^\;"]*bolum[^\'"]*)' % (video.season, video.episode)
+            episode_pattern = '''href=['"]([^'"]+-%s-sezon-%s-[^\;"]*bolum[^'"]*)''' % (video.season, video.episode)
             return self._default_get_episode_url(season_url, video, episode_pattern)
 
     def search(self, video_type, title, year):
@@ -101,7 +101,7 @@ class Dizibox_Scraper(scraper.Scraper):
         seen_urls = {}
         norm_title = scraper_utils.normalize_title(title)
         for fragment in dom_parser.parse_dom(html, 'ul', {'class': 'category-list'}):
-            for match in re.finditer('href=["\']([^\'"]+)[^>]+>([^<]+)', fragment):
+            for match in re.finditer('''href=["']([^'"]+)[^>]+>([^<]+)''', fragment):
                 url, match_title = match.groups()
                 if url not in seen_urls:
                     seen_urls[url] = True

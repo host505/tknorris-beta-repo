@@ -75,7 +75,7 @@ class UFlix_Scraper(scraper.Scraper):
                 if match:
                     quality = QUALITY_MAP.get(match.group(1).upper())
 
-            pattern = 'href="[^"]+url=([^&]+)&domain=([^"&]+).*?fa-thumbs-o-up">\s*([^<]+).*?vote_bad_embedid_\d+\'>([^<]+)'
+            pattern = '''href="[^"]+url=([^&]+)&domain=([^"&]+).*?fa-thumbs-o-up">\s*([^<]+).*?vote_bad_embedid_\d+'>([^<]+)'''
             for match in re.finditer(pattern, html, re.I | re.DOTALL):
                 url, host, up, down = match.groups()
                 up = ''.join([c for c in up if c in string.digits])

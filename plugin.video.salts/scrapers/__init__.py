@@ -12,7 +12,7 @@ from salts_lib.constants import VIDEO_TYPES
 __all__ = ['scraper', 'proxy', 'local_scraper', 'pw_scraper', 'uflix_scraper', 'watchseries_scraper', 'movie25_scraper', 'merdb_scraper', '2movies_scraper',
            'icefilms_scraper', 'movieshd_scraper', 'viooz_scraper', 'filmstreaming_scraper', 'myvideolinks_scraper', 'filmikz_scraper', 'clickplay_scraper', 'nitertv_scraper',
            'iwatch_scraper', 'ororotv_scraper', 'view47_scraper', 'vidics_scraper', 'ocw_proxy', 'losmovies_scraper', 'movie4k_scraper', 'easynews_scraper',
-           'noobroom_scraper', 'solar_scraper', 'directdl_scraper', 'movietv_scraper', 'streamallthis_scraper', 'afdah_scraper', 'torbase_scraper', 'dizibox_scraper',
+           'noobroom_scraper', 'solar_scraper', 'directdl_scraper', 'streamallthis_scraper', 'afdah_scraper', 'torbase_scraper', 'dizibox_scraper',
            'streamtv_scraper', 'moviestorm_scraper', 'wmo_scraper', 'zumvo_scraper', 'wso_scraper', 'ch131_scraper', 'watchfree_scraper', 'streamlord_scraper',
            'pftv_scraper', 'flixanity_scraper', 'cmz_scraper', 'movienight_scraper', 'alluc_scraper', 'afdahorg_scraper', 'xmovies8_scraper', 'yifystreaming_scraper',
            'mintmovies_scraper', 'pubfilm_scraper', 'rlssource_scraper', 'couchtunerv1_scraper', 'couchtunerv2_scraper', 'ddlvalley_scraper', 'tvrelease_scraper',
@@ -100,16 +100,24 @@ def update_all_scrapers():
         now = time.time()
         list_url = kodi.get_setting('scraper_url')
         scraper_password = kodi.get_setting('scraper_password')
-        if list_url and scraper_password and last_check < (now - (24 * 60 * 60)):
+        list_path = os.path.join(kodi.translate_path(kodi.get_profile()), 'scraper_list.txt')
+        exists = os.path.exists(list_path)
+        if list_url and scraper_password and (not exists or last_check < (now - (24 * 60 * 60))):
             scraper_list = utils2.get_and_decrypt(list_url, scraper_password)
             if scraper_list:
-                kodi.set_setting('last_list_check', str(int(now)))
-                for line in scraper_list.split('\n'):
-                    line = line.replace(' ', '')
-                    if line:
-                        scraper_url, filename = line.split(',')
-                        if scraper_url.startswith('http'):
-                            update_scraper(filename, scraper_url)
+                try:
+                    with open(list_path, 'w') as f:
+                        f.write(scraper_list)
+    
+                    kodi.set_setting('last_list_check', str(int(now)))
+                    for line in scraper_list.split('\n'):
+                        line = line.replace(' ', '')
+                        if line:
+                            scraper_url, filename = line.split(',')
+                            if scraper_url.startswith('http'):
+                                update_scraper(filename, scraper_url)
+                except Exception as e:
+                    log_utils.log('Exception during scraper update: %s' % (e), log_utils.LOGWARNING)
     
 def update_scraper(filename, scraper_url):
     try:

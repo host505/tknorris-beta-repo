@@ -48,7 +48,7 @@ class WSO_Scraper(scraper.Scraper):
     def resolve_link(self, link):
         url = urlparse.urljoin(self.base_url, link)
         html = self._http_get(url, cache_limit=.5)
-        match = re.search('href=(?:\'|")([^"\']+)(?:"|\')>Click Here to Play', html)
+        match = re.search('''href=(?:\|")([^"']+)(?:"|')>Click Here to Play''', html)
         if match:
             return match.group(1)
         else:
