@@ -27,13 +27,13 @@ from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
 from salts_lib.constants import VIDEO_TYPES
-from salts_lib.constants import XHR
 from salts_lib.utils2 import i18n
 import scraper
 
 
 BASE_URL = 'http://www.flixanity.is'
 EMBED_URL = '/ajax/embeds.php'
+XHR = {'X-Requested-With': 'XMLHttpRequest'}
 
 class Flixanity_Scraper(scraper.Scraper):
     base_url = BASE_URL

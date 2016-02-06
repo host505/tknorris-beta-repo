@@ -30,13 +30,13 @@ from salts_lib.constants import QUALITIES
 from salts_lib.constants import RAND_UAS
 from salts_lib.constants import VIDEO_TYPES
 from salts_lib.constants import WIN_VERS
-from salts_lib.constants import XHR
 import scraper
 
 
 BASE_URL = 'http://twomovies.us'
 AJAX_URL = '/Xajax/aj0001'
 LOCAL_USER_AGENT = 'SALTS for Kodi/%s' % (kodi.get_version())
+XHR = {'X-Requested-With': 'XMLHttpRequest'}
 
 class TwoMovies_Scraper(scraper.Scraper):
     base_url = BASE_URL

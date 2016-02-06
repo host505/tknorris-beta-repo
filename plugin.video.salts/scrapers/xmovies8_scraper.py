@@ -26,9 +26,9 @@ from salts_lib import log_utils
 from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import VIDEO_TYPES
-from salts_lib.constants import XHR
 import scraper
 
+XHR = {'X-Requested-With': 'XMLHttpRequest'}
 VIDEO_URL = '/video_info/iframe'
 
 class XMovies8_Scraper(scraper.Scraper):

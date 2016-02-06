@@ -25,10 +25,10 @@ from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
 from salts_lib.constants import VIDEO_TYPES
-from salts_lib.constants import XHR
 import scraper
 
 BASE_URL = 'http://yshow.me'
+XHR = {'X-Requested-With': 'XMLHttpRequest'}
 
 class YShows_Scraper(scraper.Scraper):
     base_url = BASE_URL

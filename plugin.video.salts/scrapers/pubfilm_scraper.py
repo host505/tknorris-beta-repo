@@ -25,12 +25,12 @@ from salts_lib import log_utils
 from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import VIDEO_TYPES
-from salts_lib.constants import XHR
 import scraper
 
 
 BASE_URL = 'http://movie.pubfilmno1.com'
 GK_URL = 'http://player.pubfilm.com/smplayer/plugins/gkphp/plugins/gkpluginsphp.php'
+XHR = {'X-Requested-With': 'XMLHttpRequest'}
 
 class PubFilm_Scraper(scraper.Scraper):
     base_url = BASE_URL

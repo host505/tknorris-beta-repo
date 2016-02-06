@@ -25,7 +25,6 @@ from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
 from salts_lib.constants import VIDEO_TYPES
-from salts_lib.constants import XHR
 import scraper
 import xml.etree.ElementTree as ET
 
@@ -35,6 +34,7 @@ PLAYLIST_URL1 = 'movie/loadEmbed/%s'
 PLAYLIST_URL2 = 'movie/load_episode/%s'
 SL_URL = '/movie/loadepisodes/%s'
 Q_MAP = {'TS': QUALITIES.LOW, 'CAM': QUALITIES.LOW, 'HDTS': QUALITIES.LOW, 'HD-720P': QUALITIES.HD720}
+XHR = {'X-Requested-With': 'XMLHttpRequest'}
 
 class One23Movies_Scraper(scraper.Scraper):
     base_url = BASE_URL
@@ -71,7 +71,6 @@ class One23Movies_Scraper(scraper.Scraper):
                 headers['Referer'] = url
                 url = urlparse.urljoin(self.base_url, server_url)
                 html = self._http_get(url, headers=headers, cache_limit=0)
-                log_utils.log(html)
                 sources = {}
                 for match in re.finditer('''loadEpisode\(\s*(\d+)\s*,\s*(\d+)\s*,\s*'([^']+)'\s*\).*?class="btn-eps[^>]*>([^<]+)''', html, re.DOTALL):
                     link_type, link_id, _hash_id, q_str = match.groups()

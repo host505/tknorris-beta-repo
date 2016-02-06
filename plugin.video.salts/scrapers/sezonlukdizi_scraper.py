@@ -28,7 +28,6 @@ from salts_lib import scraper_utils
 from salts_lib import dom_parser
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import VIDEO_TYPES
-from salts_lib.constants import XHR
 import scraper
 
 
@@ -95,7 +94,6 @@ class SezonLukDizi_Scraper(scraper.Scraper):
                                 seen_urls[stream_url] = True
                                 if 'v.asp' in stream_url:
                                     stream_redirect = self._http_get(stream_url, allow_redirect=False, cache_limit=0)
-                                    log_utils.log(stream_redirect)
                                     if stream_redirect: stream_url = stream_redirect
                                     
                                 stream_url += '|User-Agent=%s' % (scraper_utils.get_ua())

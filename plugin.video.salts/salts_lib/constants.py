@@ -92,7 +92,6 @@ Q_ORDER = {QUALITIES.LOW: 1, QUALITIES.MEDIUM: 2, QUALITIES.HIGH: 3, QUALITIES.H
 
 IMG_SIZES = ['full', 'medium', 'thumb']
 
-XHR = {'X-Requested-With': 'XMLHttpRequest'}
 USER_AGENT = "Mozilla/5.0 (compatible, MSIE 11, Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko"
 BR_VERS = [
     ['%s.0' % i for i in xrange(18, 43)],

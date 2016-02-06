@@ -25,7 +25,6 @@ from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
 from salts_lib.constants import VIDEO_TYPES
-from salts_lib.constants import XHR
 import scraper
 
 
@@ -34,6 +33,7 @@ DETAIL_URL = '/movie-detail.php?%s'
 PLAYER_URL = '/movie-player.php?%s'
 
 QUALITY_MAP = {'HD': QUALITIES.HD720, 'FULL HD': QUALITIES.HD1080, 'DVD': QUALITIES.MEDIUM}
+XHR = {'X-Requested-With': 'XMLHttpRequest'}
 
 class BeinMovie_Scraper(scraper.Scraper):
     base_url = BASE_URL

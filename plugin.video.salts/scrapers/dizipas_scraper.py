@@ -73,7 +73,6 @@ class Dizipas_Scraper(scraper.Scraper):
             if match:
                 post_url, post_data = match.groups()
                 data = self.__get_data(post_data)
-                log_utils.log(data)
                 html = self._http_get(post_url, data=data, cache_limit=.5)
                 js_result = scraper_utils.parse_json(html, post_url)
                 for key in js_result:

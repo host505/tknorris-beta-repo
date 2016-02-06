@@ -25,10 +25,10 @@ from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import VIDEO_TYPES
 from salts_lib.constants import QUALITIES
-from salts_lib.constants import XHR
 import scraper
 
 
+XHR = {'X-Requested-With': 'XMLHttpRequest'}
 BASE_URL = 'http://www.watchepisodes.com'
 
 class WatchEpisodes_Scraper(scraper.Scraper):

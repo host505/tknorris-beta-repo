@@ -27,10 +27,10 @@ from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
 from salts_lib.constants import Q_ORDER
 from salts_lib.constants import VIDEO_TYPES
-from salts_lib.constants import XHR
 import scraper
 
 
+XHR = {'X-Requested-With': 'XMLHttpRequest'}
 BASE_URL = 'http://zumvo.so'
 QUALITY_MAP = {'HD': QUALITIES.HD1080, 'CAM': QUALITIES.MEDIUM, 'BR-RIP': QUALITIES.HD720, 'UNKNOWN': QUALITIES.MEDIUM, 'SD': QUALITIES.HIGH}
 GK_URL = '/player/gkplayerphp/plugins/gkpluginsphp.php'

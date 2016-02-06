@@ -24,10 +24,10 @@ from salts_lib import kodi
 from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import VIDEO_TYPES
-from salts_lib.constants import XHR
 import scraper
 
 
+XHR = {'X-Requested-With': 'XMLHttpRequest'}
 BASE_URL = 'http://xmovies8.tv'
 
 class XMovies8V2_Scraper(scraper.Scraper):

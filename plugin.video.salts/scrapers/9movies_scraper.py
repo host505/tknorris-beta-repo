@@ -27,13 +27,13 @@ from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
 from salts_lib.constants import VIDEO_TYPES
-from salts_lib.constants import XHR
 import scraper
 
 
 BASE_URL = 'http://9movies.to'
 HASH_URL = '/ajax/film/episode?hash_id=%s&f=&p=%s'
 Q_MAP = {'TS': QUALITIES.LOW, 'CAM': QUALITIES.LOW, 'HDTS': QUALITIES.LOW, 'HD 720P': QUALITIES.HD720}
+XHR = {'X-Requested-With': 'XMLHttpRequest'}
 
 class NineMovies_Scraper(scraper.Scraper):
     base_url = BASE_URL

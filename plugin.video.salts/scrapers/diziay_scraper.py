@@ -26,12 +26,12 @@ from salts_lib import log_utils
 from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import VIDEO_TYPES
-from salts_lib.constants import XHR
 import scraper
 
 
 BASE_URL = 'http://diziay.com'
 SEASON_URL = '/posts/filmgonder.php?action=sezongets'
+XHR = {'X-Requested-With': 'XMLHttpRequest'}
 
 class Diziay_Scraper(scraper.Scraper):
     base_url = BASE_URL

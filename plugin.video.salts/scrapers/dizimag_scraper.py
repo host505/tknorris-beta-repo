@@ -25,11 +25,10 @@ from salts_lib import kodi
 from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import VIDEO_TYPES
-from salts_lib.constants import XHR
 import scraper
 
-
 BASE_URL = 'http://dizimag.co'
+XHR = {'X-Requested-With': 'XMLHttpRequest'}
 
 class Dizimag_Scraper(scraper.Scraper):
     base_url = BASE_URL

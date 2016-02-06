@@ -24,12 +24,12 @@ from salts_lib import log_utils
 from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import VIDEO_TYPES
-from salts_lib.constants import XHR
 import scraper
 
 
 BASE_URL = 'http://www.dizigold.net'
 AJAX_URL = '/sistem/ajax.php'
+XHR = {'X-Requested-With': 'XMLHttpRequest'}
 
 class Dizigold_Scraper(scraper.Scraper):
     base_url = BASE_URL

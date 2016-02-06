@@ -26,7 +26,6 @@ from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
 from salts_lib.constants import VIDEO_TYPES
-from salts_lib.constants import XHR
 from salts_lib.utils2 import i18n
 import scraper
 
@@ -37,6 +36,7 @@ LOGIN_URL = '/en/users/sign_in'
 MAX_REDIRECT = 10
 CATEGORIES = {VIDEO_TYPES.TVSHOW: '2,3', VIDEO_TYPES.MOVIE: '1,3,4'}
 ORORO_WAIT = 1000
+XHR = {'X-Requested-With': 'XMLHttpRequest'}
 
 class OroroTV_Scraper(scraper.Scraper):
     base_url = BASE_URL

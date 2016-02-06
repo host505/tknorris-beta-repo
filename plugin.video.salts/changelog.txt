@@ -1,4 +1,4 @@
-[B]Version 1.0.114[/B]
+[B]Version 1.0.115[/B]
 - Fix sezon scraper
 - Handle no stream_url notification
 - Set content type on calendars & MNE
@@ -7,6 +7,7 @@
 - Fix yshows scraper
 - Remove movietv.to scraper
 - Fix stupid video_type error
+- Small code fixes for XHR
 
 [B]Version 1.0.112[/B]
 - Internal Code Improvements
