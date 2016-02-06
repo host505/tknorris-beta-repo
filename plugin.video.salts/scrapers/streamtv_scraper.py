@@ -18,6 +18,7 @@
 """
 import re
 import urlparse
+import copy
 
 from salts_lib import kodi
 from salts_lib import scraper_utils
@@ -69,7 +70,8 @@ class StreamTV_Scraper(scraper.Scraper):
         return hosters
 
     def __get_base_ep_url(self, video):
-        video.video_type = VIDEO_TYPES.TVSHOW
+        temp_video = copy.copy(video)
+        temp_video.video_type = VIDEO_TYPES.TVSHOW
         url = urlparse.urljoin(self.base_url, self.get_url(video))
         html = self._http_get(url, cache_limit=8)
         match = re.search('href="([^"]+[sS]\d+-?[eE]\d+[^"]+)', html)

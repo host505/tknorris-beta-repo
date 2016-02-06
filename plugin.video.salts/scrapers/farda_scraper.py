@@ -28,7 +28,7 @@ import scraper
 
 BASE_URL = 'http://dl.fardadownload.ir/'
 
-class MovieFarsi_Scraper(scraper.Scraper):
+class Farda_Scraper(scraper.Scraper):
     base_url = BASE_URL
 
     def __init__(self, timeout=scraper.DEFAULT_TIMEOUT):
@@ -84,7 +84,7 @@ class MovieFarsi_Scraper(scraper.Scraper):
         return hosters
 
     def get_url(self, video):
-        return super(MovieFarsi_Scraper, self)._default_get_url(video)
+        return super(Farda_Scraper, self)._default_get_url(video)
 
     def _get_episode_url(self, show_url, video):
         force_title = scraper_utils.force_title(video)
