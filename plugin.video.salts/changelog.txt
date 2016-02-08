@@ -1,3 +1,7 @@
+[B]Version 2.0.0~rc1[/B]
+- Fix srt download path
+- Fix flixanity search
+
 [B]Version 1.0.115[/B]
 - Fix sezon scraper
 - Handle no stream_url notification
