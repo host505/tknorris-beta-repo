@@ -117,12 +117,14 @@ def __is_salts_listitem(li_path):
     movie_folder = xbmc.translatePath(addon.getSetting('movie-folder'))
     real_path = xbmc.translatePath(li_path)
     if not real_path.startswith(movie_folder) and not real_path.startswith(tvshow_folder):
+        log_utils.log('Path Mismatch: |%s|%s|%s|' % (real_path, movie_folder, tvshow_folder))
         return False
     
     try:
         lines = xbmcvfs.File(li_path).read()
         if lines and not lines.startswith('plugin://plugin.video.salts'):
-                return False
+            log_utils.log('STRM Mistmatch: %s' % (lines))
+            return False
     except Exception as e:
         log_utils.log('Failed to read item %s: %s' % (li_path, str(e)), xbmc.LOGERROR)
     

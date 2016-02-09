@@ -1,3 +1,6 @@
+[B]Version 1.0.0[/B]
+Log SALTS LI Failures
+
 [B]Version 0.0.4[/B]
 - Strip (XXXX) off movie & tvshow titles
 
