@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SALTS\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"PO-Revision-Date: 2016-01-18 09:50+0000\n"
+"PO-Revision-Date: 2016-02-03 09:48+0000\n"
 "Last-Translator: tknorris\n"
 "Language-Team: Portuguese (http://www.transifex.com/tv-addons/salts/language/pt/)\n"
 "MIME-Version: 1.0\n"
@@ -39,7 +39,7 @@ msgstr "Série"
 
 msgctxt "#30004"
 msgid "Settings"
-msgstr "Configurações"
+msgstr "Definições"
 
 msgctxt "#30005"
 msgid "Scraper Sort Order"
@@ -51,7 +51,7 @@ msgstr "Definições do URL Resolver"
 
 msgctxt "#30007"
 msgid "Add-on Settings"
-msgstr "Configurações do add-on"
+msgstr "Definições do add-on"
 
 msgctxt "#30008"
 msgid "Auto-Configure SALTS"
@@ -185,9 +185,17 @@ msgctxt "#30040"
 msgid "Enter New Position (1 - %s)"
 msgstr "Introduza a Nova Posição (1 - %s)"
 
+msgctxt "#30041"
+msgid "Set Default %s View"
+msgstr "Definir Vista Padrão de %s"
+
 msgctxt "#30043"
 msgid "Import"
 msgstr "Importar"
+
+msgctxt "#30044"
+msgid "%s View Set to: %s"
+msgstr "Vista de %s definida para: %s"
 
 msgctxt "#30045"
 msgid "Delete [B][COLOR red]ENTIRE[/COLOR][/B] Url Cache"
@@ -204,6 +212,14 @@ msgstr "Continuar"
 msgctxt "#30051"
 msgid "Auto-configure Complete"
 msgstr "Auto-configuração Terminada"
+
+msgctxt "#30052"
+msgid "Set as Favorites List"
+msgstr "Definir como Lista de Favoritos"
+
+msgctxt "#30053"
+msgid "Set as Subscription List"
+msgstr "Definir como Lista de Subscrições"
 
 msgctxt "#30054"
 msgid "Import from Collection"
@@ -249,6 +265,22 @@ msgctxt "#30064"
 msgid "Browse Seasons"
 msgstr "Procurar temporadas"
 
+msgctxt "#30065"
+msgid "Update Subscriptions: (Next Run: [COLOR %s]%s[/COLOR])"
+msgstr "Atualizar Subscrições: (Próxima execução: [COLOR %s]%s[/COLOR])"
+
+msgctxt "#30066"
+msgid "Clean-Up Subscriptions"
+msgstr "Limpar Subscrições"
+
+msgctxt "#30067"
+msgid "Pick a list to use for Subscriptions"
+msgstr "Seleccione uma lista para Subscrições"
+
+msgctxt "#30068"
+msgid "Pick a list to use for Favorites"
+msgstr "Seleccione uma lista para Favoritos"
+
 msgctxt "#30069"
 msgid "Blank Searches are not allowed"
 msgstr "Não são permitidas pesquisas em branco"
@@ -265,13 +297,45 @@ msgctxt "#30072"
 msgid "Delete Search"
 msgstr "Eliminar Pesquisa"
 
+msgctxt "#30073"
+msgid "Recent %s Searches Cleared"
+msgstr "%s Pesquisas Recentes Eliminadas"
+
+msgctxt "#30074"
+msgid "Saved %s Searches Cleared"
+msgstr "%s Pesquisas Guardadas Eliminadas"
+
+msgctxt "#30075"
+msgid "Scraper Timeouts: %s/%s"
+msgstr "Tempo Limite dos Scrapers: %s/%s"
+
+msgctxt "#30076"
+msgid "No Useable Sources Found%s"
+msgstr "Nenhuma Fonte Utilizável%s"
+
 msgctxt "#30077"
 msgid "Choose a subtitle to download"
 msgstr "Escolha uma legenda para transferir"
 
+msgctxt "#30079"
+msgid "All sources failed to play"
+msgstr "Falha na reprodução de todas as fontes"
+
 msgctxt "#30080"
 msgid "Choose your stream"
 msgstr "Escolha o seu stream"
+
+msgctxt "#30081"
+msgid "Set Related Url"
+msgstr "Defina o Url relacionado"
+
+msgctxt "#30082"
+msgid "Received result from: %s"
+msgstr "Resultado recebido de: %s"
+
+msgctxt "#30083"
+msgid "Url To Change (%s)"
+msgstr "Url a modificar (%s)"
 
 msgctxt "#30086"
 msgid "Manual Search"
@@ -289,6 +353,10 @@ msgctxt "#30089"
 msgid "Scraper does not support searching"
 msgstr "Função de pesquisa não suportada pelo scraper"
 
+msgctxt "#30091"
+msgid "Input TVShow ID"
+msgstr "Introduza ID de Série"
+
 msgctxt "#30092"
 msgid "Item Added to Collection"
 msgstr "Item Adicionado à Coleção"
@@ -300,6 +368,10 @@ msgstr "Item Removido da Coleção"
 msgctxt "#30094"
 msgid "Item Added to List"
 msgstr "Item Adicionado à Lista"
+
+msgctxt "#30095"
+msgid "List Copied: (A:%s/E:%s/S:%s)"
+msgstr "Lista Copiada: (A:%s/E:%s/S:%s)"
 
 msgctxt "#30096"
 msgid "TV"
@@ -321,6 +393,10 @@ msgctxt "#30100"
 msgid "Are you sure you want to delete the url cache?"
 msgstr "Tem a certeza de que pretende eliminar a cache de url?"
 
+msgctxt "#30101"
+msgid "This will slow things down until all urls are re-cached"
+msgstr "Notará alguma lentidão até que todos os urls sejam recolocados em cache"
+
 msgctxt "#30102"
 msgid "Keep"
 msgstr "Guardar"
@@ -328,6 +404,10 @@ msgstr "Guardar"
 msgctxt "#30103"
 msgid "Delete"
 msgstr "Apagar"
+
+msgctxt "#30104"
+msgid "Flush web cache"
+msgstr "Limpar Web Cache"
 
 msgctxt "#30105"
 msgid "DB Reset Successful"
@@ -457,6 +537,14 @@ msgctxt "#30139"
 msgid "Add to Library"
 msgstr "Adicionar à Biblioteca"
 
+msgctxt "#30140"
+msgid "Set Addic7ed TVShowID"
+msgstr "Definir ID de Série Addic7ed"
+
+msgctxt "#30143"
+msgid "Set Related Url (Search)"
+msgstr "Defina o Url relacionado (Pesquisa)"
+
 msgctxt "#30144"
 msgid "Play Trailer"
 msgstr "Ver Trailer"
@@ -465,6 +553,10 @@ msgctxt "#30145"
 msgid "Pick a list"
 msgstr "Escolha uma lista"
 
+msgctxt "#30146"
+msgid "No Lists exist for user: %s"
+msgstr "Não existem listas do utilizador: %s"
+
 msgctxt "#30147"
 msgid "Scraper Automatically Disabled"
 msgstr "Scraper Automaticamente Desativado"
@@ -472,6 +564,10 @@ msgstr "Scraper Automaticamente Desativado"
 msgctxt "#30149"
 msgid "Disabling it avoids wasting time and resources"
 msgstr "Desativando-o poupará tempo e recursos"
+
+msgctxt "#30150"
+msgid "([I]If you Keep Enabled, consider increasing scraper timeout[/I])"
+msgstr "([I]Se mantiver Ativo, pondere aumentar o tempo limite de scraper[/I])"
 
 msgctxt "#30151"
 msgid "Keep Enabled"
@@ -533,6 +629,10 @@ msgctxt "#30165"
 msgid "3) Enter the PIN provided in the box below."
 msgstr "3) Introduza o PIN fornecido na caixa abaixo."
 
+msgctxt "#30166"
+msgid ""
+msgstr "O SALTS pode ser usado sem uma conta trakt.tv, mas para tirar total partido do SALTS deve autorizá-lo a aceder à sua conta trakt.tv."
+
 msgctxt "#30167"
 msgid "Authorize"
 msgstr "Autorizar"
@@ -555,7 +655,7 @@ msgstr "Será lembrado daqui a 24 horas"
 
 msgctxt "#30172"
 msgid "Use Addon Settings later if you change your mind"
-msgstr "Utilize as Configurações do addon se mudar de ideias"
+msgstr "Utilize as Definições do add-on se mudar de ideias"
 
 msgctxt "#30173"
 msgid "Trakt Authorization Complete"
@@ -636,6 +736,10 @@ msgstr "Falha ao escrever ficheiro"
 msgctxt "#30192"
 msgid "Reset All Scraper Base Urls to Default"
 msgstr "Restaurar Urls Base dos Scrapers"
+
+msgctxt "#30194"
+msgid "Requesting Url for: %s"
+msgstr "A pedir Url para: %s"
 
 msgctxt "#30195"
 msgid "'%s' added to library"
@@ -733,6 +837,10 @@ msgctxt "#30221"
 msgid "Applying Source Filters"
 msgstr "A aplicar filtros de Fontes"
 
+msgctxt "#30222"
+msgid "Include Links from Comments"
+msgstr "Incluir Links dos Comentários"
+
 msgctxt "#30223"
 msgid "My Watched History"
 msgstr "Meu Histórico de Visualizações"
@@ -752,6 +860,10 @@ msgstr "Falharam: [%s] %s de %s"
 msgctxt "#30227"
 msgid "Scraper Timeouts: [COLOR blue]%s[/COLOR]"
 msgstr "Tempo Limite dos Scrapers: [COLOR blue]%s[/COLOR]"
+
+msgctxt "#30228"
+msgid "Reset Failures"
+msgstr "Restaurar Falhas"
 
 msgctxt "#30229"
 msgid "Maximum Source Results"
@@ -785,9 +897,17 @@ msgctxt "#30236"
 msgid "Include Watchlist in My Next Episodes"
 msgstr "Incluir Watchlist nos Meus Próximos Episódios"
 
+msgctxt "#30238"
+msgid "Remove Unusable Indirect sources from results"
+msgstr "Remover fontes indirectas inutilizáveis dos resultados"
+
 msgctxt "#30239"
 msgid "Show Debrid sources in Green"
 msgstr "Mostrar fontes Debrid a verde"
+
+msgctxt "#30240"
+msgid "No Limit on Maximum Source Results"
+msgstr "Sem Limite Máximo de Resultados das Fontes"
 
 msgctxt "#30243"
 msgid "Reset All Scraper Base Urls to Default"
@@ -800,6 +920,10 @@ msgstr "Selecionar Todos/Nenhum"
 msgctxt "#30245"
 msgid "Automatically Select Best Source"
 msgstr "Selecionar Automaticamente a melhor Fonte"
+
+msgctxt "#30252"
+msgid "DB Reset Failed: %s"
+msgstr "Falhou o restauro da BD: %s"
 
 msgctxt "#30500"
 msgid "Addon Theme"
@@ -1012,14 +1136,6 @@ msgstr "Testar Previamente Fontes Diretas"
 msgctxt "#30552"
 msgid "Use Trakt Bookmarks"
 msgstr "Usar Favoritos do Trakt"
-
-msgctxt "#30553"
-msgid "Cache watched status"
-msgstr "Manter estado de visualização em cache"
-
-msgctxt "#30554"
-msgid "Cache Collection"
-msgstr "Manter coleção em cache"
 
 msgctxt "#30555"
 msgid "Include People"
@@ -1468,4 +1584,8 @@ msgstr "Continuar"
 msgctxt "#30668"
 msgid "Cancel"
 msgstr "Cancelar"
+
+msgctxt "#30669"
+msgid "Select this item to Install the SALTS Themepak"
+msgstr "Seleccione esta opção para instalar o pacote de temas SALTS"
 
