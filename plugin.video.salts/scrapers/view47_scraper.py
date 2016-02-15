@@ -73,7 +73,6 @@ class View47_Scraper(scraper.Scraper):
                     host = host.lower()
                     host = re.sub('<img.*?/>', '', host)
                     host = HOSTS.get(host, host)
-                    log_utils.log('%s - %s' % (url, host))
                     if host in GVIDEO_NAMES:
                         sources = self.__get_links(urlparse.urljoin(self.base_url, url))
                         direct = True
@@ -143,7 +142,6 @@ class View47_Scraper(scraper.Scraper):
                                 match_title = match_title_year
                                 match_year = ''
                         else:
-                            log_utils.log(is_season.group(1))
                             if season and int(is_season.group(1)) != int(season):
                                 continue
                             match_title = match_title_year

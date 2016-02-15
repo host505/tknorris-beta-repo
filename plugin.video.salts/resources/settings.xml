@@ -500,7 +500,7 @@
          <setting id="torba.se-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="torba.se_last_results" type="number" default="0" visible="false"/>
          <setting id="tunemovie-enable" type="bool" label="tunemovie Enabled" default="true" visible="true"/>
-         <setting id="tunemovie-base_url" type="text" label="    Base Url" default="http://tunemovie.is" visible="eq(-1,true)"/>
+         <setting id="tunemovie-base_url" type="text" label="    Base Url" default="http://tunemovie.tv" visible="eq(-1,true)"/>
          <setting id="tunemovie-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="tunemovie_last_results" type="number" default="0" visible="false"/>
          <setting id="TVRelease.Net-enable" type="bool" label="TVRelease.Net Enabled" default="true" visible="true"/>

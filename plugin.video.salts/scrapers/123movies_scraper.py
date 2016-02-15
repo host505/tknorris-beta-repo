@@ -61,6 +61,7 @@ class One23Movies_Scraper(scraper.Scraper):
     def get_sources(self, video):
         source_url = self.get_url(video)
         hosters = []
+        sources = {}
         if source_url and source_url != FORCE_NO_MATCH:
             html = self.__get_source_page(source_url)
             sources = {}

@@ -214,9 +214,12 @@ class DB_Connection():
         if year is None: year = ''
         sql = 'DELETE FROM rel_url WHERE video_type=? and title=? and year=? and source=?'
         params = [video_type, title, year, source]
-        if season and episode:
-            sql += ' and season=? and episode=?'
-            params += [season, episode]
+        if season:
+            sql += ' and season=?'
+            params += [season]
+        if episode:
+            sql += ' and episode=?'
+            params += [episode]
         self.__execute(sql, params)
 
     def clear_scraper_related_urls(self, source):

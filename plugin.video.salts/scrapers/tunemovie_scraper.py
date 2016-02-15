@@ -30,8 +30,9 @@ from salts_lib.constants import VIDEO_TYPES
 import scraper
 
 
-BASE_URL = 'http://tunemovie.is'
-GK_KEY = base64.b64decode('Q05WTmhPSjlXM1BmeFd0UEtiOGg=')
+BASE_URL = 'http://tunemovie.tv'
+LINK_URL = '/ip.temp/swf/plugins/ipplugins.php'
+XHR = {'X-Requested-With': 'XMLHttpRequest'}
 
 class TuneMovie_Scraper(scraper.Scraper):
     base_url = BASE_URL
@@ -66,45 +67,51 @@ class TuneMovie_Scraper(scraper.Scraper):
     def get_sources(self, video):
         source_url = self.get_url(video)
         hosters = []
+        sources = {}
         if source_url and source_url != FORCE_NO_MATCH:
             url = urlparse.urljoin(self.base_url, source_url)
             html = self._http_get(url, cache_limit=.5)
+            sources = self.__get_gk_links(html, url)
             
-            views = None
-            match = re.search('<li>\s*Views\s*:\s*(.*?)</li>', html)
-            if match:
-                views = re.sub('[^0-9]', '', match.group(1))
-                
-            hosts = dom_parser.parse_dom(html, 'p', {'class': 'server_servername'})
-            links = dom_parser.parse_dom(html, 'p', {'class': 'server_play'})
-            for item in zip(hosts, links):
-                host, link_text = item
-                host = host.lower().replace('server', '').strip()
-                match = re.search('href="([^"]+)', link_text)
-                if match:
-                    link = match.group(1)
-                    if 'google' in host:
-                        sources = self.__get_google_links(link)
-                        for source in sources:
-                            source += '|User-Agent=%s' % (scraper_utils.get_ua())
-                            hoster = {'multi-part': False, 'url': source, 'class': self, 'quality': scraper_utils.gv_get_quality(source), 'host': self._get_direct_hostname(source), 'rating': None, 'views': views, 'direct': True}
-                            hosters.append(hoster)
-                    else:
-                            hoster = {'multi-part': False, 'url': link, 'class': self, 'quality': scraper_utils.get_quality(video, host, QUALITIES.HIGH), 'host': host, 'rating': None, 'views': views, 'direct': False}
-                            hosters.append(hoster)
+            for source in sources:
+                host = self._get_direct_hostname(source)
+                if host == 'gvideo':
+                    direct = True
+                else:
+                    host = urlparse.urlparse(source).hostname
+                    direct = False
+                stream_url = source + '|User-Agent=%s' % (scraper_utils.get_ua())
+                hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': sources[source], 'views': None, 'rating': None, 'url': stream_url, 'direct': direct}
+                hosters.append(hoster)
 
         return hosters
 
-    def __get_google_links(self, link):
+    def __get_gk_links(self, html, page_url):
         sources = {}
-        html = self._http_get(link, cache_limit=.5)
-        match = re.search('base64\.decode\("([^"]+)', html, re.I)
-        if match:
-            log_utils.log(match.group(1))
-            match = re.search('proxy\.link=tunemovie\*([^&]+)', base64.b64decode(match.group(1)))
-            if match:
-                picasa_url = scraper_utils.gk_decrypt(self.get_name(), GK_KEY, match.group(1))
-                sources = self._parse_google(picasa_url)
+        for link in dom_parser.parse_dom(html, 'div', {'class': '[^"]*server_line[^"]*'}):
+            film_id = dom_parser.parse_dom(link, 'a', ret='data-film')
+            name_id = dom_parser.parse_dom(link, 'a', ret='data-name')
+            server_id = dom_parser.parse_dom(link, 'a', ret='data-server')
+            if film_id and name_id and server_id:
+                data = {'ipplugins': 1, 'ip_film': film_id[0], 'ip_server': server_id[0], 'ip_name': name_id[0]}
+                headers = XHR
+                headers['Referer'] = page_url
+                url = urlparse.urljoin(self.base_url, LINK_URL)
+                html = self._http_get(url, data=data, headers=headers, cache_limit=.25)
+                js_data = scraper_utils.parse_json(html, url)
+                if 's' in js_data:
+                    if isinstance(js_data['s'], basestring):
+                        sources[js_data['s']] = QUALITIES.HIGH
+                    else:
+                        for link in js_data['s']:
+                            stream_url = link['file']
+                            if self._get_direct_hostname(stream_url) == 'gvideo':
+                                quality = scraper_utils.gv_get_quality(stream_url)
+                            elif 'label' in link:
+                                quality = scraper_utils.height_get_quality(link['label'])
+                            else:
+                                quality = QUALITIES.HIGH
+                            sources[stream_url] = quality
         return sources
 
     def get_url(self, video):
@@ -115,14 +122,15 @@ class TuneMovie_Scraper(scraper.Scraper):
         return self._default_get_episode_url(season_url, video, episode_pattern)
     
     def search(self, video_type, title, year, season=''):
-        search_url = urlparse.urljoin(self.base_url, '/search-movies/%s.html')
+        search_url = urlparse.urljoin(self.base_url, '/search/%s.html')
         search_url = search_url % (urllib.quote_plus(title))
         html = self._http_get(search_url, cache_limit=0)
         results = []
         for thumb in dom_parser.parse_dom(html, 'div', {'class': 'thumb'}):
-            match = re.search('title="([^"]+)"\s+href="([^"]+)"', thumb)
-            if match:
-                match_title, url = match.groups()
+            match_title = dom_parser.parse_dom(thumb, 'a', {'class': 'clip-link'}, ret='title')
+            url = dom_parser.parse_dom(thumb, 'a', {'class': 'clip-link'}, ret='href')
+            if match_title and url:
+                match_title, url = match_title[0], url[0]
                 is_season = re.search('Season\s+(\d+)$', match_title, re.I)
                 if not is_season and video_type == VIDEO_TYPES.MOVIE or is_season and VIDEO_TYPES.SEASON:
                     match_year = ''

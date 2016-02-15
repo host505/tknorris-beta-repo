@@ -1,3 +1,13 @@
+[B]Version 2.0.3[/B]
+- Fix 123Movies scraper
+- Fix Pubfilms scraper
+- Fix xmovies8V2 scraper
+- Fix moviemax scraper
+- Fix tunemovie scraper
+- Fix wso scraper
+- Fix furk.net scraper
+- Close working dialog before resume prompt
+
 [B]Version 2.0.2[/B]
 - Add MovieMax scraper
 - Add VKFlix scraper

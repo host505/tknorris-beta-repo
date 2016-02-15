@@ -88,7 +88,6 @@ class MovieSub_Scraper(scraper.Scraper):
                 url = urlparse.urljoin(self.base_url, LINK_URL)
                 html = self._http_get(url, data=data, headers=headers, cache_limit=.25)
                 js_data = scraper_utils.parse_json(html, url)
-                log_utils.log(js_data)
                 if 's' in js_data:
                     if isinstance(js_data['s'], basestring):
                         sources[js_data['s']] = QUALITIES.HIGH

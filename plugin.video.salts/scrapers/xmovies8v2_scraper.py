@@ -124,9 +124,12 @@ class XMovies8V2_Scraper(scraper.Scraper):
                 else:
                     match_title = match_title_year
             else:
-                match_title = '%s - Season %s' % (is_season.groups())
-                if season and int(is_season.group(2)) != int(season):
-                    continue
+                if is_season:
+                    match_title = '%s - Season %s' % (is_season.groups())
+                    if season and int(is_season.group(2)) != int(season):
+                        continue
+                else:
+                    match_title = match_title_year
     
             if not year or not match_year or year == match_year:
                 result = {'url': scraper_utils.pathify_url(url), 'title': match_title, 'year': match_year}

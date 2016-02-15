@@ -19,7 +19,6 @@ import json
 import re
 import urllib
 import urlparse
-
 from salts_lib import kodi
 from salts_lib import log_utils
 from salts_lib import scraper_utils
@@ -135,12 +134,16 @@ class Furk_Scraper(scraper.Scraper):
                     else:
                         quality = QUALITIES.HIGH
                     
-                stream_url = item['url_pls']
-                host = self._get_direct_hostname(stream_url)
-                hoster = {'multi-part': False, 'class': self, 'views': None, 'url': stream_url, 'rating': None, 'host': host, 'quality': quality, 'direct': True}
-                hoster['size'] = scraper_utils.format_size(int(item['size']), 'B')
-                hoster['extra'] = item['name']
-                hosters.append(hoster)
+                if 'url_pls' in item:
+                    stream_url = item['url_pls']
+                    host = self._get_direct_hostname(stream_url)
+                    hoster = {'multi-part': False, 'class': self, 'views': None, 'url': stream_url, 'rating': None, 'host': host, 'quality': quality, 'direct': True}
+                    hoster['size'] = scraper_utils.format_size(int(item['size']), 'B')
+                    hoster['extra'] = item['name']
+                    hosters.append(hoster)
+                else:
+                    log_utils.log('Furk.net result skipped - no playlist: |%s|' % (json.dumps(item)), log_utils.LOGDEBUG)
+                    
         return hosters
     
     def get_url(self, video):

@@ -133,8 +133,8 @@ class MoxieHDMax_Scraper(scraper.Scraper):
                         match_title = match_title_year
                         match_year = ''
 
-                    log_utils.log('%s - %s' % (match_title, season))
                     if video_type == VIDEO_TYPES.SEASON:
+                        match_year = ''
                         if season and not re.search('Season\s+%s$' % (season), match_title, re.I):
                             continue
             
