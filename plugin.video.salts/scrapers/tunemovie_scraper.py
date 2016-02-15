@@ -23,6 +23,7 @@ import urlparse
 from salts_lib import dom_parser
 from salts_lib import kodi
 from salts_lib import scraper_utils
+from salts_lib import log_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
 from salts_lib.constants import VIDEO_TYPES
@@ -41,7 +42,7 @@ class TuneMovie_Scraper(scraper.Scraper):
 
     @classmethod
     def provides(cls):
-        return frozenset([VIDEO_TYPES.MOVIE])
+        return frozenset([VIDEO_TYPES.MOVIE, VIDEO_TYPES.SEASON, VIDEO_TYPES.EPISODE])
 
     @classmethod
     def get_name(cls):
@@ -76,16 +77,16 @@ class TuneMovie_Scraper(scraper.Scraper):
                 
             hosts = dom_parser.parse_dom(html, 'p', {'class': 'server_servername'})
             links = dom_parser.parse_dom(html, 'p', {'class': 'server_play'})
-            
             for item in zip(hosts, links):
                 host, link_text = item
-                host = host.replace('server', '').strip()
+                host = host.lower().replace('server', '').strip()
                 match = re.search('href="([^"]+)', link_text)
                 if match:
                     link = match.group(1)
                     if 'google' in host:
                         sources = self.__get_google_links(link)
                         for source in sources:
+                            source += '|User-Agent=%s' % (scraper_utils.get_ua())
                             hoster = {'multi-part': False, 'url': source, 'class': self, 'quality': scraper_utils.gv_get_quality(source), 'host': self._get_direct_hostname(source), 'rating': None, 'views': views, 'direct': True}
                             hosters.append(hoster)
                     else:
@@ -99,6 +100,7 @@ class TuneMovie_Scraper(scraper.Scraper):
         html = self._http_get(link, cache_limit=.5)
         match = re.search('base64\.decode\("([^"]+)', html, re.I)
         if match:
+            log_utils.log(match.group(1))
             match = re.search('proxy\.link=tunemovie\*([^&]+)', base64.b64decode(match.group(1)))
             if match:
                 picasa_url = scraper_utils.gk_decrypt(self.get_name(), GK_KEY, match.group(1))
@@ -108,22 +110,31 @@ class TuneMovie_Scraper(scraper.Scraper):
     def get_url(self, video):
         return self._default_get_url(video)
 
-    def search(self, video_type, title, year):
+    def _get_episode_url(self, season_url, video):
+        episode_pattern = 'class="[^"]*episode_series_link[^"]*"\s+href="([^"]+)[^>]*>\s*%s\s*<' % (video.episode)
+        return self._default_get_episode_url(season_url, video, episode_pattern)
+    
+    def search(self, video_type, title, year, season=''):
         search_url = urlparse.urljoin(self.base_url, '/search-movies/%s.html')
         search_url = search_url % (urllib.quote_plus(title))
         html = self._http_get(search_url, cache_limit=0)
         results = []
         for thumb in dom_parser.parse_dom(html, 'div', {'class': 'thumb'}):
-            match_year = dom_parser.parse_dom(thumb, 'div', {'class': '[^"]*status-year[^"]*'})
-            if match_year:
-                match_year = match_year[0]
-            else:
-                match_year = ''
-            
             match = re.search('title="([^"]+)"\s+href="([^"]+)"', thumb)
             if match:
                 match_title, url = match.groups()
-                if not year or not match_year or year == match_year:
-                    result = {'url': scraper_utils.pathify_url(url), 'title': match_title, 'year': match_year}
-                    results.append(result)
+                is_season = re.search('Season\s+(\d+)$', match_title, re.I)
+                if not is_season and video_type == VIDEO_TYPES.MOVIE or is_season and VIDEO_TYPES.SEASON:
+                    match_year = ''
+                    if video_type == VIDEO_TYPES.MOVIE:
+                        match_year = dom_parser.parse_dom(thumb, 'div', {'class': '[^"]*status-year[^"]*'})
+                        if match_year:
+                            match_year = match_year[0]
+                    else:
+                        if season and int(is_season.group(1)) != int(season):
+                            continue
+                    
+                    if not year or not match_year or year == match_year:
+                        result = {'url': scraper_utils.pathify_url(url), 'title': match_title, 'year': match_year}
+                        results.append(result)
         return results

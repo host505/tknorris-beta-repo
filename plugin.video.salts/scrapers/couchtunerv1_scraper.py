@@ -93,7 +93,7 @@ class CouchTunerV1_Scraper(scraper.Scraper):
         title_pattern = 'href="(?P<url>[^"]+season-\d+-episode-\d+-[^"]+).*?8211;\s*(?P<title>[^<]+)'
         return self._default_get_episode_url(show_url, video, episode_pattern, title_pattern)
 
-    def search(self, video_type, title, year):
+    def search(self, video_type, title, year, season=''):
         show_list_url = urlparse.urljoin(self.base_url, '/tv-lists/')
         html = self._http_get(show_list_url, cache_limit=8)
         results = []

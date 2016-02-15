@@ -25,7 +25,7 @@ import xbmcvfs
 import xbmcgui
 import log_utils
 import kodi
-from utils2 import i18n
+from kodi import i18n
 
 def enum(**enums):
     return type('Enum', (), enums)
@@ -217,6 +217,11 @@ class DB_Connection():
         if season and episode:
             sql += ' and season=? and episode=?'
             params += [season, episode]
+        self.__execute(sql, params)
+
+    def clear_scraper_related_urls(self, source):
+        sql = 'DELETE FROM rel_url WHERE source=?'
+        params = [source]
         self.__execute(sql, params)
 
     def get_related_url(self, video_type, title, year, source, season='', episode=''):

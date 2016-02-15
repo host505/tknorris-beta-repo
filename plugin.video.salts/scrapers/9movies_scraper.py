@@ -44,7 +44,7 @@ class NineMovies_Scraper(scraper.Scraper):
 
     @classmethod
     def provides(cls):
-        return frozenset([VIDEO_TYPES.MOVIE])
+        return frozenset([VIDEO_TYPES.MOVIE, VIDEO_TYPES.SEASON, VIDEO_TYPES.EPISODE])
 
     @classmethod
     def get_name(cls):
@@ -65,7 +65,12 @@ class NineMovies_Scraper(scraper.Scraper):
             url = urlparse.urljoin(self.base_url, source_url)
             html = self._http_get(url, cache_limit=.5)
             for server_list in dom_parser.parse_dom(html, 'ul', {'class': 'episodes'}):
-                for hash_id in dom_parser.parse_dom(server_list, 'a', ret='data-id'):
+                labels = dom_parser.parse_dom(server_list, 'a')
+                hash_ids = dom_parser.parse_dom(server_list, 'a', ret='data-id')
+                for label, hash_id in zip(labels, hash_ids):
+                    if video.video_type == VIDEO_TYPES.EPISODE and not self.__episode_match(label, video.episode):
+                        continue
+                    
                     now = time.localtime()
                     url = urlparse.urljoin(self.base_url, HASH_URL)
                     url = url % (hash_id, now.tm_hour + now.tm_min)
@@ -93,7 +98,21 @@ class NineMovies_Scraper(scraper.Scraper):
     def get_url(self, video):
         return self._default_get_url(video)
 
-    def search(self, video_type, title, year):
+    def _get_episode_url(self, season_url, video):
+        url = urlparse.urljoin(self.base_url, season_url)
+        html = self._http_get(url, cache_limit=8)
+        fragment = dom_parser.parse_dom(html, 'ul', {'class': 'episodes'})
+        if fragment:
+            for link in dom_parser.parse_dom(fragment[0], 'a'):
+                if self.__episode_match(link, video.episode):
+                    return season_url
+    
+    def __episode_match(self, label, episode):
+        try: link = int(label)
+        except: link = -1
+        return link == int(episode)
+        
+    def search(self, video_type, title, year, season=''):
         search_url = urlparse.urljoin(self.base_url, '/search?keyword=%s' % (urllib.quote_plus(title)))
         html = self._http_get(search_url, cache_limit=1)
         results = []
@@ -101,12 +120,16 @@ class NineMovies_Scraper(scraper.Scraper):
         fragment = dom_parser.parse_dom(html, 'ul', {'class': 'movie-list'})
         if fragment:
             for item in dom_parser.parse_dom(fragment[0], 'li'):
-                if dom_parser.parse_dom(item, 'div', {'class': '[^"]*episode[^"]*'}): continue
-                match = re.search('href="([^"]+).*?title="([^"]+)', item)
-                if match:
-                    match_url, match_title = match.groups()
-                    if not year or not match_year or year == match_year:
-                        result = {'title': match_title, 'year': '', 'url': scraper_utils.pathify_url(match_url)}
-                        results.append(result)
+                is_season = dom_parser.parse_dom(item, 'div', {'class': '[^"]*episode[^"]*'})
+                if (not is_season and video_type == VIDEO_TYPES.MOVIE) or (is_season and video_type == VIDEO_TYPES.SEASON):
+                    match = re.search('href="([^"]+).*?title="([^"]+)', item)
+                    if match:
+                        match_url, match_title = match.groups()
+                        if video_type == VIDEO_TYPES.SEASON:
+                            if season and not re.search('\s+%s$' % (season), match_title): continue
+                            
+                        if not year or not match_year or year == match_year:
+                            result = {'title': match_title, 'year': '', 'url': scraper_utils.pathify_url(match_url)}
+                            results.append(result)
 
         return results

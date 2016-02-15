@@ -269,6 +269,7 @@ def pathify_url(url):
         strip = ''
     strip += '//' + pieces.netloc
     url = url.replace(strip, '')
+    if url.startswith('..'): url = url[2:]
     if not url.startswith('/'): url = '/' + url
     url = url.replace('/./', '/')
     url = url.replace('&amp;', '&')

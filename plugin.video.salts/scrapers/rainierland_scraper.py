@@ -98,7 +98,7 @@ class Rainierland_Scraper(scraper.Scraper):
             if result:
                 return result
     
-    def search(self, video_type, title, year):
+    def search(self, video_type, title, year, season=''):
         results = []
         if video_type == VIDEO_TYPES.MOVIE:
             search_url = urlparse.urljoin(self.base_url, '/?s=')

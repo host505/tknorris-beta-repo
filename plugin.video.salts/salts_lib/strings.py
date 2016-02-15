@@ -261,5 +261,16 @@ STRINGS = {
     'rec_reset_2': 30250,
     'rec_reset_3': 30251,
     'reset_failed': 30252,
-    'no_stream_found': 30253
+    'no_stream_found': 30253,
+    'discover_mne': 30254,
+    'retr_history': 30255,
+    'retr_watchlist': 30256,
+    'retr_hidden': 30257,
+    'req_progress': 30258,
+    'rec_progress': 30259,
+    'reset_rel_urls': 30260,
+    'scraper_url_reset': 30261,
+    'anticipated': 30262,
+    'set_as_sources_view': 30263,
+    'set_rel_season_url_search': 30264
 }

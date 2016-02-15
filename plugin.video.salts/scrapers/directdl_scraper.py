@@ -72,12 +72,6 @@ class DirectDownload_Scraper(scraper.Scraper):
                 log_utils.log('DD.tv API error: "%s" @ %s' % (js_result['error'], url), log_utils.LOGWARNING)
                 return hosters
 
-            query = urlparse.parse_qs(urlparse.urlparse(url).query)
-            match_quality = self.q_order
-            if 'quality' in query:
-                temp_quality = re.sub('\s', '', query['quality'][0])
-                match_quality = temp_quality.split(',')
-
             sxe_str = '.S%02dE%02d.' % (int(video.season), int(video.episode))
             try:
                 airdate_str = video.ep_airdate.strftime('.%Y.%m.%d.')
@@ -88,7 +82,7 @@ class DirectDownload_Scraper(scraper.Scraper):
                 if sxe_str not in result['release'] and airdate_str not in result['release']:
                     continue
                 
-                if result['quality'] in match_quality:
+                if result['quality'] in self.q_order:
                     for key in result['links']:
                         url = result['links'][key][0]
                         if re.search('\.rar(\.|$)', url):
@@ -135,7 +129,7 @@ class DirectDownload_Scraper(scraper.Scraper):
         settings = scraper_utils.disable_sub_check(settings)
         return settings
 
-    def search(self, video_type, title, year):
+    def search(self, video_type, title, year, season=''):
         results = []
         search_url = urlparse.urljoin(self.base_url, '/search?query=')
         search_url += title
@@ -161,7 +155,8 @@ class DirectDownload_Scraper(scraper.Scraper):
     def __translate_search(self, url):
         query = urlparse.parse_qs(urlparse.urlparse(url).query)
         if 'quality' in query:
-            q_list = re.sub('\s', '', query['quality'][0].upper()).split(',')
+            q_index = Q_DICT[query['quality'][0]]
+            q_list = [dd_qual for dd_qual in DD_QUALITIES if Q_DICT[dd_qual] <= q_index]
         else:
             q_list = self.q_order
         quality = '&'.join(['quality[]=%s' % (q) for q in q_list])

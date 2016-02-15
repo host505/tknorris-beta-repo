@@ -78,7 +78,7 @@ class Flixanity_Scraper(scraper.Scraper):
     def get_url(self, video):
         return self._default_get_url(video)
 
-    def search(self, video_type, title, year):
+    def search(self, video_type, title, year, season=''):
         results = []
         search_url = urlparse.urljoin(self.base_url, '/search?key=')
         search_key = title.lower()

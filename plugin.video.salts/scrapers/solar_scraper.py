@@ -84,7 +84,7 @@ class Solar_Scraper(scraper.Scraper):
     def get_url(self, video):
         return self._default_get_url(video)
 
-    def search(self, video_type, title, year):
+    def search(self, video_type, title, year, season=''):
         if video_type == VIDEO_TYPES.MOVIE:
             is_series = 1
         else:

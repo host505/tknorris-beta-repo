@@ -80,7 +80,7 @@ class StreamLord_Scraper(scraper.Scraper):
         title_pattern = 'class="head".*?</span>(?P<title>.*?)</a>.*?href="(?P<url>[^"]+)'
         return self._default_get_episode_url(show_url, video, episode_pattern, title_pattern)
         
-    def search(self, video_type, title, year):
+    def search(self, video_type, title, year, season=''):
         results = []
         url = urlparse.urljoin(self.base_url, '/search.html')
         data = {'search': title}

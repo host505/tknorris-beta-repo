@@ -1,3 +1,17 @@
+[B]Version 2.0.2[/B]
+- Add MovieMax scraper
+- Add VKFlix scraper
+- Add support for Related Season Urls
+- Add Anticipated Movies and TV Shows section
+- Show Background Dialog progress for MNE
+- Show "Working" dialog during url resolve
+- Add function to Reset ALL Related URLs for a single scraper
+- Only set bookmark if <= 98% of video was watched
+- Fix unicode error during sub update when using translated strings
+- Return qualities of less than or equal to locked quality from dd.tv
+- Fix major performance issue with re-loading translated strings (5x improvements in some areas)
+- Exclude specials from aired episodes collection hack (fixes watched count in collections being off sometimes)
+
 [B]Version 2.0.1[/B]
 - Fix srt download path
 - Fix flixanity search

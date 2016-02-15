@@ -30,7 +30,7 @@ from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
 from salts_lib.constants import Q_ORDER
 from salts_lib.constants import VIDEO_TYPES
-from salts_lib.utils2 import i18n
+from salts_lib.kodi import i18n
 import scraper
 
 
@@ -137,7 +137,7 @@ class WatchHD_Scraper(scraper.Scraper):
     def get_url(self, video):
         return self._default_get_url(video)
 
-    def search(self, video_type, title, year):
+    def search(self, video_type, title, year, season=''):
         search_url = urlparse.urljoin(self.base_url, '/search/%s' % (urllib.quote_plus(title)))
         html = self._http_get(search_url, cache_limit=.25)
         results = []

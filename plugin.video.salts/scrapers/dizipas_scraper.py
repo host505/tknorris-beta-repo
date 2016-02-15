@@ -104,7 +104,7 @@ class Dizipas_Scraper(scraper.Scraper):
         title_pattern = 'class="episode-name"\s+href="(?P<url>[^"]+)">(?P<title>[^<]+)'
         return self._default_get_episode_url(show_url, video, episode_pattern, title_pattern)
 
-    def search(self, video_type, title, year):
+    def search(self, video_type, title, year, season=''):
         results = []
         xml_url = urlparse.urljoin(self.base_url, '/series.xml')
         xml = self._http_get(xml_url, cache_limit=24)

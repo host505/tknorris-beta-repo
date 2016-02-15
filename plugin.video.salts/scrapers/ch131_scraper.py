@@ -73,7 +73,7 @@ class CH131_Scraper(scraper.Scraper):
         title_pattern = 'href="(?P<url>[^"]+season-\d+-episode-\d+-[^"]+)[^>]+>[^<]+Season \d+ Episode \d (?P<title>[^<]+)'
         return self._default_get_episode_url(show_url, video, episode_pattern, title_pattern)
 
-    def search(self, video_type, title, year):
+    def search(self, video_type, title, year, season=''):
         html = self._http_get(self.base_url, cache_limit=8)
         results = []
         norm_title = scraper_utils.normalize_title(title)

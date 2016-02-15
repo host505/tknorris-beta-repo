@@ -83,7 +83,7 @@ class TwoMovies_Scraper(scraper.Scraper):
     def get_url(self, video):
         return self._default_get_url(video)
 
-    def search(self, video_type, title, year):
+    def search(self, video_type, title, year, season=''):
         results = []
         html = self._http_get(self.base_url, cache_limit=1)
         match = re.search('xajax.config.requestURI\s*=\s*"([^"]+)', html)

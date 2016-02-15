@@ -120,10 +120,17 @@ def get_pin():
     del dialog
 
 class ProgressDialog(object):
-    def __init__(self, heading, line1='', line2='', line3='', active=True):
+    def __init__(self, heading, line1='', line2='', line3='', background=False, active=True):
         if active:
-            self.pd = xbmcgui.DialogProgress()
-            self.pd.create(heading, line1, line2, line3)
+            if background:
+                self.pd = xbmcgui.DialogProgressBG()
+                msg = line1 + line2 + line3
+                self.pd.create(heading, msg)
+            else:
+                self.pd = xbmcgui.DialogProgress()
+                self.pd.create(heading, line1, line2, line3)
+            self.background = background
+            self.heading = heading
             self.pd.update(0)
         else:
             self.pd = None
@@ -137,14 +144,18 @@ class ProgressDialog(object):
             del self.pd
     
     def is_canceled(self):
-        if self.pd is not None:
+        if self.pd is not None and not self.background:
             return self.pd.iscanceled()
         else:
             return False
         
     def update(self, percent, line1='', line2='', line3=''):
         if self.pd is not None:
-            self.pd.update(percent, line1, line2, line3)
+            if self.background:
+                msg = line1 + line2 + line3
+                self.pd.update(percent, self.heading, msg)
+            else:
+                self.pd.update(percent, line1, line2, line3)
 
 def perform_auto_conf(responses):
     length = len(responses)
@@ -173,12 +184,12 @@ def perform_auto_conf(responses):
     if responses[10]:
         tiers = ['Local', 'Furk.net', 'Premiumize.me', 'EasyNews', 'DD.tv', 'NoobRoom',
                  ['WatchHD', 'IFlix', 'MoviesPlanet', 'TVWTVS', '9Movies', '123Movies', 'niter.tv', 'HDMovie14', 'ororo.tv'],
-                 ['StreamLord', 'CyberReel', 'MWM', 'tunemovie', 'afdah.org', 'xmovies8', 'xmovies8.v2', 'MovieXK'],
+                 ['StreamLord', 'CyberReel', 'MWM', 'tunemovie', 'MovieMax', 'afdah.org', 'xmovies8', 'xmovies8.v2', 'MovieXK'],
                  ['torba.se', 'Rainierland', 'FardaDownload', 'zumvo.com', 'PutMV', 'MiraDeTodo', 'beinmovie', 'FireMoviesHD'],
                  ['IzlemeyeDeger', 'SezonLukDizi', 'Dizimag', 'Dizilab', 'Dizigold', 'Dizibox', 'Diziay', 'Dizipas', 'OneClickTVShows'],
                  ['DayT.se', 'DDLValley', 'ReleaseBB', 'MyVideoLinks.eu', 'OCW', 'RLSSource.net', 'TVRelease.Net', 'alluc.com'],
                  ['IceFilms', 'WatchEpisodes', 'PrimeWire', 'SantaSeries', 'Flixanity', 'wso.ch', 'WatchSeries', 'UFlix.org', 'Putlocker'],
-                 ['funtastic-vids', 'WatchFree.to', 'pftv', 'streamallthis.is', 'Movie4K', 'afdah', 'SolarMovie', 'yify-streaming'],
+                 ['VKFlix', 'funtastic-vids', 'WatchFree.to', 'pftv', 'streamallthis.is', 'Movie4K', 'afdah', 'SolarMovie', 'yify-streaming'],
                  ['MovieSub', 'MovieHut', 'CouchTunerV2', 'CouchTunerV1', 'Watch8Now', 'yshows', 'TwoMovies.us', 'iWatchOnline'],
                  ['vidics.ch', 'pubfilm', 'OnlineMoviesIs', 'OnlineMoviesPro', 'ViewMovies', 'movie25', 'viooz.ac', 'view47', 'MoviesHD'],
                  ['wmo.ch', 'ayyex', 'stream-tv.co', 'clickplay.to', 'MintMovies', 'MovieNight', 'cmz', 'ch131', 'filmikz.ch'],

@@ -125,7 +125,7 @@ class SezonLukDizi_Scraper(scraper.Scraper):
             if result and 'javascript:;' not in result:
                 return result
 
-    def search(self, video_type, title, year):
+    def search(self, video_type, title, year, season=''):
         results = []
         search_url = urlparse.urljoin(self.base_url, SEARCH_URL)
         search_url += urllib.quote_plus(title)

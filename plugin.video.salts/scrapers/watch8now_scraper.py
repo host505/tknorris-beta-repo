@@ -85,7 +85,7 @@ class Watch8Now_Scraper(scraper.Scraper):
         title_pattern = 'href="(?P<url>[^"]+[sS]\d+[eE]\d+\.html)"(?:[^>]+>){6}(?P<title>[^<]+)'
         return self._default_get_episode_url(show_url, video, episode_pattern, title_pattern)
 
-    def search(self, video_type, title, year):
+    def search(self, video_type, title, year, season=''):
         search_url = urlparse.urljoin(self.base_url, '/search?q=')
         search_url += urllib.quote_plus(title)
         html = self._http_get(search_url, cache_limit=8)

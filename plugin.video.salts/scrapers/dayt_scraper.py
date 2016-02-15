@@ -86,7 +86,7 @@ class DayT_Scraper(scraper.Scraper):
         episode_pattern = 'href="([^"]*[Ss]%02d[Ee]%02d[^"]*)' % (int(video.season), int(video.episode))
         return self._default_get_episode_url(show_url, video, episode_pattern)
 
-    def search(self, video_type, title, year):
+    def search(self, video_type, title, year, season=''):
         results = []
         url = urlparse.urljoin(self.base_url, '/forum/forum.php')
         html = self._http_get(url, cache_limit=48)

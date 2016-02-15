@@ -26,7 +26,7 @@ from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import SHORT_MONS
 from salts_lib.constants import VIDEO_TYPES
-from salts_lib.utils2 import i18n
+from salts_lib.kodi import i18n
 import scraper
 
 
@@ -113,7 +113,7 @@ class DDLValley_Scraper(scraper.Scraper):
                 
             page_url = dom_parser.parse_dom(html, 'a', {'class': 'nextpostslink'}, ret='href')
     
-    def search(self, video_type, title, year):
+    def search(self, video_type, title, year, season=''):
         results = []
         search_url = urlparse.urljoin(self.base_url, '/search/')
         search_url += urllib.quote_plus(title)

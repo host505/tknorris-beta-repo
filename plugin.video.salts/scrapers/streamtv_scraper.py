@@ -90,7 +90,7 @@ class StreamTV_Scraper(scraper.Scraper):
         if ep_url:
             return scraper_utils.pathify_url(ep_url)
 
-    def search(self, video_type, title, year):
+    def search(self, video_type, title, year, season=''):
         results = []
         html = self._http_get(self.base_url, cache_limit=8)
         norm_title = scraper_utils.normalize_title(title)

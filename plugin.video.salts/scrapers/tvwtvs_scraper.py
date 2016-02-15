@@ -139,7 +139,7 @@ class TVWTVS_Scraper(scraper.Scraper):
             pages = dom_parser.parse_dom(fragment[0], 'a', ret='href')
         return pages
     
-    def search(self, video_type, title, year):
+    def search(self, video_type, title, year, season=''):
         results = self.__search(title)
         results = [result for result in results if not re.search('-season-\d+$', result['url']) and not re.search('Season\s+\d+$', result['title'])]
         return results

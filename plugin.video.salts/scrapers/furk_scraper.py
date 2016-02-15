@@ -26,7 +26,7 @@ from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
 from salts_lib.constants import VIDEO_TYPES
-from salts_lib.utils2 import i18n
+from salts_lib.kodi import i18n
 import scraper
 import xml.etree.ElementTree as ET
 
@@ -159,7 +159,7 @@ class Furk_Scraper(scraper.Scraper):
             self.db_connection.set_related_url(video.video_type, video.title, video.year, self.get_name(), url)
         return url
 
-    def search(self, video_type, title, year):
+    def search(self, video_type, title, year, season=''):
         return []
 
     @classmethod

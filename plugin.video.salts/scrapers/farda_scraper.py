@@ -99,7 +99,7 @@ class Farda_Scraper(scraper.Scraper):
                     if match:
                         return scraper_utils.pathify_url(season_url)
             
-    def search(self, video_type, title, year):
+    def search(self, video_type, title, year, season=''):
         results = []
         norm_title = scraper_utils.normalize_title(title)
         if video_type == VIDEO_TYPES.MOVIE:

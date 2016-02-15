@@ -142,6 +142,13 @@ class Trakt_API():
         response = self.__call_trakt(url, params=params)
         return [item[TRAKT_SECTIONS[section][:-1]] for item in response]
 
+    def get_anticipated(self, section, page=None):
+        url = '/%s/anticipated' % (TRAKT_SECTIONS[section])
+        params = {'extended': 'full,images', 'limit': self.list_size}
+        if page: params['page'] = page
+        response = self.__call_trakt(url, params=params)
+        return [item[TRAKT_SECTIONS[section][:-1]] for item in response]
+
     def get_popular(self, section, page=None):
         url = '/%s/popular' % (TRAKT_SECTIONS[section])
         params = {'extended': 'full,images', 'limit': self.list_size}

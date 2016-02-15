@@ -25,7 +25,7 @@ from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
 from salts_lib.constants import VIDEO_TYPES
-from salts_lib.utils2 import i18n
+from salts_lib.kodi import i18n
 import scraper
 
 
@@ -99,7 +99,7 @@ class TVReleaseNet_Scraper(scraper.Scraper):
         settings.append('         <setting id="%s-select" type="enum" label="     %s" lvalues="30636|30637" default="0" visible="eq(-5,true)"/>' % (name, i18n('auto_select')))
         return settings
 
-    def search(self, video_type, title, year):
+    def search(self, video_type, title, year, season=''):
         search_url = urlparse.urljoin(self.base_url, '/?s=')
         search_url += urllib.quote(title)
         if video_type == VIDEO_TYPES.EPISODE:

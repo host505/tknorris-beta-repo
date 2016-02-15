@@ -90,7 +90,7 @@ class Dizimag_Scraper(scraper.Scraper):
         title_pattern = 'class="gizle".*?href="(?P<url>[^"]+)">(?P<title>[^<]+)'
         return self._default_get_episode_url(show_url, video, episode_pattern, title_pattern)
 
-    def search(self, video_type, title, year):
+    def search(self, video_type, title, year, season=''):
         html = self._http_get(self.base_url, cache_limit=8)
         results = []
         fragment = dom_parser.parse_dom(html, 'div', {'id': 'fil'})

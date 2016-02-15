@@ -83,7 +83,7 @@ class FireMovies_Scraper(scraper.Scraper):
     def get_url(self, video):
         return self._default_get_url(video)
 
-    def search(self, video_type, title, year):
+    def search(self, video_type, title, year, season=''):
         search_url = urlparse.urljoin(self.base_url, '/?s=%s' % (urllib.quote_plus(title)))
         html = self._http_get(search_url, cache_limit=1)
         results = []

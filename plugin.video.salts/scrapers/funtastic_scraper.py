@@ -104,7 +104,7 @@ class Funtastic_Scraper(scraper.Scraper):
         title_pattern = 'href="(?P<url>[^"]+/season-\d+/episode-\d+-[^"]*)"\s+title="[^-]*-\s*(?P<title>[^"]+)'
         return self._default_get_episode_url(show_url, video, episode_pattern, title_pattern)
 
-    def search(self, video_type, title, year):
+    def search(self, video_type, title, year, season=''):
         results = []
         temp_results = []
         if video_type == VIDEO_TYPES.MOVIE:

@@ -103,7 +103,7 @@ class Afdah_Scraper(scraper.Scraper):
     def get_url(self, video):
         return self._default_get_url(video)
 
-    def search(self, video_type, title, year):
+    def search(self, video_type, title, year, season=''):
         search_url = urlparse.urljoin(self.base_url, '/wp-content/themes/afdah/ajax-search.php')
         data = {'search': title, 'type': 'title'}
         html = self._http_get(search_url, data=data, cache_limit=1)

@@ -120,7 +120,7 @@ class WatchEpisodes_Scraper(scraper.Scraper):
                     if ep_url and ep_title and norm_title == scraper_utils.normalize_title(ep_title[0]):
                         return scraper_utils.pathify_url(ep_url[0])
 
-    def search(self, video_type, title, year):
+    def search(self, video_type, title, year, season=''):
         results = []
         search_url = urlparse.urljoin(self.base_url, '/search/ajax_search?q=')
         search_url += urllib.quote_plus(title)

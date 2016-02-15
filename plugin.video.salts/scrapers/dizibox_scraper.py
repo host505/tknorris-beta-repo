@@ -95,7 +95,7 @@ class Dizibox_Scraper(scraper.Scraper):
             episode_pattern = '''href=['"]([^'"]+-%s-sezon-%s-[^\;"]*bolum[^'"]*)''' % (video.season, video.episode)
             return self._default_get_episode_url(season_url, video, episode_pattern)
 
-    def search(self, video_type, title, year):
+    def search(self, video_type, title, year, season=''):
         html = self._http_get(self.base_url, cache_limit=8)
         results = []
         seen_urls = {}

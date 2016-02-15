@@ -33,9 +33,9 @@ import xbmcvfs
 import xbmcgui
 import xbmcplugin
 import kodi
-import strings
 import pyaes
 from constants import *
+from kodi import i18n
 
 THEME_LIST = ['Shine', 'Luna_Blue', 'Iconic', 'Simple', 'SALTy', 'SALTy (Blended)', 'SALTy (Blue)', 'SALTy (Frog)', 'SALTy (Green)',
               'SALTy (Macaw)', 'SALTier (Green)', 'SALTier (Orange)', 'SALTier (Red)', 'IGDB', 'Simply Elegant', 'IGDB Redux']
@@ -321,7 +321,7 @@ def filter_quality(video_type, hosters):
     if qual_filter == 5:
         return hosters
     else:
-        return [hoster for hoster in hosters if Q_ORDER[hoster['quality']] <= qual_filter]
+        return [hoster for hoster in hosters if hoster['quality'] is not None and Q_ORDER[hoster['quality']] <= qual_filter]
 
 def get_sort_key(item):
     item_sort_key = []
@@ -753,13 +753,6 @@ def reset_base_url():
                 if re.search('-base_url\d*$', setting.get('id')):
                     log_utils.log('Resetting: %s -> %s' % (setting.get('id'), setting.get('default')), xbmc.LOGDEBUG)
                     kodi.set_setting(setting.get('id'), setting.get('default'))
-
-def i18n(string_id):
-    try:
-        return xbmcaddon.Addon().getLocalizedString(strings.STRINGS[string_id]).encode('utf-8', 'ignore')
-    except Exception as e:
-        log_utils.log('Failed String Lookup: %s (%s)' % (string_id, e))
-        return string_id
 
 def get_and_decrypt(url, password):
     try:
