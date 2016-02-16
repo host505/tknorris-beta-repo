@@ -84,7 +84,7 @@ BLOG_Q_MAP[QUALITIES.HD1080] = ['1080']
 HOST_Q = {}
 HOST_Q[QUALITIES.LOW] = ['youwatch', 'allmyvideos', 'played.to', 'gorillavid']
 HOST_Q[QUALITIES.MEDIUM] = ['primeshare', 'exashare', 'bestreams', 'flashx', 'vidto', 'vodlocker', 'thevideo', 'vidzi', 'vidbull',
-                            'realvid', 'nosvideo', 'daclips', 'sharerepo', 'zalaa', 'filehoot', 'vshare']
+                            'realvid', 'nosvideo', 'daclips', 'sharerepo', 'zalaa', 'filehoot', 'vshare.io']
 HOST_Q[QUALITIES.HIGH] = ['vidspot', 'mrfile', 'divxstage', 'streamcloud', 'mooshare', 'novamov', 'mail.ru', 'vid.ag']
 HOST_Q[QUALITIES.HD720] = ['thefile', 'sharesix', 'filenuke', 'vidxden', 'movshare', 'nowvideo', 'vidbux', 'streamin.to', 'allvid.ch']
 HOST_Q[QUALITIES.HD1080] = ['hugefiles', '180upload', 'mightyupload', 'videomega', 'allmyvideos']

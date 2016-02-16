@@ -74,7 +74,7 @@ class MWM_Scraper(scraper.Scraper):
 
     def __get_iframe_links(self, html):
         sources = {}
-        for iframe_url in dom_parser.parse_dom(html, 'iframe', ret='src'):
+        for iframe_url in dom_parser.parse_dom(html, 'iframe', ret='data-lazy-src'):
             html = self._http_get(iframe_url, cache_limit=.25)
             for match in re.finditer('"file"\s*:\s*"([^"]+)"\s*,\s*"label"\s*:\s*"([^"]+)', html, re.DOTALL):
                 stream_url, height = match.groups()
@@ -114,23 +114,26 @@ class MWM_Scraper(scraper.Scraper):
         search_url = urlparse.urljoin(self.base_url, '/?s=%s' % (urllib.quote_plus(title)))
         html = self._http_get(search_url, cache_limit=1)
         results = []
-        for item in dom_parser.parse_dom(html, 'div', {'class': '[^"]*news-summary[^"]*'}):
-            match = re.search('href="([^"]+)[^>]+>([^<]+)', item)
-            if match:
-                match_url, match_title_year = match.groups()
-                match = re.search('(.*?)\s+\(?(\d{4})\)?', match_title_year)
+        fragment = dom_parser.parse_dom(html, 'ul', {'class': '[^"]*listing-videos[^"]*'})
+        if fragment:
+            for item in dom_parser.parse_dom(fragment[0], 'li'):
+                match = re.search('href="([^"]+)[^>]+>(.*?)</a>', item)
                 if match:
-                    match_title, match_year = match.groups()
-                else:
-                    match_title = match_title_year
-                    match_year = ''
-                
-                match_title = match_title.replace('Full Movie', '').replace('Watch Online', '').replace('&#8217;', "'")
-                if not year or not match_year or year == match_year:
-                    if any((item for item in results if item['title'] == match_title and item['year'] == match_year)):
-                        continue
+                    match_url, match_title_year = match.groups()
+                    match_title_year = re.sub('</?span>', '', match_title_year)
+                    match = re.search('(.*?)\s+\(?(\d{4})\)?', match_title_year)
+                    if match:
+                        match_title, match_year = match.groups()
+                    else:
+                        match_title = match_title_year
+                        match_year = ''
                     
-                    result = {'title': match_title.strip(), 'year': match_year, 'url': scraper_utils.pathify_url(match_url)}
-                    results.append(result)
+                    match_title = match_title.replace('Full Movie', '').replace('Watch Online', '').replace('&#8217;', "'")
+                    if not year or not match_year or year == match_year:
+                        if any((item for item in results if item['title'] == match_title and item['year'] == match_year)):
+                            continue
+                        
+                        result = {'title': match_title.strip(), 'year': match_year, 'url': scraper_utils.pathify_url(match_url)}
+                        results.append(result)
 
         return results

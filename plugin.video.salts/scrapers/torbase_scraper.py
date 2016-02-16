@@ -72,8 +72,6 @@ class TorbaSe_Scraper(scraper.Scraper):
                 f.write(line + '\n')
             f.close()
             self._http_get('http://streamtorrent.tv/crossdomain.xml', cache_limit=0)
-            headers = {'Referer': 'http://p.jwpcdn.com/6/12/jwplayer.flash.swf'}
-            self._http_get('http://cdn.streamtorrent.pw/crossdomain.xml', headers=headers, cache_limit=0)
             return M3U8_PATH
         except:
             return None
@@ -90,7 +88,7 @@ class TorbaSe_Scraper(scraper.Scraper):
             html = self._http_get(url, cache_limit=0)
             vid_link = dom_parser.parse_dom(html, 'a', {'class': 'video-play'}, 'href')
             if vid_link:
-                i = vid_link[0].rfind('#')
+                i = vid_link[0].rfind('/')
                 if i > -1:
                     vid_id = vid_link[0][i + 1:]
                     stream_id = self.__get_stream_id(vid_id)

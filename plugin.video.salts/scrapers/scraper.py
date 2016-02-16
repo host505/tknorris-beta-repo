@@ -362,13 +362,13 @@ class Scraper(object):
         wdlg.close()
         return {'recaptcha_challenge_field': match.group(1), 'recaptcha_response_field': solution}
 
-    def _default_get_episode_url(self, show_url, video, episode_pattern, title_pattern='', airdate_pattern='', data=None, headers=None):
+    def _default_get_episode_url(self, show_url, video, episode_pattern, title_pattern='', airdate_pattern='', data=None, headers=None, method=None):
         log_utils.log('Default Episode Url: |%s|%s|%s|%s|' % (self.base_url, show_url, str(video).decode('utf-8', 'replace'), data), log_utils.LOGDEBUG)
         if not show_url.startswith('http'):
             url = urlparse.urljoin(self.base_url, show_url)
         else:
             url = show_url
-        html = self._http_get(url, data=data, headers=headers, cache_limit=2)
+        html = self._http_get(url, data=data, headers=headers, method=method, cache_limit=2)
         if html:
             force_title = scraper_utils.force_title(video)
 
@@ -417,7 +417,6 @@ class Scraper(object):
                 show_title = title
         norm_title = scraper_utils.normalize_title(show_title)
 
-        filter_days = datetime.timedelta(days=int(kodi.get_setting('%s-filter' % (self.get_name()))))
         today = datetime.date.today()
         for match in re.finditer(post_pattern, html, re.DOTALL):
             post_data = match.groupdict()
@@ -425,7 +424,10 @@ class Scraper(object):
             if 'quality' in post_data:
                 post_title += '- [%s]' % (post_data['quality'])
 
+            try: filter_days = int(kodi.get_setting('%s-filter' % (self.get_name())))
+            except ValueError: filter_days = 0
             if filter_days and date_format and 'date' in post_data:
+                filter_days = datetime.timedelta(days=filter_days)
                 try: post_date = datetime.datetime.strptime(post_data['date'], date_format).date()
                 except TypeError: post_date = datetime.datetime(*(time.strptime(post_data['date'], date_format)[0:6])).date()
                 if today - post_date > filter_days:
@@ -502,9 +504,9 @@ class Scraper(object):
                         if match:
                             q_str = match.group(1)
                             quality = scraper_utils.blog_get_quality(video, q_str, '')
-                            # print 'result: |%s|%s|%s|%s|' % (result, q_str, quality, Q_ORDER[quality])
+                            log_utils.log('result: |%s|%s|%s|%s|' % (result, q_str, quality, Q_ORDER[quality]), log_utils.LOGDEBUG)
                             if Q_ORDER[quality] > best_qorder:
-                                # print 'Setting best as: |%s|%s|%s|%s|' % (result, q_str, quality, Q_ORDER[quality])
+                                log_utils.log('Setting best as: |%s|%s|%s|%s|' % (result, q_str, quality, Q_ORDER[quality]), log_utils.LOGDEBUG)
                                 best_result = result
                                 best_qorder = Q_ORDER[quality]
 

@@ -83,11 +83,12 @@ class View47_Scraper(scraper.Scraper):
                     for source in sources:
                         if self._get_direct_hostname(source) == 'gvideo':
                             quality = scraper_utils.gv_get_quality(source)
-                            source = source + '|User-Agent=%s' % (scraper_utils.get_ua())
+                            stream_url = source + '|User-Agent=%s' % (scraper_utils.get_ua())
                         else:
                             quality = scraper_utils.get_quality(video, source, QUALITIES.HIGH)
+                            stream_url = source
                     
-                        hoster = {'multi-part': False, 'host': sources[source], 'class': self, 'quality': quality, 'views': None, 'rating': None, 'url': source, 'direct': direct}
+                        hoster = {'multi-part': False, 'host': sources[source], 'class': self, 'quality': quality, 'views': None, 'rating': None, 'url': stream_url, 'direct': direct}
                         hosters.append(hoster)
         return hosters
 

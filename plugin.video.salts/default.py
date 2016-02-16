@@ -809,7 +809,6 @@ def get_progress(cached=True):
 def show_progress():
     try:
         folder = kodi.get_setting('source-win') == 'Directory' and kodi.get_setting('auto-play') == 'false'
-        workers = []
         workers, progress = get_progress()
         for episode in progress:
             log_utils.log('Episode: Sort Keys: Tile: |%s| Last Watched: |%s| Percent: |%s%%| Completed: |%s|' % (episode['show']['title'], episode['last_watched_at'], episode['percent_completed'], episode['completed']), xbmc.LOGDEBUG)
@@ -832,7 +831,8 @@ def show_progress():
         kodi.set_content(CONTENT_TYPES.EPISODES)
         kodi.end_of_directory(cache_to_disc=False)
     finally:
-        utils2.reap_workers(workers, None)
+        try: utils2.reap_workers(workers, None)
+        except UnboundLocalError: pass
 
 @url_dispatcher.register(MODES.MANAGE_SUBS, ['section'])
 def manage_subscriptions(section):

@@ -1,3 +1,22 @@
+[B]Version 2.0.4[/B]
+- Add TheExtopia scraper
+- Add MovieWatcher scraper
+- Fix view47 scraper
+- Fix MovieMax scraper
+- Fix MovieHDMax scraper
+- Fix Flixanity scraper
+- Fix HDMovie14 scraper
+- Fix MVL scraper
+- Fix MWM scraper
+- Fix viooz scraper
+- Fix dizibox scraper
+- Fix sezon scraper
+- Fix torba.se scraper
+- Fix TVWTS scraper
+- Remove TwoMovies scraper
+- Remove Funtastic-Vids scraper
+- Remove yify-streaming scraper
+
 [B]Version 2.0.3[/B]
 - Fix 123Movies scraper
 - Fix Pubfilms scraper

@@ -29,7 +29,7 @@ import scraper
 
 
 BASE_URL = 'http://viooz.ac'
-GK_URL = '/p8/plugins/gkpluginsphp.php'
+GK_URL = '/p9/plugins/gkpluginsphp.php'
 XHR = {'X-Requested-With': 'XMLHttpRequest'}
 
 class VioozAc_Scraper(scraper.Scraper):

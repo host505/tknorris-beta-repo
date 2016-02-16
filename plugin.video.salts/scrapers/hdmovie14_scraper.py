@@ -62,7 +62,7 @@ class Flixanity_Scraper(scraper.Scraper):
                 if iframe_url:
                     url = urlparse.urljoin(self.base_url, iframe_url[0])
                     html = self._http_get(url, cache_limit=.5)
-                    for match in re.finditer('"src"\s*:\s*"([^"]+)[^}]+"res"\s*:\s*([^,]+)', html):
+                    for match in re.finditer('"(?:url|src)"\s*:\s*"([^"]+)[^}]+"res"\s*:\s*([^,]+)', html):
                         stream_url, height = match.groups()
                         host = self._get_direct_hostname(stream_url)
                         if host == 'gvideo':

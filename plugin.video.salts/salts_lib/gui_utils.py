@@ -187,10 +187,10 @@ def perform_auto_conf(responses):
                  ['StreamLord', 'CyberReel', 'MWM', 'tunemovie', 'MovieMax', 'afdah.org', 'xmovies8', 'xmovies8.v2', 'MovieXK'],
                  ['torba.se', 'Rainierland', 'FardaDownload', 'zumvo.com', 'PutMV', 'MiraDeTodo', 'beinmovie', 'FireMoviesHD'],
                  ['IzlemeyeDeger', 'SezonLukDizi', 'Dizimag', 'Dizilab', 'Dizigold', 'Dizibox', 'Diziay', 'Dizipas', 'OneClickTVShows'],
-                 ['DayT.se', 'DDLValley', 'ReleaseBB', 'MyVideoLinks.eu', 'OCW', 'RLSSource.net', 'TVRelease.Net', 'alluc.com'],
+                 ['DayT.se', 'DDLValley', 'ReleaseBB', 'MyVideoLinks.eu', 'OCW', 'TheExtopia', 'RLSSource.net', 'TVRelease.Net'],
                  ['IceFilms', 'WatchEpisodes', 'PrimeWire', 'SantaSeries', 'Flixanity', 'wso.ch', 'WatchSeries', 'UFlix.org', 'Putlocker'],
-                 ['VKFlix', 'funtastic-vids', 'WatchFree.to', 'pftv', 'streamallthis.is', 'Movie4K', 'afdah', 'SolarMovie', 'yify-streaming'],
-                 ['MovieSub', 'MovieHut', 'CouchTunerV2', 'CouchTunerV1', 'Watch8Now', 'yshows', 'TwoMovies.us', 'iWatchOnline'],
+                 ['MovieWatcher', 'alluc.com', 'VKFlix', 'WatchFree.to', 'pftv', 'streamallthis.is', 'Movie4K', 'afdah', 'SolarMovie'],
+                 ['MovieSub', 'MovieHut', 'CouchTunerV2', 'CouchTunerV1', 'Watch8Now', 'yshows', 'iWatchOnline'],
                  ['vidics.ch', 'pubfilm', 'OnlineMoviesIs', 'OnlineMoviesPro', 'ViewMovies', 'movie25', 'viooz.ac', 'view47', 'MoviesHD'],
                  ['wmo.ch', 'ayyex', 'stream-tv.co', 'clickplay.to', 'MintMovies', 'MovieNight', 'cmz', 'ch131', 'filmikz.ch'],
                  ['MovieTube', 'LosMovies', 'FilmStreaming.in', 'moviestorm.eu', 'MerDB']]

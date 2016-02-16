@@ -102,7 +102,7 @@ class MoxieHDMax_Scraper(scraper.Scraper):
                 else:
                     quality = QUALITIES.HIGH
             sources[source] = quality
-            return sources
+        return sources
         
     def get_url(self, video):
         return self._default_get_url(video)
