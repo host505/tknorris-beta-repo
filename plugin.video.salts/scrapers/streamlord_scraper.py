@@ -60,15 +60,16 @@ class StreamLord_Scraper(scraper.Scraper):
         if source_url and source_url != FORCE_NO_MATCH:
             url = urlparse.urljoin(self.base_url, source_url)
             html = self._http_get(url, cache_limit=1)
-            match = re.search('"file"\s*:\s*"([^"]+)', html)
+            match = re.search('''["']sources['"]\s*:\s*\[(.*?)\]''', html, re.DOTALL)
             if match:
-                if video.video_type == VIDEO_TYPES.MOVIE:
-                    quality = QUALITIES.HD720
-                else:
-                    quality = QUALITIES.HIGH
-                stream_url = match.group(1) + '|User-Agent=%s&Referer=%s' % (scraper_utils.get_ua(), urllib.quote(url))
-                hoster = {'multi-part': False, 'host': self._get_direct_hostname(stream_url), 'class': self, 'url': stream_url, 'quality': quality, 'views': None, 'rating': None, 'direct': True}
-                hosters.append(hoster)
+                for match in re.finditer('''['"]*file['"]*\s*:\s*['"]*([^'"]+)''', match.group(1), re.DOTALL):
+                    if video.video_type == VIDEO_TYPES.MOVIE:
+                        quality = QUALITIES.HD720
+                    else:
+                        quality = QUALITIES.HIGH
+                    stream_url = match.group(1) + '|User-Agent=%s&Referer=%s' % (scraper_utils.get_ua(), urllib.quote(url))
+                    hoster = {'multi-part': False, 'host': self._get_direct_hostname(stream_url), 'class': self, 'url': stream_url, 'quality': quality, 'views': None, 'rating': None, 'direct': True}
+                    hosters.append(hoster)
 
         return hosters
 

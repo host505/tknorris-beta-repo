@@ -1,4 +1,4 @@
-[B]Version 2.0.4[/B]
+[B]Version 2.0.5[/B]
 - Add TheExtopia scraper
 - Add MovieWatcher scraper
 - Fix view47 scraper
