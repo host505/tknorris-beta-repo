@@ -148,6 +148,6 @@ class View47_Scraper(scraper.Scraper):
                             match_title = match_title_year
                             match_year = ''
                     
-                        result = {'title': match_title, 'year': match_year, 'url': scraper_utils.pathify_url(match_url)}
+                        result = {'title': scraper_utils.cleanse_title(match_title), 'year': match_year, 'url': scraper_utils.pathify_url(match_url)}
                         results.append(result)
         return results

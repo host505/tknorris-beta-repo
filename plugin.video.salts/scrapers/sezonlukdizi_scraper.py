@@ -122,7 +122,10 @@ class SezonLukDizi_Scraper(scraper.Scraper):
             episode_pattern = '''href=['"]([^'"]*/%s-sezon-%s-[^'"]*bolum[^'"]*)''' % (video.season, video.episode)
             title_pattern = '''href=['"](?P<url>[^'"]+)[^>]*>(?P<title>[^<]+)'''
             airdate_pattern = '''href=['"]([^"']+)[^>]*>[^<]*</a>\s*</td>\s*<td class="right aligned">{p_day}\.{p_month}\.{year}'''
-            result = self._default_get_episode_url(season_url, video, episode_pattern, title_pattern, airdate_pattern, headers=XHR, method='POST')
+            headers = XHR
+            headers['Content-Length'] = 0
+            headers['Referer'] = url
+            result = self._default_get_episode_url(season_url, video, episode_pattern, title_pattern, airdate_pattern, headers=headers, method='POST')
             if result and 'javascript:;' not in result:
                 return result
 
@@ -147,7 +150,7 @@ class SezonLukDizi_Scraper(scraper.Scraper):
                         match_year = ''
                     
                     if not year or not match_year or year == match_year:
-                        result = {'url': scraper_utils.pathify_url(match_url), 'title': match_title, 'year': match_year}
+                        result = {'url': scraper_utils.pathify_url(match_url), 'title': scraper_utils.cleanse_title(match_title), 'year': match_year}
                         results.append(result)
 
         return results

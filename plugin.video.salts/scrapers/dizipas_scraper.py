@@ -16,11 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 import re
-import urllib
 import urlparse
-import json
-
-from salts_lib import dom_parser
 from salts_lib import kodi
 from salts_lib import log_utils
 from salts_lib import scraper_utils
@@ -117,7 +113,7 @@ class Dizipas_Scraper(scraper.Scraper):
                     if name is not None and norm_title in scraper_utils.normalize_title(name.text):
                         url = element.find('url')
                         if url is not None and (not year or not match_year or year == match_year):
-                            result = {'url': scraper_utils.pathify_url(url.text), 'title': name.text, 'year': ''}
+                            result = {'url': scraper_utils.pathify_url(url.text), 'title': scraper_utils.cleanse_title(name.text), 'year': ''}
                             results.append(result)
             except (ParseError, ExpatError) as e:
                 log_utils.log('Dizilab Search Parse Error: %s' % (e), log_utils.LOGWARNING)

@@ -46,7 +46,7 @@ class WatchHD_Scraper(scraper.Scraper):
 
     @classmethod
     def provides(cls):
-        return frozenset([VIDEO_TYPES.MOVIE])
+        return frozenset([VIDEO_TYPES.MOVIE, VIDEO_TYPES.SEASON, VIDEO_TYPES.EPISODE])
 
     @classmethod
     def get_name(cls):
@@ -60,13 +60,13 @@ class WatchHD_Scraper(scraper.Scraper):
         except:
             headers = {}
 
-        html = self._http_get(link, headers=headers, cache_limit=.5)
+        html = self._http_get(link, headers=headers, cache_limit=0)
         fragment = dom_parser.parse_dom(html, 'div', {'class': 'player'})
         if fragment:
             iframe_url = dom_parser.parse_dom(fragment[0], 'iframe', ret='src')
             if iframe_url:
                 headers = {'Referer': link}
-                html = self._http_get(iframe_url[0], headers=headers, cache_limit=.5)
+                html = self._http_get(iframe_url[0], headers=headers, cache_limit=0)
                 match = re.search("window\.atob\('([^']+)", html)
                 if match:
                     func_count = len(re.findall('window\.atob', html))
@@ -82,7 +82,7 @@ class WatchHD_Scraper(scraper.Scraper):
                     if not self.auto_pick:
                         result = xbmcgui.Dialog().select(i18n('choose_stream'), [e[1] for e in streams])
                         if result > -1:
-                            return streams[result][0]
+                            return streams[result][0] + '|User-Agent=%s' % (scraper_utils.get_ua())
                     else:
                         best_stream = ''
                         best_q = 0
@@ -93,9 +93,9 @@ class WatchHD_Scraper(scraper.Scraper):
                                 best_stream = stream_url
                         
                         if best_stream:
-                            return best_stream
+                            return best_stream + '|User-Agent=%s' % (scraper_utils.get_ua())
                 elif streams:
-                    return streams[0][0]
+                    return streams[0][0] + '|User-Agent=%s' % (scraper_utils.get_ua())
 
     def format_source_label(self, item):
         label = '[%s] %s' % (item['quality'], item['host'])
@@ -110,33 +110,53 @@ class WatchHD_Scraper(scraper.Scraper):
         hosters = []
         if source_url and source_url != FORCE_NO_MATCH:
             url = urlparse.urljoin(self.base_url, source_url)
-            html = self._http_get(url, cache_limit=.5)
+            html = self._http_get(url, cache_limit=8)
             match = re.search('<b>Views:.*?([\d,]+)', html)
             if match:
                 views = int(match.group(1).replace(',', ''))
             else:
                 views = None
-            button = dom_parser.parse_dom(html, 'a', {'class': '[^"]*btn_watch_detail[^"]*'}, ret='href')
-            if button:
-                html = self._http_get(button[0], cache_limit=.5)
-                for match in re.finditer('<span class="svname">\s*(.*?)\s*:?\s*</span>(.*?)(?=<span class="svname">|</div>)', html):
-                    title, fragment = match.groups()
-                    for match in re.finditer('<a[^>]+id="ep_\d+"[^>]+href="([^"]+)[^>]+>\s*([^<]+)', fragment):
-                        stream_url, name = match.groups()
-                        match = re.search('(\d+)', name)
+            
+            html = self.__get_watch_now(html)
+            for match in re.finditer('<span class="svname">\s*(.*?)\s*:?\s*</span>(.*?)(?=<span class="svname">|</div>)', html):
+                title, fragment = match.groups()
+                for match in re.finditer('<a[^>]+id="ep_\d+"[^>]+href="([^"]+)[^>]+>\s*([^<]+)', fragment):
+                    stream_url, name = match.groups()
+                    match = re.search('(\d+)', name)
+                    if video.video_type == VIDEO_TYPES.MOVIE:
                         if match:
                             quality = scraper_utils.height_get_quality(match.group(1))
                         else:
                             quality = QUALITIES.HIGH
-                        stream_url += '|User-Agent=%s&Referer=%s&Cookie=%s' % (scraper_utils.get_ua(), url, self._get_stream_cookies())
-                        hoster = {'multi-part': False, 'host': self._get_direct_hostname(stream_url), 'class': self, 'quality': quality, 'views': views, 'rating': None, 'url': stream_url, 'direct': True}
-                        hoster['title'] = title
-                        hosters.append(hoster)
+                    else:
+                        if not match or int(name) != int(video.episode):
+                            continue
+                        
+                        quality = QUALITIES.HIGH
+                    stream_url += '|User-Agent=%s&Referer=%s&Cookie=%s' % (scraper_utils.get_ua(), url, self._get_stream_cookies())
+                    hoster = {'multi-part': False, 'host': self._get_direct_hostname(stream_url), 'class': self, 'quality': quality, 'views': views, 'rating': None, 'url': stream_url, 'direct': True}
+                    hoster['title'] = title
+                    hosters.append(hoster)
         return hosters
 
+    def __get_watch_now(self, html):
+        button = dom_parser.parse_dom(html, 'a', {'class': '[^"]*btn_watch_detail[^"]*'}, ret='href')
+        if button:
+            return self._http_get(button[0], cache_limit=.5)
+        else:
+            return ''
+    
     def get_url(self, video):
         return self._default_get_url(video)
 
+    def _get_episode_url(self, season_url, video):
+        url = urlparse.urljoin(self.base_url, season_url)
+        html = self._http_get(url, cache_limit=2)
+        html = self.__get_watch_now(html)
+        match = re.search('<a[^>]+id="ep_\d+"[^>]*>\s*%s\s*<' % (video.episode), html)
+        if match:
+            return season_url
+    
     def search(self, video_type, title, year, season=''):
         search_url = urlparse.urljoin(self.base_url, '/search/%s' % (urllib.quote_plus(title)))
         html = self._http_get(search_url, cache_limit=.25)
@@ -145,17 +165,23 @@ class WatchHD_Scraper(scraper.Scraper):
             match = re.search('href="([^"]+)[^>]+>([^<]+)', item)
             if match:
                 url, match_title_year = match.groups()
-                if re.search('Season\s+\d+', match_title_year, re.IGNORECASE): continue
-                match = re.search('(.*?)(?:\s+\(?(\d{4})\)?)', match_title_year)
-                if match:
-                    match_title, match_year = match.groups()
-                else:
-                    match_title = match_title_year
+                is_season = re.search('Season\s+(\d+)', match_title_year, re.IGNORECASE)
+                if not is_season and video_type == VIDEO_TYPES.MOVIE or is_season and VIDEO_TYPES.SEASON:
                     match_year = ''
-                
-                if not year or not match_year or year == match_year:
-                    result = {'title': match_title, 'year': match_year, 'url': scraper_utils.pathify_url(url)}
-                    results.append(result)
+                    if video_type == VIDEO_TYPES.MOVIE:
+                        match = re.search('(.*?)(?:\s+\(?(\d{4})\)?)', match_title_year)
+                        if match:
+                            match_title, match_year = match.groups()
+                        else:
+                            match_title = match_title_year
+                    else:
+                        match_title = match_title_year
+                        if season and int(is_season.group(1)) != int(season):
+                            continue
+                    
+                    if not year or not match_year or year == match_year:
+                        result = {'title': scraper_utils.cleanse_title(match_title), 'year': match_year, 'url': scraper_utils.pathify_url(url)}
+                        results.append(result)
 
         return results
 

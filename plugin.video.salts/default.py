@@ -44,7 +44,8 @@ TOKEN = kodi.get_setting('trakt_oauth_token')
 use_https = kodi.get_setting('use_https') == 'true'
 trakt_timeout = int(kodi.get_setting('trakt_timeout'))
 list_size = int(kodi.get_setting('list_size'))
-trakt_api = Trakt_API(TOKEN, use_https, list_size, trakt_timeout)
+OFFLINE = kodi.get_setting('trakt_offline') == 'true'
+trakt_api = Trakt_API(TOKEN, use_https, list_size, trakt_timeout, OFFLINE)
 
 url_dispatcher = URL_Dispatcher()
 
@@ -116,6 +117,8 @@ def browse_menu(section):
     if utils2.menu_on('search'): kodi.create_item({'mode': MODES.SEARCH, 'section': section}, i18n('search'), thumb=utils2.art(section_params['search_img']), fanart=utils2.art('fanart.jpg'))
     if utils2.menu_on('search'): add_search_item({'mode': MODES.RECENT_SEARCH, 'section': section}, i18n('recent_searches'), utils2.art(section_params['search_img']), MODES.CLEAR_RECENT)
     if utils2.menu_on('search'): add_search_item({'mode': MODES.SAVED_SEARCHES, 'section': section}, i18n('saved_searches'), utils2.art(section_params['search_img']), MODES.CLEAR_SAVED)
+    if OFFLINE:
+        kodi.notify(msg='[COLOR blue]***[/COLOR][COLOR red] %s [/COLOR][COLOR blue]***[/COLOR]' % (i18n('trakt_api_offline')))
     kodi.end_of_directory()
 
 @url_dispatcher.register(MODES.SHOW_BOOKMARKS, ['section'])

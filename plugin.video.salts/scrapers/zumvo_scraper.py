@@ -121,7 +121,7 @@ class Zumvo_Scraper(scraper.Scraper):
             for match in re.finditer(pattern, result_fragment, re.DOTALL):
                 url, title, match_year = match.groups('')
                 if not year or not match_year or year == match_year:
-                    result = {'url': scraper_utils.pathify_url(url), 'title': title, 'year': match_year}
+                    result = {'url': scraper_utils.pathify_url(url), 'title': scraper_utils.cleanse_title(title), 'year': match_year}
                     results.append(result)
         return results
 

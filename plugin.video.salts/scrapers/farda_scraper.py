@@ -112,7 +112,7 @@ class Farda_Scraper(scraper.Scraper):
                         for movie in self.__get_files(url, cache_limit=24):
                             match_title, match_year, _height, _extra = scraper_utils.parse_movie_link(movie['link'])
                             if not movie['directory'] and norm_title in scraper_utils.normalize_title(match_title) and (not year or not match_year or year == match_year):
-                                result = {'url': scraper_utils.pathify_url(url), 'title': match_title, 'year': year}
+                                result = {'url': scraper_utils.pathify_url(url), 'title': scraper_utils.cleanse_title(match_title), 'year': year}
                                 results.append(result)
         else:
             base_url = urlparse.urljoin(self.base_url, '/Serial/')
@@ -120,7 +120,7 @@ class Farda_Scraper(scraper.Scraper):
             for link in self.__parse_directory(html):
                 if link['directory'] and norm_title in scraper_utils.normalize_title(link['title']):
                     url = urlparse.urljoin(base_url, link['link'])
-                    result = {'url': scraper_utils.pathify_url(url), 'title': link['title'], 'year': ''}
+                    result = {'url': scraper_utils.pathify_url(url), 'title': scraper_utils.cleanse_title(link['title']), 'year': ''}
                     results.append(result)
             
         return results

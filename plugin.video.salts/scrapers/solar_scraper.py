@@ -98,7 +98,7 @@ class Solar_Scraper(scraper.Scraper):
             for match in re.finditer('class="name">\s*<a\s+title="([^"]+)\s+\((\d{4})\)"\s+href="([^"]+)', html):
                 title, year, url = match.groups('')
                 if re.search('/season-\d+/episode-\d+', url): continue  # exclude episodes
-                result = {'url': scraper_utils.pathify_url(url), 'title': title, 'year': year}
+                result = {'url': scraper_utils.pathify_url(url), 'title': scraper_utils.cleanse_title(title), 'year': year}
                 results.append(result)
         return results
 

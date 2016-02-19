@@ -163,7 +163,7 @@ class TorbaSe_Scraper(scraper.Scraper):
                     match_year = ''
                     
                 if not year or not match_year or year == match_year:
-                    result = {'title': match_title, 'year': match_year, 'url': match_url}
+                    result = {'title': scraper_utils.cleanse_title(match_title), 'year': match_year, 'url': match_url}
                     results.append(result)
 
         return results

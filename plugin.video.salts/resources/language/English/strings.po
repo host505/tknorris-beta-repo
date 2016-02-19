@@ -1074,6 +1074,10 @@ msgctxt "#30264"
 msgid "Set Related Season Url (Search)"
 msgstr ""
 
+msgctxt "#30265"
+msgid "Trakt API Offline Mode Enabled"
+msgstr ""
+
 msgctxt "#30500"
 msgid "Addon Theme"
 msgstr ""
@@ -1779,4 +1783,8 @@ msgstr ""
 
 msgctxt "#30673"
 msgid "Scraper Last Update"
+msgstr ""
+
+msgctxt "#30674"
+msgid "Trakt API Offline Mode"
 msgstr ""

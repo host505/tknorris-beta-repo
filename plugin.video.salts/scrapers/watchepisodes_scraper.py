@@ -131,7 +131,7 @@ class WatchEpisodes_Scraper(scraper.Scraper):
             for series in js_result['series']:
                 if 'seo' in series and 'label' in series:
                     if not year or not match_year or year == match_year:
-                        result = {'url': scraper_utils.pathify_url('/' + series['seo']), 'title': series['label'], 'year': match_year}
+                        result = {'url': scraper_utils.pathify_url('/' + series['seo']), 'title': scraper_utils.cleanse_title(series['label']), 'year': match_year}
                         results.append(result)
 
         return results

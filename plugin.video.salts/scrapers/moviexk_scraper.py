@@ -147,7 +147,7 @@ class MoxieXK_Scraper(scraper.Scraper):
                                 match_year = year_text[0].strip()
     
                     if not year or not match_year or year == match_year:
-                        result = {'title': match_title, 'url': scraper_utils.pathify_url(match_url), 'year': match_year}
+                        result = {'title': scraper_utils.cleanse_title(match_title), 'url': scraper_utils.pathify_url(match_url), 'year': match_year}
                         results.append(result)
 
         return results

@@ -114,6 +114,6 @@ class BeinMovie_Scraper(scraper.Scraper):
             if href and title:
                 match = re.search('movie-detail/(.*?)/', href[0])
                 if match:
-                    result = {'url': DETAIL_URL % (match.group(1)), 'title': title[0], 'year': ''}
+                    result = {'url': DETAIL_URL % (match.group(1)), 'title': scraper_utils.cleanse_title(title[0]), 'year': ''}
                     results.append(result)
         return results

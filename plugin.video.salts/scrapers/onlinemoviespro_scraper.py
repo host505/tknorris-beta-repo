@@ -106,7 +106,7 @@ class OnlineMoviesPro_Scraper(scraper.Scraper):
                         match_year = ''
 
                     if (not year or not match_year or year == match_year) and norm_title in scraper_utils.normalize_title(match_title):
-                        result = {'title': match_title, 'year': match_year, 'url': scraper_utils.pathify_url(url)}
+                        result = {'title': scraper_utils.cleanse_title(match_title), 'year': match_year, 'url': scraper_utils.pathify_url(url)}
                         results.append(result)
 
         return results

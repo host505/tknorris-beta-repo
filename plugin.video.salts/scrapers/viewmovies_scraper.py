@@ -86,6 +86,8 @@ class ViewMovies_Scraper(scraper.Scraper):
         if fragment:
             for match in re.finditer('href="([^"]+)[^>]*>(.*?)</a>', fragment[0]):
                 url, match_title_year = match.groups('')
+                if match_title_year.lower() == 'download': continue
+                
                 match_title_year = re.sub('<span>|</span>', '', match_title_year)
                 if re.search('S\d{2}E\d{2}', match_title_year): continue  # skip episodes
                 match = re.search('(.*?)\s+\(?(\d{4})\)?', match_title_year)
@@ -94,11 +96,9 @@ class ViewMovies_Scraper(scraper.Scraper):
                 else:
                     match_title = match_title_year
                     match_year = ''
-                match_title = match_title.replace('&#8211;', '-')
-                match_title = match_title.replace('&#8217;', "'")
                 
                 if (not year or not match_year or year == match_year):
-                    result = {'url': scraper_utils.pathify_url(url), 'title': match_title, 'year': match_year}
+                    result = {'url': scraper_utils.pathify_url(url), 'title': scraper_utils.cleanse_title(match_title), 'year': match_year}
                     results.append(result)
         
         return results

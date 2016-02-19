@@ -49,11 +49,12 @@ RESULTS_LIMIT = 10
 HIDDEN_SIZE = 100
 
 class Trakt_API():
-    def __init__(self, token=None, use_https=False, list_size=RESULTS_LIMIT, timeout=5):
+    def __init__(self, token=None, use_https=False, list_size=RESULTS_LIMIT, timeout=5, offline=False):
         self.token = token
         self.protocol = 'https://' if use_https else 'http://'
         self.timeout = None if timeout == 0 else timeout
         self.list_size = list_size
+        self.offline = offline
 
     def get_token(self, pin=None):
         url = '/oauth/token'
@@ -410,7 +411,13 @@ class Trakt_API():
     def __call_trakt(self, url, method=None, data=None, params=None, auth=True, cache_limit=.25, cached=True):
         res_headers = {}
         if not cached: cache_limit = 0
-        db_cache_limit = cache_limit if cache_limit > 8 else 8
+        if self.offline:
+            db_cache_limit = int(time.time()) / 60 / 60
+        else:
+            if cache_limit > 8:
+                db_cache_limit = cache_limit
+            else:
+                db_cache_limit = 8
         json_data = json.dumps(data) if data else None
         headers = {'Content-Type': 'application/json', 'trakt-api-key': V2_API_KEY, 'trakt-api-version': 2}
         url = '%s%s%s' % (self.protocol, BASE_URL, url)
@@ -418,16 +425,16 @@ class Trakt_API():
 
         db_connection = DB_Connection()
         created, cached_headers, cached_result = db_connection.get_cached_url(url, json_data, db_cache_limit)
-        if cached_result and (time.time() - created) < (60 * 60 * cache_limit):
+        if cached_result and (self.offline or (time.time() - created) < (60 * 60 * cache_limit)):
             result = cached_result
             res_headers = dict(cached_headers)
-            log_utils.log('Got cached result for: %s' % (url), log_utils.LOGDEBUG)
+            log_utils.log('***Using cached result for: %s' % (url), log_utils.LOGDEBUG)
         else:
             auth_retry = False
             while True:
                 try:
                     if auth: headers.update({'Authorization': 'Bearer %s' % (self.token)})
-                    log_utils.log('Trakt Call: %s, header: %s, data: %s cache_limit: %s cached: %s' % (url, headers, data, cache_limit, cached), log_utils.LOGDEBUG)
+                    log_utils.log('***Trakt Call: %s, header: %s, data: %s cache_limit: %s cached: %s' % (url, headers, data, cache_limit, cached), log_utils.LOGDEBUG)
                     request = urllib2.Request(url, data=json_data, headers=headers)
                     if method is not None: request.get_method = lambda: method.upper()
                     response = urllib2.urlopen(request, timeout=self.timeout)

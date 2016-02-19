@@ -98,7 +98,7 @@ class Vidics_Scraper(scraper.Scraper):
                 match_year = ''
             
             if url and match_title and (not year or not match_year or year == match_year):
-                result = {'url': scraper_utils.pathify_url(url[0]), 'title': match_title[0], 'year': match_year}
+                result = {'url': scraper_utils.pathify_url(url[0]), 'title': scraper_utils.cleanse_title(match_title[0]), 'year': match_year}
                 results.append(result)
         return results
 

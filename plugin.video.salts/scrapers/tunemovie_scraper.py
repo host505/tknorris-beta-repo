@@ -15,11 +15,9 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import base64
 import re
 import urllib
 import urlparse
-
 from salts_lib import dom_parser
 from salts_lib import kodi
 from salts_lib import scraper_utils
@@ -143,6 +141,6 @@ class TuneMovie_Scraper(scraper.Scraper):
                             continue
                     
                     if not year or not match_year or year == match_year:
-                        result = {'url': scraper_utils.pathify_url(url), 'title': match_title, 'year': match_year}
+                        result = {'url': scraper_utils.pathify_url(url), 'title': scraper_utils.cleanse_title(match_title), 'year': match_year}
                         results.append(result)
         return results

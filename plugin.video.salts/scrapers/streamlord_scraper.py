@@ -99,7 +99,7 @@ class StreamLord_Scraper(scraper.Scraper):
                 match_title = self.__make_title(link, query_type)
                 match_year = ''
                 if norm_title in scraper_utils.normalize_title(match_title) and (not year or not match_year or int(year) == int(match_year)):
-                    result = {'url': scraper_utils.pathify_url(link), 'title': match_title, 'year': match_year}
+                    result = {'url': scraper_utils.pathify_url(link), 'title': scraper_utils.cleanse_title(match_title), 'year': match_year}
                     results.append(result)
 
         return results

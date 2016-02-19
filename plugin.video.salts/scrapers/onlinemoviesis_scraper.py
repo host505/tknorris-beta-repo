@@ -95,7 +95,7 @@ class OnlineMoviesIs_Scraper(scraper.Scraper):
         
         test_url = urlparse.urljoin(self.base_url, test_url)
         if self._http_get(test_url, cache_limit=1):
-            result = {'title': title, 'year': year, 'url': scraper_utils.pathify_url(test_url)}
+            result = {'title': scraper_utils.cleanse_title(title), 'year': year, 'url': scraper_utils.pathify_url(test_url)}
             results.append(result)
 
         return results

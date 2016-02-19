@@ -91,7 +91,7 @@ class WatchFree_Scraper(scraper.Scraper):
         for match in re.finditer('class="item".*?href="([^"]+)"\s*title="Watch (.*?)(?:\s+\((\d{4})\))?"', html):
             url, res_title, res_year = match.groups('')
             if url_marker in url and (not year or not res_year or year == res_year):
-                result = {'title': res_title, 'url': scraper_utils.pathify_url(url), 'year': res_year}
+                result = {'title': scraper_utils.cleanse_title(res_title), 'url': scraper_utils.pathify_url(url), 'year': res_year}
                 results.append(result)
         return results
 

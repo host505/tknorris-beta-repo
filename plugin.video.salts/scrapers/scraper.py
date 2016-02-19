@@ -437,8 +437,6 @@ class Scraper(object):
             match_title = ''
             match_date = ''
             match_sxe = ''
-            post_title = post_title.replace('&#8211;', '-')
-            post_title = post_title.replace('&#8217;', "'")
             full_title = post_title
             if video_type == VIDEO_TYPES.MOVIE:
                 match = re.search('(.*?)\s*[\[(]?(\d{4})[)\]]?\s*(.*)', post_title)
@@ -462,7 +460,7 @@ class Scraper(object):
                           log_utils.LOGDEBUG)
             if (match_norm_title in norm_title or norm_title in match_norm_title) and (not year or not match_year or year == match_year) \
                     and (not search_date or (search_date == match_date)) and (not search_sxe or (search_sxe == match_sxe)):
-                result = {'url': scraper_utils.pathify_url(post_data['url']), 'title': full_title, 'year': match_year}
+                result = {'url': scraper_utils.pathify_url(post_data['url']), 'title': scraper_utils.cleanse_title(full_title), 'year': match_year}
                 results.append(result)
         return results
     

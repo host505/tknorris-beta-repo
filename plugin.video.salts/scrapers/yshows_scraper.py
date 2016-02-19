@@ -87,6 +87,6 @@ class YShows_Scraper(scraper.Scraper):
         results = []
         for match in re.finditer('class="list-group-item"\s+href="([^"]+)">([^<]+)', html):
             url, match_title = match.groups()
-            result = {'url': scraper_utils.pathify_url(url), 'title': match_title, 'year': ''}
+            result = {'url': scraper_utils.pathify_url(url), 'title': scraper_utils.cleanse_title(match_title), 'year': ''}
             results.append(result)
         return results

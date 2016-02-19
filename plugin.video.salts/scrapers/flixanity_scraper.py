@@ -107,7 +107,7 @@ class Flixanity_Scraper(scraper.Scraper):
     def search(self, video_type, title, year, season=''):
         self.__get_token()
         results = []
-        search_url = urlparse.urljoin(self.base_url, '/api/v1/fsearch')
+        search_url = urlparse.urljoin(self.base_url, '/api/v1/fsearch/cautare')
         timestamp = int(time.time() * 1000)
         query = {'q': title, 'limit': '100', 'timestamp': timestamp, 'verifiedCheck': self.__token}
         html = self._http_get(search_url, data=query, headers=XHR, cache_limit=1)
@@ -120,7 +120,7 @@ class Flixanity_Scraper(scraper.Scraper):
             if item['meta'].upper().startswith(media_type):
                 match_year = str(item['year']) if 'year' in item and item['year'] else ''
                 if not year or not match_year or year == match_year:
-                    result = {'title': item['title'], 'url': scraper_utils.pathify_url(item['permalink']), 'year': match_year}
+                    result = {'title': scraper_utils.cleanse_title(item['title']), 'url': scraper_utils.pathify_url(item['permalink']), 'year': match_year}
                     results.append(result)
 
         return results

@@ -140,7 +140,7 @@ class IWatchOnline_Scraper(scraper.Scraper):
             url, title, match_year = match.groups('')
             if not year or not match_year or year == match_year:
                 url = url.replace('/episode/', '/tv-shows/')  # fix wrong url returned from search results
-                result = {'url': scraper_utils.pathify_url(url), 'title': title, 'year': match_year}
+                result = {'url': scraper_utils.pathify_url(url), 'title': scraper_utils.cleanse_title(title), 'year': match_year}
                 results.append(result)
         return results
 

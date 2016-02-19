@@ -156,7 +156,7 @@ class TVWTVS_Scraper(scraper.Scraper):
                 match_title = re.sub('\s+\(\d+\)$', '', match_title)
                 match_title = match_title.replace('&amp;', '&')
                 if norm_title in scraper_utils.normalize_title(match_title):
-                    result = {'url': scraper_utils.pathify_url(url), 'title': match_title, 'year': ''}
+                    result = {'url': scraper_utils.pathify_url(url), 'title': scraper_utils.cleanse_title(match_title), 'year': ''}
                     results.append(result)
 
         return results

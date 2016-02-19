@@ -35,7 +35,8 @@ TOKEN = kodi.get_setting('trakt_oauth_token')
 use_https = kodi.get_setting('use_https') == 'true'
 trakt_timeout = int(kodi.get_setting('trakt_timeout'))
 list_size = int(kodi.get_setting('list_size'))
-trakt_api = Trakt_API(TOKEN, use_https, list_size, trakt_timeout)
+offline = kodi.get_setting('trakt_offline') == 'true'
+trakt_api = Trakt_API(TOKEN, use_https, list_size, trakt_timeout, offline)
 
 # delay db_connection until needed to force db errors during recovery try: block
 def _get_db_connection():

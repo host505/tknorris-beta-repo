@@ -110,8 +110,8 @@ class Afdah_Scraper(scraper.Scraper):
         pattern = '<li>.*?href="([^"]+)">([^<]+)\s+\((\d{4})\)'
         results = []
         for match in re.finditer(pattern, html, re.DOTALL | re.I):
-            url, title, match_year = match.groups('')
+            url, match_title, match_year = match.groups('')
             if not year or not match_year or year == match_year:
-                result = {'url': scraper_utils.pathify_url(url), 'title': title, 'year': year}
+                result = {'url': scraper_utils.pathify_url(url), 'title': scraper_utils.cleanse_title(match_title), 'year': year}
                 results.append(result)
         return results

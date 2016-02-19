@@ -133,7 +133,7 @@ class MWM_Scraper(scraper.Scraper):
                         if any((item for item in results if item['title'] == match_title and item['year'] == match_year)):
                             continue
                         
-                        result = {'title': match_title.strip(), 'year': match_year, 'url': scraper_utils.pathify_url(match_url)}
+                        result = {'title': scraper_utils.cleanse_title(match_title), 'year': match_year, 'url': scraper_utils.pathify_url(match_url)}
                         results.append(result)
 
         return results

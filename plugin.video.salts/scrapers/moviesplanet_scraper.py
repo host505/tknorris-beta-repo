@@ -116,7 +116,7 @@ class MoviesPlanet_Scraper(scraper.Scraper):
         js_data = scraper_utils.parse_json(html, search_url)
         for item in js_data:
             if item['meta'].upper().startswith(media_type):
-                result = {'title': item['title'], 'url': scraper_utils.pathify_url(item['permalink']), 'year': ''}
+                result = {'title': scraper_utils.cleanse_title(item['title']), 'url': scraper_utils.pathify_url(item['permalink']), 'year': ''}
                 results.append(result)
 
         return results

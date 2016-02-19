@@ -122,7 +122,7 @@ class Rainierland_Scraper(scraper.Scraper):
                 match_year = ''
             
             if norm_title in scraper_utils.normalize_title(match_title) and (not year or not match_year or year == match_year):
-                result = {'title': match_title, 'year': match_year, 'url': scraper_utils.pathify_url(url)}
+                result = {'title': scraper_utils.cleanse_title(match_title), 'year': match_year, 'url': scraper_utils.pathify_url(url)}
                 results.append(result)
 
         return results

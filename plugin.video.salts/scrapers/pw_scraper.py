@@ -123,11 +123,8 @@ class PW_Scraper(scraper.Scraper):
             html = self._http_get(search_url, cache_limit=.25)
             pattern = r'class="index_item.+?href="(.+?)" title="Watch (.+?)"?\(?([0-9]{4})?\)?"?>'
             for match in re.finditer(pattern, html):
-                result = {}
                 url, title, year = match.groups('')
-                result['url'] = scraper_utils.pathify_url(url)
-                result['title'] = title
-                result['year'] = year
+                result = {'url': scraper_utils.pathify_url(url), 'title': scraper_utils.cleanse_title(title), 'year': year}
                 results.append(result)
         else:
             log_utils.log('Unable to locate PW search key', log_utils.LOGWARNING)

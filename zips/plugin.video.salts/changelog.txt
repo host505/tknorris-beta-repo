@@ -1,3 +1,11 @@
+[B]Version 2.0.6[/B]
+- Add "trakt API offline" mode
+- Add Season SRU to WatchHD
+- Fix Flixanity scraper
+- Fix sezon scraper
+- Fix moviewatch title pattern
+- Centrally cleanse/unescape matching titles
+
 [B]Version 2.0.5[/B]
 - Add TheExtopia scraper
 - Add MovieWatcher scraper

@@ -126,7 +126,7 @@ class DDLValley_Scraper(scraper.Scraper):
                     if match:
                         show_url, match_title = match.groups()
                         if show_url not in seen_urls:
-                            result = {'url': scraper_utils.pathify_url(show_url), 'title': match_title, 'year': ''}
+                            result = {'url': scraper_utils.pathify_url(show_url), 'title': scraper_utils.cleanse_title(match_title), 'year': ''}
                             seen_urls[show_url] = result
                             results.append(result)
         elif video_type == VIDEO_TYPES.MOVIE:
@@ -146,7 +146,7 @@ class DDLValley_Scraper(scraper.Scraper):
                     
                     match_norm_title = scraper_utils.normalize_title(match_title)
                     if (match_norm_title in norm_title or norm_title in match_norm_title) and (not year or not match_year or year == match_year):
-                        result = {'url': scraper_utils.pathify_url(post_url), 'title': full_title, 'year': match_year}
+                        result = {'url': scraper_utils.pathify_url(post_url), 'title': scraper_utils.cleanse_title(full_title), 'year': match_year}
                         results.append(result)
         
         return results

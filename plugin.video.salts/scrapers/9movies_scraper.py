@@ -129,7 +129,7 @@ class NineMovies_Scraper(scraper.Scraper):
                             if season and not re.search('\s+%s$' % (season), match_title): continue
                             
                         if not year or not match_year or year == match_year:
-                            result = {'title': match_title, 'year': '', 'url': scraper_utils.pathify_url(match_url)}
+                            result = {'title': scraper_utils.cleanse_title(match_title), 'year': '', 'url': scraper_utils.pathify_url(match_url)}
                             results.append(result)
 
         return results

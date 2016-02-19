@@ -108,7 +108,7 @@ class Niter_Scraper(scraper.Scraper):
         pattern = 'data-name="([^"]+).*?href="([^"]+)'
         for match in re.finditer(pattern, html, re.DOTALL):
             match_title, url = match.groups()
-            result = {'title': match_title, 'year': '', 'url': scraper_utils.pathify_url(url)}
+            result = {'title': scraper_utils.cleanse_title(match_title), 'year': '', 'url': scraper_utils.pathify_url(url)}
             results.append(result)
         return results
 

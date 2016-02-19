@@ -96,7 +96,7 @@ class Putlocker_Scraper(scraper.Scraper):
                         match_title = title_year
                         match_year = ''
                     
-                    result = {'url': scraper_utils.pathify_url(url), 'title': match_title, 'year': match_year}
+                    result = {'url': scraper_utils.pathify_url(url), 'title': scraper_utils.cleanse_title(match_title), 'year': match_year}
                     results.append(result)
         results = dict((result['url'], result) for result in results).values()
         return results

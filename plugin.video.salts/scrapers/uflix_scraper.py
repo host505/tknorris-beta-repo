@@ -123,7 +123,7 @@ class UFlix_Scraper(scraper.Scraper):
                     if match_title.endswith(' Online'): match_title = match_title.replace(' Online', '')
                     
                     if not year or not match_year or year == match_year:
-                        result = {'title': match_title, 'url': scraper_utils.pathify_url(url), 'year': match_year}
+                        result = {'title': scraper_utils.cleanse_title(match_title), 'url': scraper_utils.pathify_url(url), 'year': match_year}
                         results.append(result)
         return results
 
