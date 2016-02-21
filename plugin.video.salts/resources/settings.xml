@@ -8,7 +8,6 @@
         <setting id="calendar_time" type="enum" label="30503" default="0" lvalues="30511|30512|30513"/>
         <setting id="sort_collection" type="enum" label="30504" lvalues="30514|30515|30516|30517" default="0"/>
         <setting id="sort_progress" type="enum" label="30505" lvalues="30518|30519|30520|30521|30522|30523" default="0"/>
-        <setting id="sort_watchlist" type="enum" label="30642" lvalues="30643|30644|30516|30517" default="0"/>
         <setting id="include_watchlist_next" type="bool" label="30646" default="false"/>
         <setting id="use_cached_exclusion" type="bool" label="30659" default="true"/>
         <setting id="show_unaired_next" type="bool" label="30506" default="false"/>
@@ -61,8 +60,8 @@
 
     <category label="Trakt.tv">
         <setting id="trakt_offline" label="30674" type="bool" default="false"/>
-        <setting id="get_pin" label="30547" type="action" action="RunPlugin(plugin://plugin.video.salts/?mode=get_pin)" option="close" enable="eq(-1,false)" visible="eq(1,))"/>
-        <setting id="trakt_user" label="30501" type="action" action="RunPlugin(plugin://plugin.video.salts/?mode=get_pin)" option="close" enable="eq(-2,false)"  visible="!eq(0,)"/>
+        <setting id="get_pin" label="30547" type="action" action="RunPlugin(plugin://plugin.video.salts/?mode=auth_trakt)" option="close" enable="eq(-1,false)" visible="eq(1,))"/>
+        <setting id="trakt_user" label="30501" type="action" action="RunPlugin(plugin://plugin.video.salts/?mode=auth_trakt)" option="close" enable="eq(-2,false)"  visible="!eq(0,)"/>
         <setting id="use_https" type="bool" label="30548" enable="eq(-3,false)" default="false"/>
         <setting id="trakt_timeout" type="slider" label="30549" default="30" range="0,120" option="int" enable="eq(-4,false)"/>
         <setting id="list_size" type="slider" label="30550" default="30" range="1,100" option="int" enable="eq(-5,false)"/>
@@ -171,7 +170,7 @@
          <setting id="afdah.org-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="afdah.org_last_results" type="number" default="0" visible="false"/>
          <setting id="alluc.com-enable" type="bool" label="alluc.com Enabled" default="true" visible="true"/>
-         <setting id="alluc.com-base_url" type="text" label="    Base Url" default="http://www.alluc.com" visible="eq(-1,true)"/>
+         <setting id="alluc.com-base_url" type="text" label="    Base Url" default="http://www.alluc.ee" visible="eq(-1,true)"/>
          <setting id="alluc.com-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="alluc.com_last_results" type="number" default="0" visible="false"/>
          <setting id="alluc.com-username" type="text" label="     Username" default="" visible="eq(-4,true)"/>
@@ -378,6 +377,10 @@
          <setting id="MovieXK-base_url" type="text" label="    Base Url" default="http://www.moviexk.net" visible="eq(-1,true)"/>
          <setting id="MovieXK-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="MovieXK_last_results" type="number" default="0" visible="false"/>
+         <setting id="MTVS-enable" type="bool" label="MTVS Enabled" default="true" visible="true"/>
+         <setting id="MTVS-base_url" type="text" label="    Base Url" default="http://www.mtvs.me" visible="eq(-1,true)"/>
+         <setting id="MTVS-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
+         <setting id="MTVS_last_results" type="number" default="0" visible="false"/>
          <setting id="MWM-enable" type="bool" label="MWM Enabled" default="true" visible="true"/>
          <setting id="MWM-base_url" type="text" label="    Base Url" default="http://movieswatchmovie.com" visible="eq(-1,true)"/>
          <setting id="MWM-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
@@ -431,11 +434,13 @@
          <setting id="pftv-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="pftv_last_results" type="number" default="0" visible="false"/>
          <setting id="Premiumize.me-enable" type="bool" label="Premiumize.me Enabled" default="true" visible="true"/>
-         <setting id="Premiumize.me-base_url" type="text" label="    Base Url" default="https://www.premiumize.me" visible="eq(-1,true)"/>
+         <setting id="Premiumize.me-base_url" type="text" label="    Base Url" default="premiumize.me" visible="eq(-1,true)"/>
          <setting id="Premiumize.me-sub_check" type="bool" label="    Include in Page Existence checks?" default="false" visible="eq(-2,true)"/>
          <setting id="Premiumize.me_last_results" type="number" default="0" visible="false"/>
-         <setting id="Premiumize.me-username" type="text" label="     Username" default="" visible="eq(-4,true)"/>
-         <setting id="Premiumize.me-password" type="text" label="     Password" option="hidden" default="" visible="eq(-5,true)"/>
+         <setting id="Premiumize.me-use_https" type="bool" label="     Use HTTPS" default="false" visible="eq(-4,true)"/>
+         <setting id="Premiumize.me-username" type="text" label="     Username" default="" visible="eq(-5,true)"/>
+         <setting id="Premiumize.me-password" type="text" label="     Password" option="hidden" default="" visible="eq(-6,true)"/>
+         <setting id="Premiumize.me-base_url2" type="text" label="     Movies Base Url" default="https://yts.ag" visible="eq(-7,true)"/>
     </category>
     
     <category label="Scrapers 4">

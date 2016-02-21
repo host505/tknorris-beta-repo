@@ -56,19 +56,24 @@ class Trakt_API():
         self.list_size = list_size
         self.offline = offline
 
-    def get_token(self, pin=None):
+    def get_code(self):
+        url = '/oauth/device/code'
+        data = {'client_id': V2_API_KEY}
+        return self.__call_trakt(url, data=data, auth=False, cached=False)
+    
+    def get_device_token(self, code):
+        url = '/oauth/device/token'
+        data = {'client_id': V2_API_KEY, 'client_secret': CLIENT_SECRET, 'code': code}
+        return self.__call_trakt(url, data=data, auth=False, cached=False)
+    
+    def refresh_token(self, refresh_token):
         url = '/oauth/token'
         data = {'client_id': V2_API_KEY, 'client_secret': CLIENT_SECRET, 'redirect_uri': REDIRECT_URI}
-        if pin:
-            data['code'] = pin
-            data['grant_type'] = 'authorization_code'
+        if refresh_token:
+            data['refresh_token'] = refresh_token
+            data['grant_type'] = 'refresh_token'
         else:
-            refresh_token = kodi.get_setting('trakt_refresh_token')
-            if refresh_token:
-                data['refresh_token'] = refresh_token
-                data['grant_type'] = 'refresh_token'
-            else:
-                raise TraktError('Can not refresh trakt token. Trakt reauthorizion required.')
+            raise TraktError('Can not refresh trakt token. Trakt reauthorizion required.')
             
         return self.__call_trakt(url, data=data, auth=False, cached=False)
     
@@ -87,7 +92,7 @@ class Trakt_API():
     def show_watchlist(self, section):
         url = '/users/me/watchlist/%s' % (TRAKT_SECTIONS[section])
         params = {'extended': 'full,images'}
-        cache_limit = self.__get_cache_limit(TRAKT_SECTIONS[section], 'watchlisted_at', cached=True)
+        cache_limit = self.__get_cache_limit('lists', 'updated_at', cached=True)
         response = self.__call_trakt(url, params=params, cache_limit=cache_limit)
         return [item[TRAKT_SECTIONS[section][:-1]] for item in response]
 
@@ -264,9 +269,13 @@ class Trakt_API():
             result.append(element)
         return result
 
-    def get_watched(self, section, full=False, cached=True):
+    def get_watched(self, section, full=False, noseasons=False, cached=True):
         url = '/sync/watched/%s' % (TRAKT_SECTIONS[section])
-        params = {'extended': 'full,images'} if full else None
+        params = {'extended': 'full,images'} if full else {}
+        if noseasons and params:
+            params['extended'] += ',noseasons'
+        elif noseasons:
+            params['extended'] = 'noseasons'
         media = 'movies' if section == SECTIONS.MOVIES else 'episodes'
         cache_limit = self.__get_cache_limit(media, 'watched_at', cached)
         return self.__call_trakt(url, params=params, cache_limit=cache_limit, cached=cached)
@@ -434,7 +443,7 @@ class Trakt_API():
             while True:
                 try:
                     if auth: headers.update({'Authorization': 'Bearer %s' % (self.token)})
-                    log_utils.log('***Trakt Call: %s, header: %s, data: %s cache_limit: %s cached: %s' % (url, headers, data, cache_limit, cached), log_utils.LOGDEBUG)
+                    log_utils.log('***Trakt Call: %s, header: %s, data: %s cache_limit: %s cached: %s' % (url, headers, json_data, cache_limit, cached), log_utils.LOGDEBUG)
                     request = urllib2.Request(url, data=json_data, headers=headers)
                     if method is not None: request.get_method = lambda: method.upper()
                     response = urllib2.urlopen(request, timeout=self.timeout)
@@ -467,14 +476,14 @@ class Trakt_API():
                             if e.info().getheader('X-Private-User') == 'true':
                                 raise TraktAuthError('Object is No Longer Available (%s)' % (e.code))
                             # auth failure retry or a token request
-                            elif auth_retry or url.endswith('/token'):
+                            elif auth_retry or url.endswith('/oauth/token'):
                                 self.token = None
                                 kodi.set_setting('trakt_oauth_token', '')
                                 kodi.set_setting('trakt_refresh_token', '')
                                 raise TraktAuthError('Trakt Call Authentication Failed (%s)' % (e.code))
                             # first try token fail, try to refresh token
                             else:
-                                result = self.get_token()
+                                result = self.refresh_token(kodi.get_setting('trakt_refresh_token'))
                                 self.token = result['access_token']
                                 kodi.set_setting('trakt_oauth_token', result['access_token'])
                                 kodi.set_setting('trakt_refresh_token', result['refresh_token'])

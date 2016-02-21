@@ -56,10 +56,16 @@ def source_action(mode, li_path):
         log_utils.log('Failed to read item %s: %s' % (li_path, str(e)), xbmc.LOGERROR)
 
 def set_related_url(mode):
-    title = xbmc.getInfoLabel('ListItem.Title')
+    video_type = __get_media_type()
+    if video_type == VIDEO_TYPES.SEASON:
+        title = xbmc.getInfoLabel('ListItem.TVShowtitle')
+    else:
+        title = xbmc.getInfoLabel('ListItem.Title')
     title = re.sub(' \(\d{4}\)$', '', title)
     year = xbmc.getInfoLabel('ListItem.Year')
-    queries = {'mode': mode, 'video_type': __get_media_type(), 'title': title, 'year': year, 'trakt_id': 0}  # trakt_id set to 0, not used and don't have it
+    queries = {'mode': mode, 'video_type': video_type, 'title': title, 'year': year, 'trakt_id': 0}  # trakt_id set to 0, not used and don't have it
+    if video_type == VIDEO_TYPES.SEASON:
+        queries['season'] = xbmc.getInfoLabel('ListItem.Season')
     runstring = 'RunPlugin(plugin://plugin.video.salts%s)' % (kodi.get_plugin_url(queries))
     xbmc.executebuiltin(runstring)
     
@@ -147,8 +153,8 @@ def __get_tools(path):
         ((VIDEO_TYPES.TVSHOW), 'TV Show Search', search, [SECTIONS.TV]),
         ((VIDEO_TYPES.MOVIE, VIDEO_TYPES.TVSHOW, VIDEO_TYPES.SEASON, VIDEO_TYPES.EPISODE), 'Scraper Sort Order', scraper_sort_order, []),
         ((VIDEO_TYPES.MOVIE, VIDEO_TYPES.TVSHOW, VIDEO_TYPES.SEASON, VIDEO_TYPES.EPISODE), 'Addon Settings', addon_settings, []),
-        ((VIDEO_TYPES.MOVIE, VIDEO_TYPES.TVSHOW), 'Set Related Url (Search)', set_related_url, [MODES.SET_URL_SEARCH]),
-        ((VIDEO_TYPES.MOVIE, VIDEO_TYPES.TVSHOW), 'Set Related Url (Manual)', set_related_url, [MODES.SET_URL_MANUAL])
+        ((VIDEO_TYPES.MOVIE, VIDEO_TYPES.TVSHOW, VIDEO_TYPES.SEASON), 'Set Related Url (Search)', set_related_url, [MODES.SET_URL_SEARCH]),
+        ((VIDEO_TYPES.MOVIE, VIDEO_TYPES.TVSHOW, VIDEO_TYPES.SEASON), 'Set Related Url (Manual)', set_related_url, [MODES.SET_URL_MANUAL])
     ]
     
     media_type = __get_media_type()

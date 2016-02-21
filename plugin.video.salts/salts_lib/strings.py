@@ -178,10 +178,8 @@ STRINGS = {
     'downloading': 30158,
     'download_complete': 30159,
     'download_error': 30160,
-    # 30161 - 30169 used in TraktPinAuthDialog
-    'pin_auth_failed': 30170,
-    'remind_in_24hrs': 30171,
-    'use_addon_settings': 30172,
+    'trakt_acct_auth': 30161,
+    # 30162 - 30172 deleted
     'trakt_auth_complete': 30173,
     'enabled': 30174,
     'base_url': 30175,
@@ -273,5 +271,10 @@ STRINGS = {
     'anticipated': 30262,
     'set_as_sources_view': 30263,
     'set_rel_season_url_search': 30264,
-    'trakt_api_offline': 30265
+    'trakt_api_offline': 30265,
+    'verification_url': 30266,
+    'prompt_code': 30267,
+    'code_expires': 30268,
+    'user_reject_auth': 30269,
+    'use_https': 30548
 }

@@ -31,6 +31,7 @@ import log_utils
 addon = xbmcaddon.Addon()
 get_setting = addon.getSetting
 show_settings = addon.openSettings
+sleep = xbmc.sleep
 
 def get_path():
     return addon.getAddonInfo('path').decode('utf-8')

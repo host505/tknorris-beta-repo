@@ -662,50 +662,6 @@ msgctxt "#30161"
 msgid "Trakt Account Authorization"
 msgstr ""
 
-msgctxt "#30162"
-msgid "To authorize SALTS to access your trakt.tv account:"
-msgstr ""
-
-msgctxt "#30163"
-msgid "1) Visit [COLOR skyblue]http://trakt.tv/pin/347[/COLOR] or scan the QR Code below."
-msgstr ""
-
-msgctxt "#30164"
-msgid "2) If prompted, authorize SALTS to access your account."
-msgstr ""
-
-msgctxt "#30165"
-msgid "3) Enter the PIN provided in the box below."
-msgstr ""
-
-msgctxt "#30166"
-msgid "SALTS can be used without a trakt.tv account, but to take full advantage of SALTS you should authorize it to access your trakt.tv account."
-msgstr ""
-
-msgctxt "#30167"
-msgid "Authorize"
-msgstr ""
-
-msgctxt "#30168"
-msgid "Remind Me Later"
-msgstr ""
-
-msgctxt "#30169"
-msgid "No Thanks"
-msgstr ""
-
-msgctxt "#30170"
-msgid "Trakt.tv PIN Authorization Failed"
-msgstr ""
-
-msgctxt "#30171"
-msgid "You will be reminded in 24 hours"
-msgstr ""
-
-msgctxt "#30172"
-msgid "Use Addon Settings later if you change your mind"
-msgstr ""
-
 msgctxt "#30173"
 msgid "Trakt Authorization Complete"
 msgstr ""
@@ -1076,6 +1032,22 @@ msgstr ""
 
 msgctxt "#30265"
 msgid "Trakt API Offline Mode Enabled"
+msgstr ""
+
+msgctxt "#30266"
+msgid "On ANY device, visit: %s"
+msgstr ""
+
+msgctxt "#30267"
+msgid "When prompted, enter code: %s"
+msgstr ""
+
+msgctxt "#30268"
+msgid "Code expires in: %s seconds"
+msgstr ""
+
+msgctxt "#30269"
+msgid "Authorization was Rejected"
 msgstr ""
 
 msgctxt "#30500"

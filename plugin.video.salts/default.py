@@ -62,13 +62,7 @@ def main_menu():
     kodi.create_item({'mode': MODES.BROWSE, 'section': SECTIONS.MOVIES}, i18n('movies'), thumb=utils2.art('movies.png'), fanart=utils2.art('fanart.jpg'))
     kodi.create_item({'mode': MODES.BROWSE, 'section': SECTIONS.TV}, i18n('tv_shows'), thumb=utils2.art('television.png'), fanart=utils2.art('fanart.jpg'))
     if utils2.menu_on('settings'): kodi.create_item({'mode': MODES.SETTINGS}, i18n('settings'), thumb=utils2.art('settings.png'), fanart=utils2.art('fanart.jpg'))
-
-    if not TOKEN:
-        last_reminder = int(kodi.get_setting('last_reminder'))
-        now = int(time.time())
-        if last_reminder >= 0 and last_reminder < now - (24 * 60 * 60):
-            gui_utils.get_pin()
-    else:
+    if TOKEN:
         profile = trakt_api.get_user_profile()
         kodi.set_setting('trakt_user', '%s (%s)' % (profile['username'], profile['name']))
             
@@ -81,7 +75,7 @@ def settings_menu():
     kodi.create_item({'mode': MODES.ADDON_SETTINGS}, i18n('addon_settings'), thumb=utils2.art('settings.png'), fanart=utils2.art('fanart.jpg'))
     kodi.create_item({'mode': MODES.AUTO_CONF}, i18n('auto_config'), thumb=utils2.art('settings.png'), fanart=utils2.art('fanart.jpg'))
     kodi.create_item({'mode': MODES.RESET_BASE_URL}, i18n('reset_base_url'), thumb=utils2.art('settings.png'), fanart=utils2.art('fanart.jpg'))
-    kodi.create_item({'mode': MODES.GET_PIN}, i18n('auth_salts'), thumb=utils2.art('settings.png'), fanart=utils2.art('fanart.jpg'))
+    kodi.create_item({'mode': MODES.AUTH_TRAKT}, i18n('auth_salts'), thumb=utils2.art('settings.png'), fanart=utils2.art('fanart.jpg'))
     kodi.create_item({'mode': MODES.SHOW_VIEWS}, i18n('set_default_views'), thumb=utils2.art('settings.png'), fanart=utils2.art('fanart.jpg'))
     kodi.create_item({'mode': MODES.BROWSE_URLS}, i18n('remove_cached_urls'), thumb=utils2.art('settings.png'), fanart=utils2.art('fanart.jpg'))
     kodi.end_of_directory()
@@ -205,9 +199,9 @@ def resolver_settings():
 def addon_settings():
     kodi.show_settings()
 
-@url_dispatcher.register(MODES.GET_PIN)
-def get_pin():
-    gui_utils.get_pin()
+@url_dispatcher.register(MODES.AUTH_TRAKT)
+def auth_trakt():
+    gui_utils.auth_trakt()
 
 @url_dispatcher.register(MODES.INSTALL_THEMES)
 def install_themepak():
@@ -674,14 +668,6 @@ def add_other_list(section, username=None):
 def show_list(section, slug, username=None):
     if slug == utils.WATCHLIST_SLUG:
         items = trakt_api.show_watchlist(section)
-        sort_key = int(kodi.get_setting('sort_watchlist'))
-        if sort_key == 0:
-            items.reverse()
-        elif sort_key == 2:
-            items.sort(key=lambda x: re.sub('^(The |A |An )', '', x['title'], re.I))
-        elif sort_key == 3:
-            items.sort(key=lambda x: x['year'])
-            
     else:
         try:
             items = trakt_api.show_list(slug, section, username, auth=bool(TOKEN))
@@ -727,11 +713,11 @@ def get_progress(cached=True):
     with gui_utils.ProgressDialog(i18n('discover_mne'), background=True) as pd:
         timeout = max_timeout = int(kodi.get_setting('trakt_timeout'))
         pd.update(0, line1=i18n('retr_history'))
-        progress_list = trakt_api.get_watched(SECTIONS.TV, full=True, cached=cached)
+        progress_list = trakt_api.get_watched(SECTIONS.TV, full=True, noseasons=True, cached=cached)
         if kodi.get_setting('include_watchlist_next') == 'true':
             pd.update(5, line1=i18n('retr_watchlist'))
             watchlist = trakt_api.show_watchlist(SECTIONS.TV)
-            watchlist = [{'show': item, 'last_watched_at': None} for item in watchlist]
+            watchlist = [{'show': item} for item in watchlist]
             progress_list += watchlist
     
         pd.update(10, line1=i18n('retr_hidden'))
@@ -763,14 +749,12 @@ def get_progress(cached=True):
             workers.append(worker)
             # create a shows dictionary to be used during progress building
             shows[trakt_id] = show['show']
-            shows[trakt_id]['last_watched_at'] = show['last_watched_at']
     
         episodes = []
         while worker_count > 0:
             try:
                 log_utils.log('Calling get with timeout: %s' % (timeout), xbmc.LOGDEBUG)
                 progress = q.get(True, timeout)
-                # log_utils.log('Got Progress: %s' % (progress), xbmc.LOGDEBUG)
                 worker_count -= 1
     
                 show = shows[str(progress['trakt'])]
@@ -778,7 +762,7 @@ def get_progress(cached=True):
                 pd.update(percent, line1=i18n('rec_progress') % (show['title']))
                 if 'next_episode' in progress and progress['next_episode']:
                     episode = {'show': show, 'episode': progress['next_episode']}
-                    episode['last_watched_at'] = show['last_watched_at']
+                    episode['last_watched_at'] = progress['last_watched_at']
                     episode['percent_completed'] = (progress['completed'] * 100) / progress['aired'] if progress['aired'] > 0 else 0
                     episode['completed'] = progress['completed']
                     episodes.append(episode)
@@ -2392,7 +2376,7 @@ def main(argv=None):
         db_connection = DB_Connection()
         mode = queries.get('mode', None)
         url_dispatcher.dispatch(mode, queries)
-    except (TransientTraktError, TraktError) as e:
+    except (TransientTraktError, TraktError, TraktAuthError) as e:
         log_utils.log(str(e), xbmc.LOGERROR)
         kodi.notify(msg=str(e), duration=5000)
     except DatabaseRecoveryError as e:

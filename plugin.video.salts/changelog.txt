@@ -1,3 +1,11 @@
+[B]Version 2.0.7[/B]
+- Rewrite/Improve Premiumize scraper
+- Add mtvs scraper
+- Update alluc base url
+- Improve MNE performance
+- Remove "Sort Watchlist" setting
+- Migrate SALTS to new system trakt authorization
+
 [B]Version 2.0.6[/B]
 - Add "trakt API offline" mode
 - Add Season SRU to WatchHD

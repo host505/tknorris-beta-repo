@@ -19,9 +19,7 @@ import base64
 import re
 import urllib
 import urlparse
-
 import xbmcgui
-
 from salts_lib import dom_parser
 from salts_lib import kodi
 from salts_lib import log_utils
