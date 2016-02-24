@@ -135,6 +135,7 @@ class DB_Connection():
         res_header = []
         created = 0
         now = time.time()
+        age = now - created
         limit = 60 * 60 * cache_limit
         sql = 'SELECT timestamp, response, res_header FROM url_cache WHERE url = ? and data=?'
         rows = self.__execute(sql, (url, data))
@@ -145,7 +146,7 @@ class DB_Connection():
             age = now - created
             if age < limit:
                 html = rows[0][1]
-        log_utils.log('DB Cache: Url: %s, Data: %s, Cache Hit: %s, created: %s, age: %s, limit: %s' % (url, data, bool(html), created, now - created, limit), log_utils.LOGDEBUG)
+        log_utils.log('DB Cache: Url: %s, Data: %s, Cache Hit: %s, created: %s, age: %.2fs (%.2fh), limit: %ss' % (url, data, bool(html), created, age, age / (60 * 60), limit), log_utils.LOGDEBUG)
         return created, res_header, html
 
     def get_all_urls(self, include_response=False, order_matters=False):

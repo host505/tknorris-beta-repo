@@ -67,6 +67,7 @@ def auth_trakt():
     try:
         kodi.set_setting('trakt_oauth_token', result['access_token'])
         kodi.set_setting('trakt_refresh_token', result['refresh_token'])
+        trakt_api = Trakt_API(result['access_token'], use_https=use_https, timeout=trakt_timeout)
         profile = trakt_api.get_user_profile(cached=False)
         kodi.set_setting('trakt_user', '%s (%s)' % (profile['username'], profile['name']))
         kodi.notify(msg=i18n('trakt_auth_complete'), duration=3000)
@@ -139,7 +140,7 @@ def perform_auto_conf(responses):
         tiers = ['Local', 'Furk.net', 'Premiumize.me', 'EasyNews', 'DD.tv', 'NoobRoom',
                  ['WatchHD', 'IFlix', 'MoviesPlanet', 'TVWTVS', '9Movies', '123Movies', 'niter.tv', 'HDMovie14', 'ororo.tv'],
                  ['StreamLord', 'CyberReel', 'MWM', 'tunemovie', 'MovieMax', 'afdah.org', 'xmovies8', 'xmovies8.v2', 'MovieXK'],
-                 ['torba.se', 'Rainierland', 'FardaDownload', 'zumvo.com', 'PutMV', 'MiraDeTodo', 'beinmovie', 'FireMoviesHD'],
+                 ['Rainierland', 'FardaDownload', 'zumvo.com', 'PutMV', 'vivo.to', 'MiraDeTodo', 'beinmovie', 'FireMoviesHD'],
                  ['IzlemeyeDeger', 'SezonLukDizi', 'Dizimag', 'Dizilab', 'Dizigold', 'Dizibox', 'Diziay', 'Dizipas', 'OneClickTVShows'],
                  ['DayT.se', 'DDLValley', 'ReleaseBB', 'MyVideoLinks.eu', 'OCW', 'TheExtopia', 'RLSSource.net', 'TVRelease.Net'],
                  ['IceFilms', 'WatchEpisodes', 'PrimeWire', 'SantaSeries', 'Flixanity', 'wso.ch', 'WatchSeries', 'UFlix.org', 'Putlocker'],

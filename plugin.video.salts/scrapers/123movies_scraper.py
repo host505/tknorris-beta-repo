@@ -146,6 +146,7 @@ class One23Movies_Scraper(scraper.Scraper):
     
     def search(self, video_type, title, year, season=''):
         search_url = urlparse.urljoin(self.base_url, '/movie/search/')
+        title = re.sub('[^A-Za-z0-9 ]', '', title)
         search_url += urllib.quote_plus(title)
         html = self._http_get(search_url, cache_limit=1)
         results = []

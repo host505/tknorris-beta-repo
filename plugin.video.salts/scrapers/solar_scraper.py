@@ -28,7 +28,7 @@ import scraper
 
 
 QUALITY_MAP = {'HD': QUALITIES.HIGH, 'DVD': QUALITIES.HIGH, 'TV': QUALITIES.HIGH, 'LQ DVD': QUALITIES.MEDIUM, 'CAM': QUALITIES.LOW}
-BASE_URL = 'https://www.solarmovie.is'
+BASE_URL = 'https://www.solarmovie.ph'
 
 class Solar_Scraper(scraper.Scraper):
     base_url = BASE_URL

@@ -1,3 +1,11 @@
+[B]Version 2.0.8[/B]
+- Add Episodes to Premiumize scraper
+- Add vivo.to scraper
+- Improve 123Movies scraper
+- Remove Torba scraper (UA blocking)
+- Remove TheExtopia scraper (can't handle load)
+- Update several base urls
+
 [B]Version 2.0.7[/B]
 - Rewrite/Improve Premiumize scraper
 - Add mtvs scraper
