@@ -58,6 +58,8 @@ class WatchHD_Scraper(scraper.Scraper):
         except:
             headers = {}
 
+        if not link.startswith('http'):
+            link = urlparse.urljoin(self.base_url, link)
         html = self._http_get(link, headers=headers, cache_limit=0)
         fragment = dom_parser.parse_dom(html, 'div', {'class': 'player'})
         if fragment:
@@ -65,7 +67,11 @@ class WatchHD_Scraper(scraper.Scraper):
             if iframe_url:
                 headers = {'Referer': link}
                 html = self._http_get(iframe_url[0], headers=headers, cache_limit=0)
-                match = re.search("window\.atob\('([^']+)", html)
+                match = re.search("\.replace\(\s*'([^']+)'\s*,\s*'([^']*)'\s*\)", html, re.I)
+                if match:
+                    html = html.replace(match.group(1), match.group(2))
+
+                match = re.search("window\.atob[\([]+'([^']+)", html)
                 if match:
                     func_count = len(re.findall('window\.atob', html))
                     html = match.group(1)
@@ -131,6 +137,9 @@ class WatchHD_Scraper(scraper.Scraper):
                             continue
                         
                         quality = QUALITIES.HIGH
+                        
+                    if stream_url.startswith(self.base_url):
+                        stream_url = stream_url[len(self.base_url):]
                     stream_url += '|User-Agent=%s&Referer=%s&Cookie=%s' % (scraper_utils.get_ua(), url, self._get_stream_cookies())
                     hoster = {'multi-part': False, 'host': self._get_direct_hostname(stream_url), 'class': self, 'quality': quality, 'views': views, 'rating': None, 'url': stream_url, 'direct': True}
                     hoster['title'] = title

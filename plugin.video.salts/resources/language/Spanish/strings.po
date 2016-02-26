@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SALTS\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"PO-Revision-Date: 2016-02-03 11:53+0000\n"
+"PO-Revision-Date: 2016-02-22 11:57+0000\n"
 "Last-Translator: Achaw <achaw.ar@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/tv-addons/salts/language/es/)\n"
 "MIME-Version: 1.0\n"
@@ -664,50 +664,6 @@ msgctxt "#30161"
 msgid "Trakt Account Authorization"
 msgstr "Autorización de Cuenta Trakt"
 
-msgctxt "#30162"
-msgid "To authorize SALTS to access your trakt.tv account:"
-msgstr "Para autorizar a que SALTS acceda a tu cuenta Trakt.tv:"
-
-msgctxt "#30163"
-msgid ""
-msgstr "1) Visitar [COLOR skyblue]http://trakt.tv/pin/347[/COLOR] o escanea el código QR de abajo."
-
-msgctxt "#30164"
-msgid "2) If prompted, authorize SALTS to access your account."
-msgstr "2) Ante la solicitud, autoriza a SALTS para acceder a tu cuenta."
-
-msgctxt "#30165"
-msgid "3) Enter the PIN provided in the box below."
-msgstr "3) Ingresa el PIN dado en el cuadro de texto de abajo."
-
-msgctxt "#30166"
-msgid ""
-msgstr "SALTS puede usarse sin una cuenta de trakt.tv, pero para disfrutar el máximo potencial del addon deberías autorizar el acceso a tu cuenta de trakt.tv."
-
-msgctxt "#30167"
-msgid "Authorize"
-msgstr "Autorizar"
-
-msgctxt "#30168"
-msgid "Remind Me Later"
-msgstr "Recordarme Luego"
-
-msgctxt "#30169"
-msgid "No Thanks"
-msgstr "No, gracias"
-
-msgctxt "#30170"
-msgid "Trakt.tv PIN Authorization Failed"
-msgstr "Autorización de PIN Trakt.tv fallida"
-
-msgctxt "#30171"
-msgid "You will be reminded in 24 hours"
-msgstr "Serás recordado en 24 horas"
-
-msgctxt "#30172"
-msgid "Use Addon Settings later if you change your mind"
-msgstr "Usa la configuración del addon si cambias de parecer"
-
 msgctxt "#30173"
 msgid "Trakt Authorization Complete"
 msgstr "Autorización de Trakt completa"
@@ -1027,6 +983,74 @@ msgstr "([COLOR red]***Todas las DB se eliminaran.***[/COLOR])"
 msgctxt "#30252"
 msgid "DB Reset Failed: %s"
 msgstr "Reseteo de DB fallido: %s"
+
+msgctxt "#30253"
+msgid "No Streamable Url Found"
+msgstr "No se encontró URL con stream válido "
+
+msgctxt "#30254"
+msgid "Discovering Next Episodes"
+msgstr "Descubriendo próximos episodios"
+
+msgctxt "#30255"
+msgid "Retrieving Watched History"
+msgstr "Obteniendo historial de vistos"
+
+msgctxt "#30256"
+msgid "Retrieving Watchlist"
+msgstr "Obteniendo Lista de Seguimiento"
+
+msgctxt "#30257"
+msgid "Retrieving Hidden Progress List"
+msgstr "Obteniendo lista de progreso oculta"
+
+msgctxt "#30258"
+msgid "Requesting Progress for: %s"
+msgstr "Solicitando progreso de: %s"
+
+msgctxt "#30259"
+msgid "Received Progress for: %s"
+msgstr "Progreso recibido de: %s"
+
+msgctxt "#30260"
+msgid "Reset Related Urls"
+msgstr "Resetear Url relativas"
+
+msgctxt "#30261"
+msgid "Related Urls Cleared: %s"
+msgstr "Urls relativas eliminadas: %s"
+
+msgctxt "#30262"
+msgid "Anticipated %s"
+msgstr "%s Anticipadas"
+
+msgctxt "#30263"
+msgid "Set as Sources View"
+msgstr "Definir como vista de fuente"
+
+msgctxt "#30264"
+msgid "Set Related Season Url (Search)"
+msgstr "Definir Url relativa de Temporada (Buscar)"
+
+msgctxt "#30265"
+msgid "Trakt API Offline Mode Enabled"
+msgstr "Modo Offline del API de Trakt activado"
+
+msgctxt "#30266"
+msgid "On ANY device, visit: %s"
+msgstr "En CUALQUIER dispositivo, visita: %s"
+
+msgctxt "#30267"
+msgid "When prompted, enter code: %s"
+msgstr "Cundo se te pregunte, ingresa el código: %s"
+
+msgctxt "#30268"
+msgid "Code expires in: %s seconds"
+msgstr "El código expira en: %s segundos"
+
+msgctxt "#30269"
+msgid "Authorization was Rejected"
+msgstr "La autorización fue rechazada"
 
 msgctxt "#30500"
 msgid "Addon Theme"
@@ -1647,4 +1671,20 @@ msgstr "Click aqui para instalar el pack de temas de SALTS "
 msgctxt "#30670"
 msgid "Show Settings"
 msgstr "Mostrar Configuración"
+
+msgctxt "#30671"
+msgid "Show Anticipated"
+msgstr "Show Anticipado"
+
+msgctxt "#30672"
+msgid "Default Sources View (0 = None)"
+msgstr "Vista por defecto de Fuentes (0 = Ninguna)"
+
+msgctxt "#30673"
+msgid "Scraper Last Update"
+msgstr "Ultima actualización de Scraper"
+
+msgctxt "#30674"
+msgid "Trakt API Offline Mode"
+msgstr "Modo Offline del API de Trakt"
 

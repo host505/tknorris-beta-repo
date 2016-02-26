@@ -107,7 +107,7 @@ class Flixanity_Scraper(scraper.Scraper):
     def search(self, video_type, title, year, season=''):
         self.__get_token()
         results = []
-        search_url = urlparse.urljoin(self.base_url, '/api/v1/fsearch/cautare')
+        search_url = urlparse.urljoin(self.base_url, '/api/v1/cautare')
         timestamp = int(time.time() * 1000)
         query = {'q': title, 'limit': '100', 'timestamp': timestamp, 'verifiedCheck': self.__token}
         html = self._http_get(search_url, data=query, headers=XHR, cache_limit=1)

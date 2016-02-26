@@ -72,8 +72,6 @@ class Rainierland_Scraper(scraper.Scraper):
                     host = self._get_direct_hostname(stream_url)
                     if host == 'gvideo':
                         quality = scraper_utils.gv_get_quality(stream_url)
-                    elif 'blogspot' in stream_url:
-                        quality = scraper_utils.gv_get_quality(stream_url)
                     else:
                         _, _, height, _ = scraper_utils.parse_movie_link(stream_url)
                         quality = scraper_utils.height_get_quality(height)

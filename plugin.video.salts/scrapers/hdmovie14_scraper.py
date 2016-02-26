@@ -138,10 +138,13 @@ class Flixanity_Scraper(scraper.Scraper):
         url = urlparse.urljoin(self.base_url, season_url)
         html = self._http_get(url, allow_redirect=False, cache_limit=.5)
         if html != '/':
+            url = urlparse.urljoin(self.base_url, html)
+            html = self._http_get(url, allow_redirect=False, cache_limit=.5)
+            log_utils.log(html)
             if int(video.episode) == 1:
                 return scraper_utils.pathify_url(url)
             else:
-                pattern = 'location\.href=&quot;([^&]*season-%s/%s)&quot;' % (video.season, video.episode)
+                pattern = 'location\.href=&quot;([^&]*season-%s[^/]*/%s)&quot;' % (video.season, video.episode)
                 match = re.search(pattern, html)
                 if match:
                     return scraper_utils.pathify_url(match.group(1))

@@ -15,22 +15,19 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import base64
 import re
 import urllib
 import urlparse
-
 from salts_lib import dom_parser
 from salts_lib import kodi
 from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import VIDEO_TYPES
+from salts_lib.constants import QUALITIES
 import scraper
 
 
 BASE_URL = 'http://miradetodo.com.ar'
-GK_KEY1 = base64.urlsafe_b64decode('QjZVTUMxUms3VFJBVU56V3hraHI=')
-GK_KEY2 = base64.urlsafe_b64decode('aUJocnZjOGdGZENaQWh3V2huUm0=')
 
 class MiraDetodo_Scraper(scraper.Scraper):
     base_url = BASE_URL
@@ -38,6 +35,7 @@ class MiraDetodo_Scraper(scraper.Scraper):
     def __init__(self, timeout=scraper.DEFAULT_TIMEOUT):
         self.timeout = timeout
         self.base_url = kodi.get_setting('%s-base_url' % (self.get_name()))
+        self.gk_url = self.base_url + '/gkphp/plugins/gkpluginsphp.php'
 
     @classmethod
     def provides(cls):
@@ -60,21 +58,40 @@ class MiraDetodo_Scraper(scraper.Scraper):
         if source_url and source_url != FORCE_NO_MATCH:
             url = urlparse.urljoin(self.base_url, source_url)
             html = self._http_get(url, cache_limit=.5)
-            match = re.search('proxy\.link=([^"&]+)', html)
-            if match:
-                proxy_link = match.group(1)
-                proxy_link = proxy_link.split('*', 1)[-1]
-                if len(proxy_link) <= 224:
-                    picasa_url = scraper_utils.gk_decrypt(self.get_name(), GK_KEY1, proxy_link)
-                else:
-                    picasa_url = scraper_utils.gk_decrypt(self.get_name(), GK_KEY2, proxy_link)
-                if self._get_direct_hostname(picasa_url) == 'gvideo':
-                    sources = self._parse_google(picasa_url)
+            fragment = dom_parser.parse_dom(html, 'div', {'class': 'player_container'})
+            if fragment:
+                iframe_url = dom_parser.parse_dom(fragment[0], 'IFRAME', ret='SRC')
+                if iframe_url:
+                    html = self._http_get(iframe_url[0], cache_limit=.5)
+                    match = re.search('{link\s*:\s*"([^"]+)', html)
+                    if match:
+                        sources = self.__get_gk_links(match.group(1))
+                    else:
+                        sources = {}
+                    
                     for source in sources:
                         hoster = {'multi-part': False, 'url': source, 'class': self, 'quality': scraper_utils.gv_get_quality(source), 'host': self._get_direct_hostname(source), 'rating': None, 'views': None, 'direct': True}
                         hosters.append(hoster)
         return hosters
 
+    def __get_gk_links(self, iframe_url):
+        sources = {}
+        data = {'link': iframe_url}
+        headers = {'Referer': iframe_url}
+        html = self._http_get(self.gk_url, data=data, headers=headers, cache_limit=.5)
+        js_data = scraper_utils.parse_json(html, self.gk_url)
+        if 'link' in js_data:
+            for link in js_data['link']:
+                stream_url = link['link']
+                if self._get_direct_hostname(stream_url) == 'gvideo':
+                    quality = scraper_utils.gv_get_quality(stream_url)
+                elif 'label' in link:
+                    quality = scraper_utils.height_get_quality(link['label'])
+                else:
+                    quality = QUALITIES.HIGH
+                sources[stream_url] = quality
+        return sources
+        
     def get_url(self, video):
         return self._default_get_url(video)
 

@@ -514,7 +514,7 @@ class Scraper(object):
 
     def _get_direct_hostname(self, link):
         host = urlparse.urlparse(link).hostname
-        if host and any([h for h in ['google', 'picasa'] if h in host]):
+        if host and any([h for h in ['google', 'picasa', 'blogspot'] if h in host]):
             return 'gvideo'
         else:
             return self.get_name()

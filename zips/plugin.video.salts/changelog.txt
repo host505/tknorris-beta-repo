@@ -1,3 +1,15 @@
+[B]Version 2.0.9[/B]
+- Add 2DDL Scraper
+- Require uid/pw for alluc
+- Add onlinedizi scraper
+- Fix WatchHD scraper
+- Fix TWTS scraper
+- Fix HDMovie14 scraper
+- Fix FireMoviesHD scraper
+- Fix mira scraper
+- Update Rainierland scraper
+- Update Translations
+
 [B]Version 2.0.8[/B]
 - Add Episodes to Premiumize scraper
 - Add vivo.to scraper
