@@ -57,7 +57,10 @@ class EasyNews_Scraper(scraper.Scraper):
         return link
 
     def format_source_label(self, item):
-        label = '[%s] %s' % (item['quality'], item['host'])
+        if 'format' in item:
+            label = '[%s] (%s) %s' % (item['quality'], item['format'], item['host'])
+        else:
+            label = '[%s] %s' % (item['quality'], item['host'])
         if 'size' in item:
             label += ' (%s)' % (item['size'])
         if 'extra' in item:
@@ -113,8 +116,22 @@ class EasyNews_Scraper(scraper.Scraper):
                 stream_url = 'http://members.easynews.com/dl/%s' % (stream_url)
                 stream_url = stream_url + '|Cookie=%s' % (self._get_stream_cookies())
                 host = self._get_direct_hostname(stream_url)
-                quality = scraper_utils.width_get_quality(item['width'])
+                quality = None
+                if 'width' in item:
+                    try: width = int(item['width'])
+                    except: width = 0
+                    if width:
+                        quality = scraper_utils.width_get_quality(width)
+                
+                if quality is None:
+                    if video.video_type == VIDEO_TYPES.MOVIE:
+                        _title, _year, height, _extra = scraper_utils.parse_movie_link(post_title)
+                    else:
+                        _title, _season, _episode, height, _extra = scraper_utils.parse_episode_link(post_title)
+                    quality = scraper_utils.height_get_quality(height)
+                    
                 hoster = {'multi-part': False, 'class': self, 'views': None, 'url': stream_url, 'rating': None, 'host': host, 'quality': quality, 'direct': True}
+                if any(i for i in ['X265', 'HEVC'] if i in post_title.upper()): hoster['format'] = 'x265'
                 if size: hoster['size'] = size
                 if post_title: hoster['extra'] = post_title
                 hosters.append(hoster)

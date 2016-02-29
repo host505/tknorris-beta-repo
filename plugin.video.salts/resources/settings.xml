@@ -329,6 +329,10 @@
          <setting id="MiraDeTodo-base_url" type="text" label="    Base Url" default="http://miradetodo.com.ar" visible="eq(-1,true)"/>
          <setting id="MiraDeTodo-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="MiraDeTodo_last_results" type="number" default="0" visible="false"/>
+         <setting id="MovCav-enable" type="bool" label="MovCav Enabled" default="true" visible="true"/>
+         <setting id="MovCav-base_url" type="text" label="    Base Url" default="http://movcav.com" visible="eq(-1,true)"/>
+         <setting id="MovCav-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
+         <setting id="MovCav_last_results" type="number" default="0" visible="false"/>
          <setting id="movie25-enable" type="bool" label="movie25 Enabled" default="true" visible="true"/>
          <setting id="movie25-base_url" type="text" label="    Base Url" default="http://movie25.hk" visible="eq(-1,true)"/>
          <setting id="movie25-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
@@ -337,13 +341,13 @@
          <setting id="Movie4K-base_url" type="text" label="    Base Url" default="http://www.movie4k.to" visible="eq(-1,true)"/>
          <setting id="Movie4K-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="Movie4K_last_results" type="number" default="0" visible="false"/>
+    </category>
+
+    <category label="Scrapers 3">
          <setting id="MovieHut-enable" type="bool" label="MovieHut Enabled" default="true" visible="true"/>
          <setting id="MovieHut-base_url" type="text" label="    Base Url" default="http://moviehut.co" visible="eq(-1,true)"/>
          <setting id="MovieHut-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="MovieHut_last_results" type="number" default="0" visible="false"/>
-    </category>
-
-    <category label="Scrapers 3">
          <setting id="MovieMax-enable" type="bool" label="MovieMax Enabled" default="true" visible="true"/>
          <setting id="MovieMax-base_url" type="text" label="    Base Url" default="http://moviehdmax.com" visible="eq(-1,true)"/>
          <setting id="MovieMax-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
@@ -367,7 +371,7 @@
          <setting id="moviestorm.eu-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="moviestorm.eu_last_results" type="number" default="0" visible="false"/>
          <setting id="MovieSub-enable" type="bool" label="MovieSub Enabled" default="true" visible="true"/>
-         <setting id="MovieSub-base_url" type="text" label="    Base Url" default="http://www.moviesub.tv" visible="eq(-1,true)"/>
+         <setting id="MovieSub-base_url" type="text" label="    Base Url" default="http://www.moviesub.net" visible="eq(-1,true)"/>
          <setting id="MovieSub-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="MovieSub_last_results" type="number" default="0" visible="false"/>
          <setting id="MovieTube-enable" type="bool" label="MovieTube Enabled" default="true" visible="true"/>
@@ -431,6 +435,9 @@
          <setting id="OnlineMoviesPro-base_url" type="text" label="    Base Url" default="http://onlinemovies-pro.com" visible="eq(-1,true)"/>
          <setting id="OnlineMoviesPro-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="OnlineMoviesPro_last_results" type="number" default="0" visible="false"/>
+    </category>
+    
+    <category label="Scrapers 4">
          <setting id="ororo.tv-enable" type="bool" label="ororo.tv Enabled" default="true" visible="true"/>
          <setting id="ororo.tv-base_url" type="text" label="    Base Url" default="http://ororo.tv" visible="eq(-1,true)"/>
          <setting id="ororo.tv-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
@@ -438,9 +445,6 @@
          <setting id="ororo.tv-username" type="text" label="     Username" default="" visible="eq(-4,true)"/>
          <setting id="ororo.tv-password" type="text" label="     Password" option="hidden" default="" visible="eq(-5,true)"/>
          <setting id="ororo.tv-include_premium" type="bool" label="     Include Premium" default="false" visible="eq(-6,true)"/>
-    </category>
-    
-    <category label="Scrapers 4">
          <setting id="pftv-enable" type="bool" label="pftv Enabled" default="true" visible="true"/>
          <setting id="pftv-base_url" type="text" label="    Base Url" default="http://projectfreetv.so" visible="eq(-1,true)"/>
          <setting id="pftv-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
@@ -454,6 +458,9 @@
          <setting id="Premiumize.me-password" type="text" label="     Password" option="hidden" default="" visible="eq(-6,true)"/>
          <setting id="Premiumize.me-base_url2" type="text" label="     Movies Base Url" default="https://yts.ag" visible="eq(-7,true)"/>
          <setting id="Premiumize.me-base_url3" type="text" label="     TV Shows Base Url" default="https://eztv.ag" visible="eq(-8,true)"/>
+         <setting id="Premiumize.V2-enable" type="bool" label="Premiumize.V2 Enabled" default="true" visible="true"/>
+         <setting id="Premiumize.V2-sub_check" type="bool" label="    Include in Page Existence checks?" default="false" visible="eq(-1,true)"/>
+         <setting id="Premiumize.V2_last_results" type="number" default="0" visible="false"/>
          <setting id="PrimeWire-enable" type="bool" label="PrimeWire Enabled" default="true" visible="true"/>
          <setting id="PrimeWire-base_url" type="text" label="    Base Url" default="http://www.primewire.ag" visible="eq(-1,true)"/>
          <setting id="PrimeWire-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
@@ -526,6 +533,9 @@
          <setting id="TVRelease.Net_last_results" type="number" default="0" visible="false"/>
          <setting id="TVRelease.Net-filter" type="slider" range="0,180" option="int" label="     Filter results older than (0=No Filter) (days)" default="30" visible="eq(-4,true)"/>
          <setting id="TVRelease.Net-select" type="enum" label="     Automatically Select" lvalues="30636|30637" default="0" visible="eq(-5,true)"/>
+    </category>
+
+    <category label="Scrapers 5">
          <setting id="TVWTVS-enable" type="bool" label="TVWTVS Enabled" default="true" visible="true"/>
          <setting id="TVWTVS-base_url" type="text" label="    Base Url" default="http://tvserieswatch.net" visible="eq(-1,true)"/>
          <setting id="TVWTVS-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
@@ -534,9 +544,6 @@
          <setting id="UFlix.org-base_url" type="text" label="    Base Url" default="http://uflix.org" visible="eq(-1,true)"/>
          <setting id="UFlix.org-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="UFlix.org_last_results" type="number" default="0" visible="false"/>
-    </category>
-
-    <category label="Scrapers 5">
          <setting id="vidics.ch-enable" type="bool" label="vidics.ch Enabled" default="true" visible="true"/>
          <setting id="vidics.ch-base_url" type="text" label="    Base Url" default="http://www.vidics.ch" visible="eq(-1,true)"/>
          <setting id="vidics.ch-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>

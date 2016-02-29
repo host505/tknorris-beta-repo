@@ -505,7 +505,7 @@ class Trakt_API():
                     raise
 
         try:
-            js_data = json.loads(result)
+            js_data = utils2.json_loads_as_str(result)
             if 'x-sort-by' in res_headers and 'x-sort-how' in res_headers:
                 js_data = utils2.sort_list(res_headers['x-sort-by'], res_headers['x-sort-how'], js_data)
         except ValueError:

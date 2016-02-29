@@ -27,7 +27,7 @@ from salts_lib.constants import QUALITIES
 from salts_lib.constants import VIDEO_TYPES
 import scraper
 
-BASE_URL = 'http://www.moviesub.tv'
+BASE_URL = 'http://www.moviesub.net'
 LINK_URL = '/ip.temp/swf/plugins/ipplugins.php'
 XHR = {'X-Requested-With': 'XMLHttpRequest'}
 

@@ -32,7 +32,8 @@ from salts_lib.kodi import i18n
 import scraper
 
 
-BASE_URL = 'http://watch1080p.com'
+BASE_URL = base64.decodestring('aHR0cDovL3dhdGNoMTA4MHAuY29t')
+SEARCH_URL = 'aHR0cHM6Ly93d3cuZ29vZ2xlYXBpcy5jb20vY3VzdG9tc2VhcmNoL3YxZWxlbWVudD9rZXk9QUl6YVN5Q1ZBWGlVelJZc01MMVB2NlJ3U0cxZ3VubU1pa1R6UXFZJnJzej1maWx0ZXJlZF9jc2UmbnVtPTEwJmhsPWVuJmN4PTAxMjg0NjI0MTAwMTc0NDgzNzMwNzpia210NWhrb3ZsZyZnb29nbGVob3N0PXd3dy5nb29nbGUuY29tJnE9JXM='
 
 class WatchHD_Scraper(scraper.Scraper):
     base_url = BASE_URL
@@ -165,15 +166,18 @@ class WatchHD_Scraper(scraper.Scraper):
             return season_url
     
     def search(self, video_type, title, year, season=''):
-        search_url = urlparse.urljoin(self.base_url, '/search/%s' % (urllib.quote_plus(title)))
-        html = self._http_get(search_url, cache_limit=.25)
+        search_url = base64.decodestring(SEARCH_URL) % (urllib.quote_plus(title))
+        html = self._http_get(search_url, cache_limit=1)
         results = []
-        for item in dom_parser.parse_dom(html, 'div', {'class': 'name_top'}):
-            match = re.search('href="([^"]+)[^>]+>([^<]+)', item)
-            if match:
-                url, match_title_year = match.groups()
-                is_season = re.search('Season\s+(\d+)', match_title_year, re.IGNORECASE)
+        js_data = scraper_utils.parse_json(html)
+        if 'results' in js_data:
+            norm_title = scraper_utils.normalize_title(title)
+            for item in js_data['results']:
+                is_season = re.search('Season\s+(\d+)', item['titleNoFormatting'], re.IGNORECASE)
                 if not is_season and video_type == VIDEO_TYPES.MOVIE or is_season and VIDEO_TYPES.SEASON:
+                    match_title_year = item['titleNoFormatting']
+                    match_title_year = re.sub('^Watch\s+', '', match_title_year)
+                    match_url = item['url']
                     match_year = ''
                     if video_type == VIDEO_TYPES.MOVIE:
                         match = re.search('(.*?)(?:\s+\(?(\d{4})\)?)', match_title_year)
@@ -182,12 +186,16 @@ class WatchHD_Scraper(scraper.Scraper):
                         else:
                             match_title = match_title_year
                     else:
-                        match_title = match_title_year
                         if season and int(is_season.group(1)) != int(season):
                             continue
+                        match = re.search('(.*?)\s+\(\d{4}\)', match_title_year)
+                        if match:
+                            match_title = match.group(1)
+                        else:
+                            match_title = match_title_year
                     
-                    if not year or not match_year or year == match_year:
-                        result = {'title': scraper_utils.cleanse_title(match_title), 'year': match_year, 'url': scraper_utils.pathify_url(url)}
+                    if norm_title in scraper_utils.normalize_title(match_title) and (not year or not match_year or year == match_year):
+                        result = {'title': scraper_utils.cleanse_title(match_title), 'year': match_year, 'url': scraper_utils.pathify_url(match_url)}
                         results.append(result)
 
         return results

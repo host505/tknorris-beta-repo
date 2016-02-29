@@ -211,15 +211,15 @@ def gk_decrypt(name, key, cipher_link):
 
 def parse_episode_link(link):
     link = urllib.unquote(link)
-    match = re.match('(.*?)(?:\.|_| )S(\d+)(?:\.|_| )?E(\d+)(?:E\d+)*.*?(?:(?:_|\.)(\d+)p(?:_|\.))(.*)', link, re.I)
+    match = re.match('(.*?)[._ ]S(\d+)[._ ]?E(\d+)(?:E\d+)*.*?(?:[._ ](\d+)p[._ ])(.*)', link, re.I)
     if match:
         return match.groups()
     else:
-        match = re.match('(.*?)(?:\.|_| )S(\d+)(?:\.|_| )?E(\d+)(?:E\d+)*(.*)', link, re.I)
+        match = re.match('(.*?)[._ ]S(\d+)[._ ]?E(\d+)(?:E\d+)*(.*)', link, re.I)
         if match:
             return match.groups()[:-1] + ('480', ) + (match.groups()[-1],)  # assume no height = 480
         else:
-            match = re.search('(?:\.|_| )(\d+)p(?:\.|_| )', link)
+            match = re.search('[._ ](\d+)p[._ ]', link)
             if match:
                 return ('', '-1', '-1', match.group(1), '')
             else:
@@ -227,11 +227,11 @@ def parse_episode_link(link):
 
 def parse_movie_link(link):
     file_name = link.split('/')[-1]
-    match = re.match('(.*?)(?:(?:\.|_| )(\d{4})(?:(?:\.|_| ).*?)*)?(?:\.|_| )(\d+)p(?:\.|_| )(.*)', file_name)
+    match = re.match('(.*?)(?:[._ ](\d{4})(?:[._ ].*?)*)?[._ ](\d+)p[._ ](.*)', file_name)
     if match:
         return match.groups()
     else:
-        match = re.match('(.*?)(?:(?:\.|_| )(\d{4})(?:(?:\.|_| ).*?)*)(.*)', file_name)
+        match = re.match('(.*?)(?:[._ ](\d{4})(?:[._ ].*?)*)(.*)', file_name)
         if match:
             title, year, extra = match.groups()
             return (title, year, '480', extra)

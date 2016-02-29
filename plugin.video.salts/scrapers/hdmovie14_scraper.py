@@ -140,7 +140,6 @@ class Flixanity_Scraper(scraper.Scraper):
         if html != '/':
             url = urlparse.urljoin(self.base_url, html)
             html = self._http_get(url, allow_redirect=False, cache_limit=.5)
-            log_utils.log(html)
             if int(video.episode) == 1:
                 return scraper_utils.pathify_url(url)
             else:

@@ -101,8 +101,8 @@ class TwoDDL_Scraper(scraper.Scraper):
         force_title = scraper_utils.force_title(video)
         title_fallback = kodi.get_setting('title-fallback') == 'true'
         norm_title = scraper_utils.normalize_title(video.ep_title)
-        try: ep_airdate = video.ep_airdate.strftime('.%Y.%m.%d.')
-        except: ep_airdate = ''
+        try: airdate_pattern = video.ep_airdate.strftime('(\.|_| )%Y(\.|_| )%m(\.|_| )%d(\.|_| )')
+        except: airdate_pattern = ''
         
         page_url = [show_url]
         too_old = False
@@ -119,7 +119,7 @@ class TwoDDL_Scraper(scraper.Scraper):
                     url, title = heading
                     log_utils.log(heading)
                     if not force_title:
-                        if re.search(sxe, title) or (ep_airdate and ep_airdate in title):
+                        if re.search(sxe, title) or (airdate_pattern and re.search(airdate_pattern, title)):
                             return scraper_utils.pathify_url(url)
                     else:
                         if title_fallback and norm_title:
