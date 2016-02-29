@@ -29,7 +29,7 @@ from salts_lib.constants import VIDEO_TYPES
 import scraper
 
 
-BASE_URL = 'http://movieswatchmovie.com'
+BASE_URL = 'http://usmovieshd.com'
 LINK_URL = '/watchmovieplayer/gkpluginsphp.php'
 
 class MWM_Scraper(scraper.Scraper):
@@ -62,7 +62,7 @@ class MWM_Scraper(scraper.Scraper):
             url = urlparse.urljoin(self.base_url, source_url)
             html = self._http_get(url, cache_limit=.5)
             sources.update(self.__get_gk_links(html, url))
-            sources.update(self.__get_iframe_links(html))
+            sources.update(self.__get_iframe_links(html, url))
             
             for source in sources:
                 host = self._get_direct_hostname(source)
@@ -72,10 +72,11 @@ class MWM_Scraper(scraper.Scraper):
 
         return hosters
 
-    def __get_iframe_links(self, html):
+    def __get_iframe_links(self, html, page_url):
         sources = {}
         for iframe_url in dom_parser.parse_dom(html, 'iframe', ret='data-lazy-src'):
-            html = self._http_get(iframe_url, cache_limit=.25)
+            headers = {'Referer': page_url}
+            html = self._http_get(iframe_url, headers=headers, cache_limit=.5)
             for match in re.finditer('"file"\s*:\s*"([^"]+)"\s*,\s*"label"\s*:\s*"([^"]+)', html, re.DOTALL):
                 stream_url, height = match.groups()
                 stream_url = re.sub('; .*', '', stream_url)

@@ -1,7 +1,8 @@
-[B]Version 2.0.10[/B]
+[B]Version 2.0.11[/B]
 - Add movcav scraper
 - Improve 2ddl scraper
 - Improve WatchHD scraper
+- Fix MWM scraper
 - Fix unicode errors from trakt
 - Add Premiumize.V2 scraper
 - Fail gracefully when section list does not exist
