@@ -105,7 +105,7 @@ def make_info(item, show=None, people=None):
     return info
 
 def update_url(video_type, title, year, source, old_url, new_url, season, episode):
-    log_utils.log('Setting Url: |%s|%s|%s|%s|%s|%s|%s|%s|' % (video_type, title.decode('utf-8').encode('ascii', 'xmlcharrefreplace'), year, source, old_url, new_url, season, episode), log_utils.LOGDEBUG)
+    log_utils.log('Setting Url: |%s|%s|%s|%s|%s|%s|%s|%s|' % (video_type, title, year, source, old_url, new_url, season, episode), log_utils.LOGDEBUG)
     db_connection = _get_db_connection()
     if new_url:
         db_connection.set_related_url(video_type, title, year, source, new_url, season, episode)

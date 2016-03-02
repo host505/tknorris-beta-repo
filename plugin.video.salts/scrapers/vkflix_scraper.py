@@ -76,13 +76,20 @@ class MoxieXK_Scraper(scraper.Scraper):
         return sources
 
     def __get_episode_fragment(self, html, video):
-        pattern = 'Season\s+%s\s+Series?\s+%s$' % (video.season, video.episode)
-        labels = dom_parser.parse_dom(html, 'h3')
-        fragments = dom_parser.parse_dom(html, 'div', {'class': '[^"]*tableLinks[^"]*'})
-        for label, fragment in zip(labels, fragments):
-            match = re.search(pattern, label, re.I)
-            if match:
-                return fragment
+        fragment = dom_parser.parse_dom(html, 'div', {'id': 'season%s' % (video.season)})
+        if fragment:
+            fragment = fragment[0]
+            labels = dom_parser.parse_dom(fragment, 'h3')
+            pattern = 'Season\s+%s\s+Series?\s+%s$' % (video.season, video.episode)
+            for i, label in enumerate(labels):
+                match = re.search(pattern, label, re.I)
+                if match:
+                    fragments = dom_parser.parse_dom(fragment, 'div', {'class': '[^"]*tableLinks[^"]*'})
+                    if len(fragments) > i:
+                        return fragments[i]
+                    else:
+                        break
+                
         return ''
     
     def get_url(self, video):
@@ -112,8 +119,7 @@ class MoxieXK_Scraper(scraper.Scraper):
     def _get_episode_url(self, show_url, video):
         url = urlparse.urljoin(self.base_url, show_url)
         html = self._http_get(url, cache_limit=8)
-        pattern = 'Season\s+%s\s+Series?\s+%s$' % (video.season, video.episode)
-        for item in dom_parser.parse_dom(html, 'h3'):
-            match = re.search(pattern, item, re.I)
-            if match:
-                return show_url
+        pattern = '<h3>[^>]*Season\s+%s\s+Series?\s+%s$' % (video.season, video.episode)
+        match = re.search(pattern, html, re.I)
+        if match:
+            return show_url

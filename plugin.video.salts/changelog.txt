@@ -1,3 +1,9 @@
+[B]Version 2.0.12[/B]
+- Fix premiumize exception
+- Fix moviesub scraper
+- Fix unicode errors
+- Optimize vkflix
+
 [B]Version 2.0.11[/B]
 - Add movcav scraper
 - Improve 2ddl scraper

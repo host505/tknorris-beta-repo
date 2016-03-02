@@ -381,6 +381,7 @@ def reap_workers(workers, timeout=0):
 def parallel_get_sources(q, scraper, video):
     worker = threading.current_thread()
     log_utils.log('********Worker: %s (%s) for %s sources: %s' % (worker.name, worker, scraper.get_name(), video), log_utils.LOGDEBUG)
+    start = time.time()
     hosters = scraper.get_sources(video)
     if hosters is None: hosters = []
     if kodi.get_setting('filter_direct') == 'true':
@@ -388,7 +389,7 @@ def parallel_get_sources(q, scraper, video):
     for hoster in hosters:
         if not hoster['direct']:
             hoster['host'] = hoster['host'].lower().strip()
-    log_utils.log('%s returned %s sources from %s' % (scraper.get_name(), len(hosters), worker), log_utils.LOGDEBUG)
+    log_utils.log('%s returned %s sources from %s in %.2fs' % (scraper.get_name(), len(hosters), worker, time.time() - start), log_utils.LOGDEBUG)
     result = {'name': scraper.get_name(), 'hosters': hosters}
     q.put(result)
 

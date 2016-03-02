@@ -129,7 +129,7 @@ def view_bookmarks(section):
         else:
             liz, liz_url = make_episode_item(bookmark['show'], bookmark['episode'], menu_items=menu_items)
             label = liz.getLabel()
-            label = '%s - %s' % (bookmark['show']['title'], label.decode('utf-8', 'replace'))
+            label = '%s - %s' % (bookmark['show']['title'], label)
             liz.setLabel(label)
             
         label = liz.getLabel()
@@ -138,7 +138,7 @@ def view_bookmarks(section):
             pause_label = '[COLOR blue]%.2f%%[/COLOR] %s ' % (bookmark['progress'], i18n('on'))
         paused_at = time.strftime('%Y-%m-%d', time.localtime(utils2.iso_2_utc(bookmark['paused_at'])))
         pause_label += '[COLOR deeppink]%s[/COLOR]' % (paused_at)
-        label = '[%s] %s ' % (pause_label, label.decode('utf-8', 'replace'))
+        label = '[%s] %s ' % (pause_label, label)
         liz.setLabel(label)
         xbmcplugin.addDirectoryItem(int(sys.argv[1]), liz_url, liz, isFolder=folder, totalItems=0)
     content_type = CONTENT_TYPES.EPISODES if section == SECTIONS.TV else CONTENT_TYPES.MOVIES
@@ -470,13 +470,13 @@ def show_history(section, page=1):
             menu_items.append((i18n('browse_seasons'), 'Container.Update(%s)' % (kodi.get_plugin_url(queries))),)
             liz, liz_url = make_episode_item(show, item['episode'], menu_items=menu_items)
             label = liz.getLabel()
-            label = '%s - %s' % (show['title'], label.decode('utf-8', 'replace'))
+            label = '%s - %s' % (show['title'], label)
             liz.setLabel(label)
             
         label = liz.getLabel()
         watched_at = time.strftime('%Y-%m-%d', time.localtime(utils2.iso_2_utc(item['watched_at'])))
         header = '[COLOR deeppink]%s[/COLOR]' % (watched_at)
-        label = '[%s] %s' % (header, label.decode('utf-8', 'ignore'))
+        label = '[%s] %s' % (header, label)
         liz.setLabel(label)
         
         xbmcplugin.addDirectoryItem(int(sys.argv[1]), liz_url, liz, isFolder=folder, totalItems=totalItems)
@@ -813,7 +813,7 @@ def show_progress():
     
                 liz, liz_url = make_episode_item(show, episode['episode'], menu_items=menu_items)
                 label = liz.getLabel()
-                label = '[[COLOR deeppink]%s[/COLOR]] %s - %s' % (date, show['title'], label.decode('utf-8', 'replace'))
+                label = '[[COLOR deeppink]%s[/COLOR]] %s - %s' % (date, show['title'], label)
                 liz.setLabel(label)
     
                 xbmcplugin.addDirectoryItem(int(sys.argv[1]), liz_url, liz, isFolder=folder)
@@ -2085,7 +2085,7 @@ def make_dir_from_cal(mode, start_date, days):
 
         liz, liz_url = make_episode_item(show, episode, show_subs=False, menu_items=menu_items)
         label = liz.getLabel()
-        label = '[[COLOR deeppink]%s[/COLOR]] %s - %s' % (date_time, show['title'], label.decode('utf-8', 'replace'))
+        label = '[[COLOR deeppink]%s[/COLOR]] %s - %s' % (date_time, show['title'], label)
         if episode['season'] == 1 and episode['number'] == 1:
             label = '[COLOR green]%s[/COLOR]' % (label)
         liz.setLabel(label)

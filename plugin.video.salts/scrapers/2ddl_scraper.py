@@ -117,7 +117,6 @@ class TwoDDL_Scraper(scraper.Scraper):
                     break
                 if CATEGORIES[VIDEO_TYPES.TVSHOW] in post and show_url in post:
                     url, title = heading
-                    log_utils.log(heading)
                     if not force_title:
                         if re.search(sxe, title) or (airdate_pattern and re.search(airdate_pattern, title)):
                             return scraper_utils.pathify_url(url)

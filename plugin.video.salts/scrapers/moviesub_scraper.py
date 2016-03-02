@@ -22,21 +22,26 @@ from salts_lib import dom_parser
 from salts_lib import kodi
 from salts_lib import log_utils
 from salts_lib import scraper_utils
+from salts_lib.kodi import i18n
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
 from salts_lib.constants import VIDEO_TYPES
 import scraper
 
 BASE_URL = 'http://www.moviesub.net'
+BASE_URL2 = 'http://www.moviesub.tv'
 LINK_URL = '/ip.temp/swf/plugins/ipplugins.php'
+LINK_URL2 = '/Htplugins/Loader.php'
 XHR = {'X-Requested-With': 'XMLHttpRequest'}
 
 class MovieSub_Scraper(scraper.Scraper):
     base_url = BASE_URL
+    tv_base_url = BASE_URL2
 
     def __init__(self, timeout=scraper.DEFAULT_TIMEOUT):
         self.timeout = timeout
         self.base_url = kodi.get_setting('%s-base_url' % (self.get_name()))
+        self.tv_base_url = kodi.get_setting('%s-base_url2' % (self.get_name()))
 
     @classmethod
     def provides(cls):
@@ -58,9 +63,10 @@ class MovieSub_Scraper(scraper.Scraper):
         hosters = []
         sources = {}
         if source_url and source_url != FORCE_NO_MATCH:
-            url = urlparse.urljoin(self.base_url, source_url)
+            url = urlparse.urljoin(self.__get_base_url(video.video_type), source_url)
             html = self._http_get(url, cache_limit=.5)
-            sources = self.__get_gk_links(html, url)
+            sources = self.__get_gk_links(html, url, video.video_type)
+            sources.update(self.__get_ht_links(html, url, video.video_type))
             
             for source in sources:
                 host = self._get_direct_hostname(source)
@@ -75,7 +81,25 @@ class MovieSub_Scraper(scraper.Scraper):
 
         return hosters
 
-    def __get_gk_links(self, html, page_url):
+    def __get_ht_links(self, html, page_url, video_type):
+        sources = {}
+        match = re.search('Htplugins_Make_Player\("([^"]+)', html)
+        if match:
+            data = {'data': match.group(1)}
+            url = urlparse.urljoin(self.__get_base_url(video_type), LINK_URL2)
+            headers = {'Referer': page_url}
+            html = self._http_get(url, data=data, headers=headers, cache_limit=.25)
+            js_data = scraper_utils.parse_json(html, url)
+            if 'l' in js_data:
+                for link in js_data['l']:
+                    if self._get_direct_hostname(link) == 'gvideo':
+                        quality = scraper_utils.gv_get_quality(link)
+                    else:
+                        quality = QUALITIES.HIGH
+                    sources[link] = quality
+        return sources
+        
+    def __get_gk_links(self, html, page_url, video_type):
         sources = {}
         for link in dom_parser.parse_dom(html, 'div', {'class': '[^"]*server_line[^"]*'}):
             film_id = dom_parser.parse_dom(link, 'a', ret='data-film')
@@ -85,7 +109,7 @@ class MovieSub_Scraper(scraper.Scraper):
                 data = {'ipplugins': 1, 'ip_film': film_id[0], 'ip_server': server_id[0], 'ip_name': name_id[0]}
                 headers = XHR
                 headers['Referer'] = page_url
-                url = urlparse.urljoin(self.base_url, LINK_URL)
+                url = urlparse.urljoin(self.__get_base_url(video_type), LINK_URL)
                 html = self._http_get(url, data=data, headers=headers, cache_limit=.25)
                 js_data = scraper_utils.parse_json(html, url)
                 if 's' in js_data:
@@ -107,12 +131,13 @@ class MovieSub_Scraper(scraper.Scraper):
         return self._default_get_url(video)
 
     def _get_episode_url(self, season_url, video):
+        season_url = urlparse.urljoin(self.__get_base_url(video.video_type), season_url)
         episode_pattern = 'href="([^"]+)[^>]*title="Watch\s+Episode\s+\d+[^>]*>%s<' % (video.episode)
         return self._default_get_episode_url(season_url, video, episode_pattern)
     
     def search(self, video_type, title, year, season=''):
         results = []
-        search_url = urlparse.urljoin(self.base_url, '/search/%s.html' % (urllib.quote_plus(title)))
+        search_url = urlparse.urljoin(self.__get_base_url(video_type), '/search/%s.html' % (urllib.quote_plus(title)))
         html = self._http_get(search_url, cache_limit=1)
         fragment = dom_parser.parse_dom(html, 'ul', {'class': 'cfv'})
         if fragment:
@@ -138,3 +163,17 @@ class MovieSub_Scraper(scraper.Scraper):
                             results.append(result)
 
         return results
+
+    @classmethod
+    def get_settings(cls):
+        settings = super(cls, cls).get_settings()
+        name = cls.get_name()
+        settings.append('         <setting id="%s-base_url2" type="text" label="    %s %s" default="%s" visible="eq(-4,true)"/>' % (name, i18n('tv_shows'), i18n('base_url'), cls.tv_base_url))
+        return settings
+    
+    def __get_base_url(self, video_type):
+        if video_type in [VIDEO_TYPES.SEASON, VIDEO_TYPES.EPISODE]:
+            base_url = self.tv_base_url
+        else:
+            base_url = self.base_url
+        return base_url
