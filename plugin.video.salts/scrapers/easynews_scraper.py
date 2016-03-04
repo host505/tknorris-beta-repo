@@ -73,7 +73,7 @@ class EasyNews_Scraper(scraper.Scraper):
         if source_url and source_url != FORCE_NO_MATCH:
             params = urlparse.parse_qs(urlparse.urlparse(source_url).query)
             if 'title' in params:
-                query = params['title'][0]
+                query = params['title'][0].replace("'", "")
                 if video.video_type == VIDEO_TYPES.MOVIE:
                     if 'year' in params: query += ' %s' % (params['year'][0])
                 else:

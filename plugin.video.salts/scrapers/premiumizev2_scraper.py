@@ -29,6 +29,7 @@ import scraper
 VIDEO_EXT = ['MKV', 'AVI', 'MP4']
 MIN_MEG = 100
 LIST_URL = '/api/transfer/list'
+FOLDER_URL = '/api/folder/list'
 BROWSE_URL = '/api/torrent/browse?hash=%s'
 
 class PremiumizeV2_Scraper(scraper.Scraper):
@@ -73,7 +74,7 @@ class PremiumizeV2_Scraper(scraper.Scraper):
         if source_url and source_url != FORCE_NO_MATCH:
             norm_title = scraper_utils.normalize_title(video.title)
             for stream in self.__get_videos(source_url, video):
-                if video.video_type == VIDEO_TYPES.EPISODE and not self.__match_episode(video, norm_title, stream['name'], 'dummy'):
+                if video.video_type == VIDEO_TYPES.EPISODE and not self.__match_episode(video, norm_title, stream['name']):
                     continue
 
                 host = self._get_direct_hostname(stream['url'])
@@ -142,17 +143,14 @@ class PremiumizeV2_Scraper(scraper.Scraper):
                     return season_url
         
     def __find_episodes(self, video):
-        url = urlparse.urljoin(self.base_url, LIST_URL)
-        js_data = self._http_get(url, cache_limit=0)
-        if 'transfers' in js_data:
-            if not scraper_utils.force_title(video):
-                norm_title = scraper_utils.normalize_title(video.title)
-                for item in js_data['transfers']:
-                    match_url = self.__match_episode(video, norm_title, item['name'], item['hash'])
-                    if match_url is not None:
-                        return match_url
+        if not scraper_utils.force_title(video):
+            norm_title = scraper_utils.normalize_title(video.title)
+            for item in self.__get_torrents():
+                match_url = self.__match_episode(video, norm_title, item['name'], item['hash'])
+                if match_url is not None:
+                    return match_url
                 
-    def __match_episode(self, video, norm_title, title, hash_id):
+    def __match_episode(self, video, norm_title, title, hash_id=None):
         sxe_pattern = '(.*?)[. _]S%02dE%02d[. _]' % (int(video.season), int(video.episode))
         airdate_fallback = kodi.get_setting('airdate-fallback') == 'true' and video.ep_airdate
         show_title = ''
@@ -168,36 +166,46 @@ class PremiumizeV2_Scraper(scraper.Scraper):
         if show_title and norm_title in scraper_utils.normalize_title(show_title):
             return 'hash=%s' % (hash_id)
     
-    def search(self, video_type, title, year, season=''):
+    def __get_torrents(self):
+        torrents = []
         url = urlparse.urljoin(self.base_url, LIST_URL)
-        js_data = self._http_get(url, cache_limit=0)
-        norm_title = scraper_utils.normalize_title(title)
-        results = []
+        js_data = self._http_get(url, cache_limit=.001)
         if 'transfers' in js_data:
-            for item in js_data['transfers']:
-                is_season = re.search('(.*?[._ ]season[._ ]+(\d+))[._ ](.*)', item['name'], re.I)
-                if not is_season and video_type == VIDEO_TYPES.MOVIE or is_season and VIDEO_TYPES.SEASON:
-                    if re.search('[._ ]S\d+E\d+[._ ]', item['name']): continue  # skip episodes
-                    if video_type == VIDEO_TYPES.SEASON:
-                        match_title, match_season, extra = is_season.groups()
-                        if season and int(match_season) != int(season):
-                            continue
-                        match_year = ''
-                        match_title = re.sub('[._]', ' ', match_title)
+            torrents += js_data['transfers']
+        url = urlparse.urljoin(self.base_url, FOLDER_URL)
+        js_data = self._http_get(url, cache_limit=.001)
+        if 'content' in js_data:
+            hashes = dict((torrent['hash'], True) for torrent in torrents)
+            torrents += [torrent for torrent in js_data['content'] if torrent['hash'] not in hashes]
+        return torrents
+    
+    def search(self, video_type, title, year, season=''):
+        results = []
+        norm_title = scraper_utils.normalize_title(title)
+        for item in self.__get_torrents():
+            is_season = re.search('(.*?[._ ]season[._ ]+(\d+))[._ ](.*)', item['name'], re.I)
+            if not is_season and video_type == VIDEO_TYPES.MOVIE or is_season and VIDEO_TYPES.SEASON:
+                if re.search('[._ ]S\d+E\d+[._ ]', item['name']): continue  # skip episodes
+                if video_type == VIDEO_TYPES.SEASON:
+                    match_title, match_season, extra = is_season.groups()
+                    if season and int(match_season) != int(season):
+                        continue
+                    match_year = ''
+                    match_title = re.sub('[._]', ' ', match_title)
+                else:
+                    match = re.search('(.*?)\(?(\d{4})\)?(.*)', item['name'])
+                    if match:
+                        match_title, match_year, extra = match.groups()
                     else:
-                        match = re.search('(.*?)\(?(\d{4})\)?(.*)', item['name'])
-                        if match:
-                            match_title, match_year, extra = match.groups()
-                        else:
-                            match_title, match_year, extra = item['name'], '', ''
-                        
-                    match_title = match_title.strip()
-                    extra = extra.strip()
-                    if norm_title in scraper_utils.normalize_title(match_title) and (not year or not match_year or year == match_year):
-                        result_title = match_title
-                        if extra: result_title += ' [%s]' % (extra)
-                        result = {'title': result_title, 'year': match_year, 'url': 'hash=%s' % (item['hash'])}
-                        results.append(result)
+                        match_title, match_year, extra = item['name'], '', ''
+                    
+                match_title = match_title.strip()
+                extra = extra.strip()
+                if norm_title in scraper_utils.normalize_title(match_title) and (not year or not match_year or year == match_year):
+                    result_title = match_title
+                    if extra: result_title += ' [%s]' % (extra)
+                    result = {'title': result_title, 'year': match_year, 'url': 'hash=%s' % (item['hash'])}
+                    results.append(result)
         
         return results
 

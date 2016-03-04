@@ -132,7 +132,7 @@ class DirectDownload_Scraper(scraper.Scraper):
     def search(self, video_type, title, year, season=''):
         results = []
         search_url = urlparse.urljoin(self.base_url, '/search?query=')
-        search_url += title
+        search_url += title.replace("'", "")
         html = self._http_get(search_url, cache_limit=.25)
         js_result = scraper_utils.parse_json(html, search_url)
         if 'error' in js_result:

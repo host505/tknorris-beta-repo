@@ -24,6 +24,7 @@ from salts_lib import dom_parser
 from salts_lib import kodi
 from salts_lib import log_utils
 from salts_lib import scraper_utils
+from salts_lib import recaptcha_v2
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
 from salts_lib.constants import Q_ORDER
@@ -62,12 +63,22 @@ class WatchHD_Scraper(scraper.Scraper):
         if not link.startswith('http'):
             link = urlparse.urljoin(self.base_url, link)
         html = self._http_get(link, headers=headers, cache_limit=0)
+                    
         fragment = dom_parser.parse_dom(html, 'div', {'class': 'player'})
         if fragment:
             iframe_url = dom_parser.parse_dom(fragment[0], 'iframe', ret='src')
             if iframe_url:
+                iframe_url = iframe_url[0]
                 headers = {'Referer': link}
-                html = self._http_get(iframe_url[0], headers=headers, cache_limit=0)
+                html = self._http_get(iframe_url, headers=headers, cache_limit=0)
+                sitekey = dom_parser.parse_dom(html, 'div', {'class': 'g-recaptcha'}, ret='data-sitekey')
+                if sitekey:
+                    token = recaptcha_v2.UnCaptchaReCaptcha().processCaptcha(sitekey[0], lang='en')
+                    if token:
+                        data = {'g-recaptcha-response': token}
+                        html = self._http_get(iframe_url, data=data, cache_limit=0)
+                        log_utils.log(html)
+                        
                 match = re.search("\.replace\(\s*'([^']+)'\s*,\s*'([^']*)'\s*\)", html, re.I)
                 if match:
                     html = html.replace(match.group(1), match.group(2))

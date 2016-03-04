@@ -30,10 +30,8 @@ from salts_lib.kodi import i18n
 import scraper
 
 
-BASE_URL = 'http://ororo.tv'
-LANDING_URL = '/nl'
+BASE_URL = 'https://ororo.tv'
 LOGIN_URL = '/en/users/sign_in'
-MAX_REDIRECT = 10
 CATEGORIES = {VIDEO_TYPES.TVSHOW: '2,3', VIDEO_TYPES.MOVIE: '1,3,4'}
 ORORO_WAIT = 1000
 XHR = {'X-Requested-With': 'XMLHttpRequest'}
@@ -136,19 +134,11 @@ class OroroTV_Scraper(scraper.Scraper):
         return html
 
     def __login(self):
-        url = urlparse.urljoin(self.base_url, LANDING_URL)
-        tries = 0
-        while True:
-            html = self._http_get(url, auth=False, allow_redirect=False, cache_limit=0)
-            if html.startswith('http://') and tries < MAX_REDIRECT:
-                tries += 1
-                url = html
-            else:
-                break
-        
         data = {'user[email]': self.username, 'user[password]': self.password, 'user[remember_me]': 1}
+        headers = XHR
+        landing_url = urlparse.urljoin(self.base_url, '/en')
+        headers['Referer'] = landing_url
         url = urlparse.urljoin(self.base_url, LOGIN_URL)
-        xbmc.sleep(ORORO_WAIT)
-        html = self._http_get(url, auth=False, data=data, allow_redirect=False, cache_limit=0)
-        if html != 'http://ororo.tv/en':
+        html = self._http_get(url, auth=False, data=data, headers=headers, allow_redirect=False, cache_limit=0)
+        if html != landing_url:
             raise Exception('ororo.tv login failed: %s' % (html))

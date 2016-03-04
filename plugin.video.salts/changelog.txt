@@ -1,3 +1,11 @@
+[B]Version 2.0.13[/B]
+- Add tvonline.tw scraper
+- Fix ororo log in
+- Remove mtvs scraper
+- Add recaptchav2 to watchhd
+- Filter videos that are too short from furk
+- Minor improvement in episode matching
+
 [B]Version 2.0.12[/B]
 - Fix premiumize exception
 - Fix moviesub scraper
