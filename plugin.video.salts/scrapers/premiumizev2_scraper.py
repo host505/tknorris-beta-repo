@@ -151,61 +151,72 @@ class PremiumizeV2_Scraper(scraper.Scraper):
                     return match_url
                 
     def __match_episode(self, video, norm_title, title, hash_id=None):
-        sxe_pattern = '(.*?)[. _]S%02dE%02d[. _]' % (int(video.season), int(video.episode))
-        airdate_fallback = kodi.get_setting('airdate-fallback') == 'true' and video.ep_airdate
+        sxe_patterns = [
+            '(.*?)[._ -]s([0-9]+)[._ -]*e([0-9]+)',
+            '(.*?)[._ -]([0-9]+)x([0-9]+)',
+            '(.*?)[._ -]([0-9]+)([0-9][0-9])',
+            '(.*?)[._ -]?season[._ -]*([0-9]+)[._ -]*-?[._ -]*episode[._ -]*([0-9]+)',
+            '(.*?)[._ -]\[s([0-9]+)\][._ -]*\[e([0-9]+)\]',
+            '(.*?)[._ -]s([0-9]+)[._ -]*ep([0-9]+)']
+        
         show_title = ''
-        match = re.search(sxe_pattern, title, re.I)
-        if match:
-            show_title = match.group(1)
-        elif video.ep_airdate and airdate_fallback:
-            airdate_pattern = '(.*?)[. _]%s[. _]%02d[. _]%02d[. _]' % (video.ep_airdate.year, video.ep_airdate.month, video.ep_airdate.day)
-            match = re.search(airdate_pattern, title)
+        for pattern in sxe_patterns:
+            match = re.search(pattern, title, re.I)
             if match:
-                show_title = match.group(1)
+                temp_title, season, episode = match.groups()
+                if int(season) == int(video.season) and int(episode) == int(video.episode):
+                    show_title = temp_title
+                    break
+        else:
+            airdate_fallback = kodi.get_setting('airdate-fallback') == 'true' and video.ep_airdate
+            if video.ep_airdate and airdate_fallback:
+                airdate_pattern = '(.*?)[. _]%s[. _]%02d[. _]%02d[. _]' % (video.ep_airdate.year, video.ep_airdate.month, video.ep_airdate.day)
+                match = re.search(airdate_pattern, title)
+                if match:
+                    show_title = match.group(1)
         
         if show_title and norm_title in scraper_utils.normalize_title(show_title):
             return 'hash=%s' % (hash_id)
     
     def __get_torrents(self):
         torrents = []
-        url = urlparse.urljoin(self.base_url, LIST_URL)
-        js_data = self._http_get(url, cache_limit=.001)
-        if 'transfers' in js_data:
-            torrents += js_data['transfers']
         url = urlparse.urljoin(self.base_url, FOLDER_URL)
         js_data = self._http_get(url, cache_limit=.001)
         if 'content' in js_data:
-            hashes = dict((torrent['hash'], True) for torrent in torrents)
-            torrents += [torrent for torrent in js_data['content'] if torrent['hash'] not in hashes]
+            torrents += js_data['content']
         return torrents
     
     def search(self, video_type, title, year, season=''):
         results = []
         norm_title = scraper_utils.normalize_title(title)
         for item in self.__get_torrents():
-            is_season = re.search('(.*?[._ ]season[._ ]+(\d+))[._ ](.*)', item['name'], re.I)
-            if not is_season and video_type == VIDEO_TYPES.MOVIE or is_season and VIDEO_TYPES.SEASON:
-                if re.search('[._ ]S\d+E\d+[._ ]', item['name']): continue  # skip episodes
+            if title or year or season:
+                is_season = re.search('(.*?[._ ]season[._ ]+(\d+))[._ ](.*)', item['name'], re.I)
+                if (not is_season and video_type == VIDEO_TYPES.SEASON) or (is_season and video_type == VIDEO_TYPES.MOVIE):
+                    continue
+                
+                if re.search('[._ ]S\d+E\d+[._ ]', item['name'], re.I): continue  # skip episodes
                 if video_type == VIDEO_TYPES.SEASON:
                     match_title, match_season, extra = is_season.groups()
-                    if season and int(match_season) != int(season):
-                        continue
+                    if season and int(match_season) != int(season): continue
                     match_year = ''
-                    match_title = re.sub('[._]', ' ', match_title)
+                    match_title = re.sub('[._-]', ' ', match_title)
                 else:
                     match = re.search('(.*?)\(?(\d{4})\)?(.*)', item['name'])
                     if match:
                         match_title, match_year, extra = match.groups()
                     else:
                         match_title, match_year, extra = item['name'], '', ''
+            else:
+                match_title, match_year, extra = item['name'], '', ''
                     
-                match_title = match_title.strip()
-                extra = extra.strip()
-                if norm_title in scraper_utils.normalize_title(match_title) and (not year or not match_year or year == match_year):
-                    result_title = match_title
-                    if extra: result_title += ' [%s]' % (extra)
-                    result = {'title': result_title, 'year': match_year, 'url': 'hash=%s' % (item['hash'])}
-                    results.append(result)
+            match_title = match_title.strip()
+            extra = extra.strip()
+            if norm_title in scraper_utils.normalize_title(match_title) and (not year or not match_year or year == match_year):
+                result_title = match_title
+                if extra: result_title += ' [%s]' % (extra)
+                result = {'title': result_title, 'year': match_year, 'url': 'hash=%s' % (item['hash'])}
+                results.append(result)
         
         return results
 

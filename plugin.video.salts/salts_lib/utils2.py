@@ -126,6 +126,7 @@ def iso_2_utc(iso_ts):
     return seconds
 
 def _title_key(title):
+    if title is None: title = ''
     temp = title.upper()
     if temp.startswith('THE '):
         offset = 4

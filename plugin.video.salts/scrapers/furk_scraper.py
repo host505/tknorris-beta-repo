@@ -28,7 +28,7 @@ from salts_lib.constants import VIDEO_TYPES
 from salts_lib.kodi import i18n
 import scraper
 import xml.etree.ElementTree as ET
-
+import xbmcgui
 
 BASE_URL = 'http://www.furk.net'
 SEARCH_URL = '/api/plugins/metasearch'
@@ -59,23 +59,39 @@ class Furk_Scraper(scraper.Scraper):
             ns = '{http://xspf.org/ns/0/}'
             root = ET.fromstring(playlist)
             tracks = root.findall('.//%strack' % (ns))
+            locations = []
             for track in tracks:
                 duration = track.find('%sduration' % (ns)).text
                 try: duration = int(duration)
                 except: duration = 0
                 if duration >= MIN_DURATION:
                     location = track.find('%slocation' % (ns)).text
-                    return location
+                    locations.append({'duration': duration / 1000, 'url': location})
+
+            if len(locations) > 1:
+                result = xbmcgui.Dialog().select(i18n('choose_stream'), [self.__format_time(location['duration']) for location in locations])
+                if result > -1:
+                    return locations[result]['url']
+            elif locations:
+                return locations[0]['url']
         except Exception as e:
             log_utils.log('Failure during furk playlist parse: %s' % (e), log_utils.LOGWARNING)
 
+    def __format_time(self, seconds):
+        minutes, seconds = divmod(seconds, 60)
+        if minutes > 60:
+            hours, minutes = divmod(minutes, 60)
+            return "%02dh:%02dm:%02ds" % (hours, minutes, seconds)
+        else:
+            return "00h:%02dm:%02ds" % (minutes, seconds)
+        
     def format_source_label(self, item):
-        label = '[%s] %s' % (item['quality'], item['host'])
-        if 'size' in item:
-            label += ' (%s)' % (item['size'])
-        if 'extra' in item:
-            label += ' [%s]' % (item['extra'])
-        return label
+            label = '[%s] %s' % (item['quality'], item['host'])
+            if 'size' in item:
+                label += ' (%s)' % (item['size'])
+            if 'extra' in item:
+                label += ' [%s]' % (item['extra'])
+            return label
 
     def get_sources(self, video):
         hosters = []

@@ -83,6 +83,7 @@ class One23Movies_Scraper(scraper.Scraper):
                     sources.update(self.__get_links_from_xml(xml, video))
             
         for source in sources:
+            if not source.lower().startswith('http'): continue
             if sources[source]['direct']:
                 host = self._get_direct_hostname(source)
             else:

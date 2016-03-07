@@ -1129,9 +1129,13 @@ def apply_urlresolver(hosters):
     if not filter_unusable and not show_debrid:
         return hosters
     
-    import urlresolver.plugnplay
-    resolvers = urlresolver.plugnplay.man.implementors(urlresolver.UrlResolver)
-    debrid_resolvers = [resolver for resolver in resolvers if resolver.isUniversal() and resolver.get_setting('enabled') == 'true']
+    try:
+        import urlresolver.plugnplay
+        resolvers = urlresolver.plugnplay.man.implementors(urlresolver.UrlResolver)
+        debrid_resolvers = [resolver for resolver in resolvers if resolver.isUniversal() and resolver.get_setting('enabled') == 'true']
+    except:
+        import urlresolver
+        debrid_resolvers = [resolver() for resolver in urlresolver.relevant_resolvers(order_matters=True) if resolver.isUniversal()]
     filtered_hosters = []
     debrid_hosts = {}
     unk_hosts = {}
@@ -1230,9 +1234,14 @@ def play_source(mode, hoster_url, direct, video_type, trakt_id, dialog, season='
                 log_utils.log('Indirect hoster_url not supported by urlresolver: %s' % (hoster_url))
                 stream_url = hoster_url
             else:
-                stream_url = hmf.resolve()
-                if not stream_url or not isinstance(stream_url, basestring):
-                    try: msg = stream_url.msg
+                try:
+                    stream_url = hmf.resolve()
+                    if not stream_url or not isinstance(stream_url, basestring):
+                        try: msg = stream_url.msg
+                        except: msg = hoster_url
+                        raise Exception(msg)
+                except Exception as e:
+                    try: msg = str(e)
                     except: msg = hoster_url
                     kodi.notify(msg=i18n('resolve_failed') % (msg), duration=7500)
                     return False

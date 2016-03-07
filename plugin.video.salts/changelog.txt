@@ -1,3 +1,9 @@
+[B]Version 2.0.14[/B]
+- Improve 123Movies scraper
+- Improve PremiumizeV2 scraper
+- Improve Furk.net scraper
+- Prepare for smu rewrite
+
 [B]Version 2.0.13[/B]
 - Add tvonline.tw scraper
 - Fix ororo log in
