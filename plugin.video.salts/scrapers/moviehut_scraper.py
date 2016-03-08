@@ -27,7 +27,7 @@ from salts_lib.constants import VIDEO_TYPES
 import scraper
 
 
-BASE_URL = 'http://moviehut.co'
+BASE_URL = 'http://netflix-putlocker.com'
 QUALITY_MAP = {'DVD': QUALITIES.HIGH, 'TS': QUALITIES.MEDIUM, 'CAM': QUALITIES.LOW}
 
 class MovieHut_Scraper(scraper.Scraper):

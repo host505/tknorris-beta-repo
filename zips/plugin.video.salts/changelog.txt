@@ -1,3 +1,13 @@
+[B]Version 2.0.15[/B]
+- Fix tvwts scraper
+- Fix tunemovie scraper
+- Fix vidics scraper
+- Fix MovieHut scraper
+- Fix MoviesHD scraper
+- Improve OnlineMoviesPro scraper
+- Remove ayyex scraper
+- Remove MWM scraper
+
 [B]Version 2.0.14[/B]
 - Improve 123Movies scraper
 - Improve PremiumizeV2 scraper

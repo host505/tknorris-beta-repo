@@ -18,7 +18,7 @@
 import re
 import urllib
 import urlparse
-
+from salts_lib import dom_parser
 from salts_lib import kodi
 from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
@@ -27,7 +27,7 @@ from salts_lib.constants import VIDEO_TYPES
 import scraper
 
 
-BASE_URL = 'http://movieshd.eu'
+BASE_URL = 'http://movieshd.tv'
 
 class MoviesHD_Scraper(scraper.Scraper):
     base_url = BASE_URL
@@ -62,21 +62,23 @@ class MoviesHD_Scraper(scraper.Scraper):
         if source_url and source_url != FORCE_NO_MATCH:
             url = urlparse.urljoin(self.base_url, source_url)
             html = self._http_get(url, cache_limit=.5)
+            
+            fragment = dom_parser.parse_dom(html, 'div', {'class': 'video-embed'})
+            if fragment:
+                sources = dom_parser.parse_dom(fragment[0], 'source', ret='src')
+                sources += dom_parser.parse_dom(fragment[0], 'iframe', ret='src')
+                
+                for source in sources:
+                    if self._get_direct_hostname(source) == 'gvideo':
+                        direct = True
+                        quality = scraper_utils.gv_get_quality(source)
+                        host = self._get_direct_hostname(source)
+                    else:
+                        direct = False
+                        host = urlparse.urlparse(source).hostname
+                        quality = scraper_utils.get_quality(video, host, QUALITIES.HD720)
 
-            match = re.search("(?:'|\")([^'\"]+hashkey=[^'\"]+)", html)
-            stream_url = ''
-            if match:
-                stream_url = match.group(1)
-                if stream_url.startswith('//'): stream_url = 'http:' + stream_url
-                host = 'videomega.tv'
-            else:
-                match = re.search('iframe[^>]*src="([^"]+)', html)
-                if match:
-                    stream_url = match.group(1)
-                    host = urlparse.urlparse(stream_url).hostname
-                    
-                if stream_url:
-                    hoster = {'multi-part': False, 'url': stream_url, 'host': host, 'class': self, 'quality': QUALITIES.HD720, 'views': None, 'rating': None, 'up': None, 'down': None, 'direct': False}
+                    hoster = {'multi-part': False, 'url': source, 'host': host, 'class': self, 'quality': quality, 'views': None, 'rating': None, 'direct': direct}
                     hosters.append(hoster)
         return hosters
 

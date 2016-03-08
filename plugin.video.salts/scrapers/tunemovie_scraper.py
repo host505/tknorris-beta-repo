@@ -18,6 +18,7 @@
 import re
 import urllib
 import urlparse
+import base64
 from salts_lib import dom_parser
 from salts_lib import kodi
 from salts_lib import scraper_utils
@@ -28,9 +29,10 @@ from salts_lib.constants import VIDEO_TYPES
 import scraper
 
 
-BASE_URL = 'http://tunemovie.tv'
+BASE_URL = 'http://tunemovie.is'
 LINK_URL = '/ip.temp/swf/plugins/ipplugins.php'
 XHR = {'X-Requested-With': 'XMLHttpRequest'}
+GK_KEY = base64.b64decode('Q05WTmhPSjlXM1BmeFd0UEtiOGg=')
 
 class TuneMovie_Scraper(scraper.Scraper):
     base_url = BASE_URL
@@ -70,6 +72,8 @@ class TuneMovie_Scraper(scraper.Scraper):
             url = urlparse.urljoin(self.base_url, source_url)
             html = self._http_get(url, cache_limit=.5)
             sources = self.__get_gk_links(html, url)
+            if not sources:
+                sources = self.__get_gk_links2(html)
             
             for source in sources:
                 host = self._get_direct_hostname(source)
@@ -112,6 +116,20 @@ class TuneMovie_Scraper(scraper.Scraper):
                             sources[stream_url] = quality
         return sources
 
+    def __get_gk_links2(self, html):
+        sources = {}
+        match = re.search('base64\.decode\("([^"]+)', html, re.I)
+        if match:
+            match = re.search('proxy\.link=tunemovie\*([^&]+)', base64.b64decode(match.group(1)))
+            if match:
+                picasa_url = scraper_utils.gk_decrypt(self.get_name(), GK_KEY, match.group(1))
+                g_links = self._parse_google(picasa_url)
+                for link in g_links:
+                    sources[link] = scraper_utils.gv_get_quality(link)
+                
+        log_utils.log(sources)
+        return sources
+
     def get_url(self, video):
         return self._default_get_url(video)
 
@@ -120,7 +138,7 @@ class TuneMovie_Scraper(scraper.Scraper):
         return self._default_get_episode_url(season_url, video, episode_pattern)
     
     def search(self, video_type, title, year, season=''):
-        search_url = urlparse.urljoin(self.base_url, '/search/%s.html')
+        search_url = urlparse.urljoin(self.base_url, '/search-movies/%s.html')
         search_url = search_url % (urllib.quote_plus(title))
         html = self._http_get(search_url, cache_limit=0)
         results = []
