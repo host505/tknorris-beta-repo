@@ -119,7 +119,7 @@ class cInputWindow(xbmcgui.WindowDialog):
             self.close()
         else:
             label = control.getLabel()
-            if label.isnumeric():
+            if label.isdigit():
                 index = int(label) - 1
                 self.chkstate[index] = not self.chkstate[index]
                 self.chk[index].setVisible(self.chkstate[index])

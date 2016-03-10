@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SALTS\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"PO-Revision-Date: 2016-02-22 11:57+0000\n"
+"PO-Revision-Date: 2016-03-07 13:02+0000\n"
 "Last-Translator: Achaw <achaw.ar@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/tv-addons/salts/language/es/)\n"
 "MIME-Version: 1.0\n"
@@ -82,7 +82,7 @@ msgstr " %s recomendadas"
 
 msgctxt "#30016"
 msgid "My %s Collection"
-msgstr "%s en mi Librería"
+msgstr "%s en mi Colección de Trakt"
 
 msgctxt "#30017"
 msgid "My Favorites"
@@ -234,7 +234,7 @@ msgstr "Definir como lista de Suscripción"
 
 msgctxt "#30054"
 msgid "Import from Collection"
-msgstr "Importar desde Librería"
+msgstr "Importar desde Colección de Trakt"
 
 msgctxt "#30055"
 msgid "Add another user's list"
@@ -338,7 +338,7 @@ msgstr "La reproducción de TODAS las fuentes FALLÓ."
 
 msgctxt "#30080"
 msgid "Choose your stream"
-msgstr "Elige tu Fuente"
+msgstr "Streams Disponibles"
 
 msgctxt "#30081"
 msgid "Set Related Url"
@@ -386,11 +386,11 @@ msgstr "Ingresa ID de Serie de TV"
 
 msgctxt "#30092"
 msgid "Item Added to Collection"
-msgstr "Item agregado a la Librería"
+msgstr "Item agregado a la Colección de Trakt"
 
 msgctxt "#30093"
 msgid "Item Removed from Collection"
-msgstr "Item eliminado de la Librería"
+msgstr "Item eliminado de la Colección de Trakt"
 
 msgctxt "#30094"
 msgid "Item Added to List"
@@ -562,11 +562,11 @@ msgstr "Definir Url relativa (Manual)"
 
 msgctxt "#30136"
 msgid "Remove from Collection"
-msgstr "Eliminar de la Librería"
+msgstr "Eliminar de la Colección de Trakt"
 
 msgctxt "#30137"
 msgid "Add to Collection"
-msgstr "Agregar a la Librería"
+msgstr "Agregar a la Colección de Trakt"
 
 msgctxt "#30138"
 msgid "Add to List"
@@ -846,7 +846,7 @@ msgstr "Forzar No Match"
 
 msgctxt "#30218"
 msgid "Getting Sources"
-msgstr "Recibiendo Fuentes"
+msgstr "Obteniendo Fuentes"
 
 msgctxt "#30219"
 msgid "Requested Sources from: %s"
@@ -854,7 +854,7 @@ msgstr "Solicitando fuentes de: %s"
 
 msgctxt "#30220"
 msgid "Received %s Sources from: %s"
-msgstr "%s fuentes recibidas de: %s"
+msgstr "%s fuentes obtenidas de: %s"
 
 msgctxt "#30221"
 msgid "Applying Source Filters"
@@ -1070,7 +1070,7 @@ msgstr "Mostrar tiempo de emisión en calendarios"
 
 msgctxt "#30504"
 msgid "My Collection Sort Order"
-msgstr "Orden de clasificación de Mi Librería"
+msgstr "Orden de clasificación de Mi Colección de Trakt"
 
 msgctxt "#30505"
 msgid "My Next Episodes Sort Order"
@@ -1166,7 +1166,7 @@ msgstr "Mostrar Recomendadas"
 
 msgctxt "#30528"
 msgid "Show My Collection"
-msgstr "Mostrar Mi Librería"
+msgstr "Mostrar Mi Colección de Trakt"
 
 msgctxt "#30529"
 msgid "Show My Favorites"

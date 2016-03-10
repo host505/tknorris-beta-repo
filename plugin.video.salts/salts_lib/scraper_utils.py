@@ -78,6 +78,7 @@ def force_title(video):
         return str(video.trakt_id) in trakt_list
 
 def normalize_title(title):
+    if title is None: title = ''
     new_title = title.upper()
     new_title = re.sub('[^A-Za-z0-9]', '', new_title)
     # log_utils.log('In title: |%s| Out title: |%s|' % (title,new_title), log_utils.LOGDEBUG)

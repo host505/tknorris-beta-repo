@@ -1,3 +1,9 @@
+[B]Version 2.0.16[/B]
+- Add tvonline scraper
+- Improve Premiumize.V2 scraper
+- Improve HDMovies14 scraper
+- Fix TVWTS scraper
+
 [B]Version 2.0.15[/B]
 - Fix tvwts scraper
 - Fix tunemovie scraper

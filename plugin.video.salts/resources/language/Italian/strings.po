@@ -4,11 +4,12 @@
 # Translators:
 # Alessandro Boggiano <boggiano@gmail.com>, 2016
 # theloca95 <iloca95@gmail.com>, 2015-2016
+# tknorris, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: SALTS\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"PO-Revision-Date: 2016-02-25 19:01+0000\n"
+"PO-Revision-Date: 2016-03-02 07:53+0000\n"
 "Last-Translator: Alessandro Boggiano <boggiano@gmail.com>\n"
 "Language-Team: Italian (http://www.transifex.com/tv-addons/salts/language/it/)\n"
 "MIME-Version: 1.0\n"
@@ -67,11 +68,11 @@ msgstr "Rimuovi le Url nella Cache"
 
 msgctxt "#30012"
 msgid "Trending %s"
-msgstr "Di tendenza %"
+msgstr "Di tendenza %s"
 
 msgctxt "#30013"
 msgid "Popular %s"
-msgstr "Popolari %s"
+msgstr "%s Popolari"
 
 msgctxt "#30014"
 msgid "Recently Updated %s"
@@ -495,11 +496,11 @@ msgstr "Non disponibile"
 
 msgctxt "#30130"
 msgid "Select Source"
-msgstr "Seleziona sorgente"
+msgstr "Seleziona Fonte"
 
 msgctxt "#30131"
 msgid "Download Source"
-msgstr "Scarica sorgente"
+msgstr "Scarica Fonte"
 
 msgctxt "#30132"
 msgid "Show Information"
@@ -527,7 +528,7 @@ msgstr "Aggiungi alla Libreria"
 
 msgctxt "#30140"
 msgid "Set Addic7ed TVShowID"
-msgstr "Imposta l' Addic7ed TVShowID"
+msgstr "Imposta l' TVShowID di Addic7ed "
 
 msgctxt "#30144"
 msgid "Play Trailer"
@@ -609,6 +610,10 @@ msgctxt "#30174"
 msgid "Enabled"
 msgstr "Abilitato"
 
+msgctxt "#30175"
+msgid "Base Url"
+msgstr "Url di Partenza"
+
 msgctxt "#30176"
 msgid "Include in Page Existence checks?"
 msgstr "Includi il controllo dell'esistenza delle pagine?"
@@ -663,7 +668,7 @@ msgstr "Non visto"
 
 msgctxt "#30189"
 msgid "Updating"
-msgstr "Aggiornado"
+msgstr "Aggiornando"
 
 msgctxt "#30190"
 msgid "Failed to create directory"
@@ -673,6 +678,14 @@ msgctxt "#30191"
 msgid "Failed to write file"
 msgstr "Scrittura del file fallita"
 
+msgctxt "#30192"
+msgid "Reset All Scraper Base Urls to Default"
+msgstr "Resetta le Url di Base degli Scraper ai valori di Default"
+
+msgctxt "#30193"
+msgid "Base Url Reset Complete"
+msgstr "Reset delle Url di Base completato"
+
 msgctxt "#30194"
 msgid "Requesting Url for: %s"
 msgstr "Richiedendo la Url per: %s"
@@ -681,9 +694,21 @@ msgctxt "#30195"
 msgid "'%s' added to library"
 msgstr "'%s' aggiunto alla libreria"
 
+msgctxt "#30196"
+msgid "Add to Section Menu"
+msgstr "Aggiungi al Menu di Sezione"
+
+msgctxt "#30197"
+msgid "Remove from Section Menu"
+msgstr "Rimuovi dal Menu di Sezione"
+
 msgctxt "#30198"
 msgid "Liked Lists"
 msgstr "Liste collegate"
+
+msgctxt "#30199"
+msgid "%s Mosts"
+msgstr "%s Più"
 
 msgctxt "#30200"
 msgid "Most Played This Week"
@@ -715,7 +740,15 @@ msgstr "%s NON aggiunto alla libreria (%s)"
 
 msgctxt "#30211"
 msgid "Scraper Download Url"
-msgstr "Url di download dello scraper"
+msgstr "Url di Download dello scraper"
+
+msgctxt "#30213"
+msgid "Trakt On Deck"
+msgstr "Trakt On Deck"
+
+msgctxt "#30214"
+msgid "on"
+msgstr "on"
 
 msgctxt "#30215"
 msgid "Delete Bookmark"
@@ -727,11 +760,11 @@ msgstr "Segnalibro Cancellato"
 
 msgctxt "#30220"
 msgid "Received %s Sources from: %s"
-msgstr "Ricevute %s Sorgenti da: %s"
+msgstr "Ricevute %s Fonti da: %s"
 
 msgctxt "#30221"
 msgid "Applying Source Filters"
-msgstr "Applicando Filtri Sorgente"
+msgstr "Applicando Filtri alle Fonti"
 
 msgctxt "#30226"
 msgid "Failed: [%s] %s from %s"
@@ -755,7 +788,11 @@ msgstr "Includi Watchlist ne I Miei Prossimi Episodi"
 
 msgctxt "#30239"
 msgid "Show Debrid sources in Green"
-msgstr "Mostra le sorgenti Debrid in Verde"
+msgstr "Mostra le fonti Debrid in Verde"
+
+msgctxt "#30243"
+msgid "Reset All Scraper Base Urls to Default"
+msgstr "Resetta le Url di Base degli Scraper ai valori di Default"
 
 msgctxt "#30244"
 msgid "Select All/None"
@@ -763,7 +800,7 @@ msgstr "Seleziona Tutto/Niente"
 
 msgctxt "#30245"
 msgid "Automatically Select Best Source"
-msgstr "Automaticamente Seleziona la Sorgente Migliore"
+msgstr "Automaticamente Seleziona la Fonte Migliore"
 
 msgctxt "#30248"
 msgid "Should SALTS attempt a DB migration?"
@@ -784,6 +821,10 @@ msgstr "Scoprendo Nuovi Episodi"
 msgctxt "#30267"
 msgid "When prompted, enter code: %s"
 msgstr "Quando richiesto, inserisci codice: %s"
+
+msgctxt "#30269"
+msgid "Authorization was Rejected"
+msgstr "L'Autorizzazione e' stat Rifiutata"
 
 msgctxt "#30511"
 msgid "Off"
@@ -808,6 +849,14 @@ msgstr "Anno"
 msgctxt "#30519"
 msgid "Title"
 msgstr "Titolo"
+
+msgctxt "#30522"
+msgid "Recently Aired"
+msgstr "Recentemente Trasmessi"
+
+msgctxt "#30526"
+msgid "Show Recently Updated"
+msgstr "Mostra Aggiornati Recentemente"
 
 msgctxt "#30527"
 msgid "Show Recommended"
@@ -877,13 +926,17 @@ msgctxt "#30550"
 msgid "Trakt Page Size"
 msgstr "Trakt Dimensione Pagina"
 
+msgctxt "#30552"
+msgid "Use Trakt Bookmarks"
+msgstr "Usa i Segnalibri di Trak"
+
 msgctxt "#30555"
 msgid "Include People"
 msgstr "Includi Persone"
 
 msgctxt "#30556"
 msgid "Minimum Image Size"
-msgstr "Dimensione Immagine minima"
+msgstr "Dimensione Minima dell' Immagine "
 
 msgctxt "#30558"
 msgid "TV Show Folder"
@@ -911,7 +964,7 @@ msgstr "Includi Film?"
 
 msgctxt "#30572"
 msgid "Auto-Play Sources"
-msgstr "Auto-Play Sorgenti"
+msgstr "Auto-Play Fonti"
 
 msgctxt "#30574"
 msgid "Show Download Option"
@@ -921,13 +974,25 @@ msgctxt "#30575"
 msgid "    Show Download Progress"
 msgstr "Mostra il Progresso del Download"
 
+msgctxt "#30576"
+msgid "    TV Show Download Folder"
+msgstr "Cartella di Download delle Serie TV"
+
+msgctxt "#30577"
+msgid "    Movie Download Folder"
+msgstr "Cartella di Download dei Film"
+
 msgctxt "#30578"
 msgid "Scraper Timeout (seconds) (0=No Limit)"
-msgstr "Scraper Timeout (secondi) (0=Nessun Limite)"
+msgstr "Timeout dello Scraper (secondi) (0=Nessun Limite)"
 
 msgctxt "#30580"
 msgid "Filter Out Unusable Sources"
-msgstr "Filtra Sorgenti Non Usabili"
+msgstr "Filtra Fonti Non Usabili"
+
+msgctxt "#30586"
+msgid "Automatically disable ineffective scrapers"
+msgstr "Autmaticamente Disabilita gli scrapers inefficaci"
 
 msgctxt "#30587"
 msgid "    Check Frequency (requests)"
@@ -947,7 +1012,7 @@ msgstr "Sfondo"
 
 msgctxt "#30591"
 msgid "Source Sorting"
-msgstr "Ordinamento Sorgenti"
+msgstr "Ordinamento Fonti"
 
 msgctxt "#30592"
 msgid "Sort Sources"
@@ -985,13 +1050,25 @@ msgctxt "#30611"
 msgid "Worst to Best"
 msgstr "Dal Peggiore al Migliore"
 
+msgctxt "#30612"
+msgid "Base Url"
+msgstr "Url di Partenza"
+
 msgctxt "#30613"
 msgid "Include in Page Existence checks?"
 msgstr "Includi il controllo dell'esistenza delle pagine?"
 
+msgctxt "#30614"
+msgid "Subtitles work only for TV Shows currently"
+msgstr "Attualmente, i Sottotitoli funzionano solo per le Serie TV"
+
 msgctxt "#30615"
 msgid "Enable Subtitles"
 msgstr "Abilita sottotitoli"
+
+msgctxt "#30616"
+msgid "Show subtitle indicators"
+msgstr "Mostra l'indicatore dei Sottotitoli"
 
 msgctxt "#30617"
 msgid "Subtitle Language"
@@ -1081,6 +1158,10 @@ msgctxt "#30640"
 msgid "Show Liked Lists"
 msgstr "Mostra Liste Piaciute"
 
+msgctxt "#30641"
+msgid "Show Mosts"
+msgstr "Mostra Più"
+
 msgctxt "#30643"
 msgid "Recently Added"
 msgstr "Aggiunti Recentemente"
@@ -1149,6 +1230,10 @@ msgctxt "#30665"
 msgid "Automatically pick first matching subtitle"
 msgstr "Automaticamente scegli il primo sottotitolo"
 
+msgctxt "#30666"
+msgid "SALTS Auto Configuration"
+msgstr "SALTS Auto Configurazione"
+
 msgctxt "#30667"
 msgid "Continue"
 msgstr "Continua"
@@ -1156,6 +1241,10 @@ msgstr "Continua"
 msgctxt "#30668"
 msgid "Cancel"
 msgstr "Cancella"
+
+msgctxt "#30669"
+msgid "Select this item to Install the SALTS Themepak"
+msgstr "Seleziona per installare il Themepak SALTS"
 
 msgctxt "#30670"
 msgid "Show Settings"

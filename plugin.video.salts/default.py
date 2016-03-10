@@ -692,7 +692,7 @@ def show_collection(section):
     if sort_key == 1:
         items.reverse()
     elif sort_key == 2:
-        items.sort(key=lambda x: re.sub('^(The |A |An )', '', x['title'], re.I))
+        items.sort(key=lambda x: utils2.title_key(x['title']))
     elif sort_key == 3:
         items.sort(key=lambda x: x['year'])
 
@@ -1067,6 +1067,7 @@ def get_sources(mode, video_type, title, year, trakt_id, season='', episode='', 
 
                 if max_results > 0 and len(hosters) >= max_results:
                     log_utils.log('Exceeded max results: %s/%s' % (max_results, len(hosters)))
+                    fails = {}
                     break
 
             else:

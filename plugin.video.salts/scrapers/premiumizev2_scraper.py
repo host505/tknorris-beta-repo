@@ -191,7 +191,9 @@ class PremiumizeV2_Scraper(scraper.Scraper):
         norm_title = scraper_utils.normalize_title(title)
         for item in self.__get_torrents():
             if title or year or season:
-                is_season = re.search('(.*?[._ ]season[._ ]+(\d+))[._ ](.*)', item['name'], re.I)
+                log_utils.log(item)
+                is_season = re.search('(.*?[._ ]season[._ ]+(\d+))[._ ]?(.*)', item['name'], re.I)
+                log_utils.log(is_season)
                 if (not is_season and video_type == VIDEO_TYPES.SEASON) or (is_season and video_type == VIDEO_TYPES.MOVIE):
                     continue
                 
