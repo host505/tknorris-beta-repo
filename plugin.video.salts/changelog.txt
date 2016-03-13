@@ -1,3 +1,12 @@
+[B]Version 2.0.17[/B]
+- Add m4ufree scraper
+- Improve Premiumize.V2 scraper
+ - Improve tv-release scraper
+ - Update flixanity scraper
+ - Improve furk matching
+ - Fix alluc scraper
+ - Improve HDMovie14 scraper searching
+
 [B]Version 2.0.16[/B]
 - Add tvonline scraper
 - Improve Premiumize.V2 scraper

@@ -178,12 +178,20 @@ class PremiumizeV2_Scraper(scraper.Scraper):
         if show_title and norm_title in scraper_utils.normalize_title(show_title):
             return 'hash=%s' % (hash_id)
     
-    def __get_torrents(self):
+    def __get_torrents(self, folder_id=None):
         torrents = []
         url = urlparse.urljoin(self.base_url, FOLDER_URL)
+        if folder_id is not None:
+            url += '?id=%s' % (folder_id)
+            
         js_data = self._http_get(url, cache_limit=.001)
         if 'content' in js_data:
-            torrents += js_data['content']
+            for item in js_data['content']:
+                if item['type'] == 'folder':
+                    torrents += self.__get_torrents(item['id'])
+                elif item['type'] == 'torrent':
+                    torrents.append(item)
+                    
         return torrents
     
     def search(self, video_type, title, year, season=''):
@@ -191,9 +199,7 @@ class PremiumizeV2_Scraper(scraper.Scraper):
         norm_title = scraper_utils.normalize_title(title)
         for item in self.__get_torrents():
             if title or year or season:
-                log_utils.log(item)
                 is_season = re.search('(.*?[._ ]season[._ ]+(\d+))[._ ]?(.*)', item['name'], re.I)
-                log_utils.log(is_season)
                 if (not is_season and video_type == VIDEO_TYPES.SEASON) or (is_season and video_type == VIDEO_TYPES.MOVIE):
                     continue
                 

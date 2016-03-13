@@ -220,7 +220,7 @@ def parse_episode_link(link):
         if match:
             return match.groups()[:-1] + ('480', ) + (match.groups()[-1],)  # assume no height = 480
         else:
-            match = re.search('[._ ](\d+)p[._ ]', link)
+            match = re.search('[._ ](\d{3,})p[._ ]', link)
             if match:
                 return ('', '-1', '-1', match.group(1), '')
             else:

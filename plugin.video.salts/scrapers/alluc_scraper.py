@@ -68,6 +68,7 @@ class Alluc_Scraper(scraper.Scraper):
         return label
 
     def get_sources(self, video):
+        hosters = []
         source_url = self.get_url(video)
         if source_url and source_url != FORCE_NO_MATCH:
             params = urlparse.parse_qs(urlparse.urlparse(source_url).query)

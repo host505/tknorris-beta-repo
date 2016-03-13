@@ -47,7 +47,7 @@ class IWatchOnline_Scraper(scraper.Scraper):
 
     def resolve_link(self, link):
         url = urlparse.urljoin(self.base_url, link)
-        html = self._http_get(url, allow_redirect=False, cache_limit=.5)
+        html = self._http_get(url, allow_redirect=False, method='HEAD', cache_limit=.5)
         if html.startswith('http'):
             return html
         else:

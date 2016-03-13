@@ -127,7 +127,6 @@ class TuneMovie_Scraper(scraper.Scraper):
                 for link in g_links:
                     sources[link] = scraper_utils.gv_get_quality(link)
                 
-        log_utils.log(sources)
         return sources
 
     def get_url(self, video):

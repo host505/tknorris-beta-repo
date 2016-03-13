@@ -301,12 +301,15 @@ class Scraper(object):
             if int(content_length) > MAX_RESPONSE:
                 log_utils.log('Response exceeded allowed size. %s => %s / %s' % (url, content_length, MAX_RESPONSE), log_utils.LOGWARNING)
             
-            if response.info().get('Content-Encoding') == 'gzip':
-                buf = StringIO(response.read(MAX_RESPONSE))
-                f = gzip.GzipFile(fileobj=buf)
-                html = f.read()
+            if method == 'HEAD':
+                return ''
             else:
-                html = response.read(MAX_RESPONSE)
+                if response.info().get('Content-Encoding') == 'gzip':
+                    buf = StringIO(response.read(MAX_RESPONSE))
+                    f = gzip.GzipFile(fileobj=buf)
+                    html = f.read()
+                else:
+                    html = response.read(MAX_RESPONSE)
         except urllib2.HTTPError as e:
             if e.code == 503 and 'cf-browser-verification' in e.read():
                 html = cloudflare.solve(url, self.cj, scraper_utils.get_ua())

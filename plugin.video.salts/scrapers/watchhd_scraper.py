@@ -77,7 +77,6 @@ class WatchHD_Scraper(scraper.Scraper):
                     if token:
                         data = {'g-recaptcha-response': token}
                         html = self._http_get(iframe_url, data=data, cache_limit=0)
-                        log_utils.log(html)
                         
                 match = re.search("\.replace\(\s*'([^']+)'\s*,\s*'([^']*)'\s*\)", html, re.I)
                 if match:

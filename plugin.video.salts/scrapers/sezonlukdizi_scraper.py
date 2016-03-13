@@ -94,7 +94,7 @@ class SezonLukDizi_Scraper(scraper.Scraper):
                             if stream_url not in seen_urls:
                                 seen_urls[stream_url] = True
                                 if 'v.asp' in stream_url:
-                                    stream_redirect = self._http_get(stream_url, allow_redirect=False, cache_limit=0)
+                                    stream_redirect = self._http_get(stream_url, allow_redirect=False, method='HEAD', cache_limit=0)
                                     if stream_redirect: stream_url = stream_redirect
                                     
                                 stream_url += '|User-Agent=%s' % (scraper_utils.get_ua())

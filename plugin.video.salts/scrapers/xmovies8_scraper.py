@@ -46,7 +46,7 @@ class XMovies8_Scraper(scraper.Scraper):
 
     def resolve_link(self, link):
         link = link.split('|', 1)[0]
-        html = self._http_get(link, allow_redirect=False, cache_limit=0)
+        html = self._http_get(link, allow_redirect=False, method='HEAD', cache_limit=0)
         if html.startswith('http'):
             return html
         else:

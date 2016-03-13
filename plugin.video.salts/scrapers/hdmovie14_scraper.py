@@ -80,6 +80,12 @@ class Flixanity_Scraper(scraper.Scraper):
         return self._default_get_url(video)
 
     def search(self, video_type, title, year, season=''):
+        results = self.__search(video_type, title, year, season)
+        if not results:
+            results = self.__alt_search(video_type, title, year, season)
+        return results
+            
+    def __search(self, video_type, title, year, season=''):
         search_url = base64.decodestring(SEARCH_URL) % (urllib.quote_plus(title))
         html = self._http_get(search_url, cache_limit=1)
         results = []
@@ -115,6 +121,38 @@ class Flixanity_Scraper(scraper.Scraper):
 
         return results
 
+    def __alt_search(self, video_type, title, year, season=''):
+        results = []
+        search_url = urlparse.urljoin(self.base_url, '/search?key=')
+        search_key = title.lower()
+        if year: search_key += ' %s' % (year)
+        if video_type == VIDEO_TYPES.SEASON and season:
+            search_key += ' Season %s' % (season)
+        search_url += urllib.quote_plus(search_key)
+        html = self._http_get(search_url, cache_limit=1)
+        for item in dom_parser.parse_dom(html, 'div', {'class': 'caption'}):
+            match = re.search('href="([^"]+)[^>]+>(.*?)<span[^>]*>', item)
+            if match:
+                match_url, match_title = match.groups()
+                is_season = re.search('-season-\d+', match_url)
+                if (video_type == VIDEO_TYPES.MOVIE and not is_season) or (video_type == VIDEO_TYPES.SEASON and is_season):
+                    if video_type == VIDEO_TYPES.SEASON:
+                        if season and not re.search('season-0*%s$' % (season), match_url): continue
+                        
+                    match_title = re.sub('</?[^>]*>', '', match_title)
+                    match_title = re.sub('\s+Full\s+Movie', '', match_title)
+                    match = re.search('-(\d{4})(?:$|-)', match_url)
+                    if match:
+                        match_year = match.group(1)
+                    else:
+                        match_year = ''
+                    
+                    if not year or not match_year or year == match_year:
+                        result = {'title': scraper_utils.cleanse_title(match_title), 'year': match_year, 'url': scraper_utils.pathify_url(match_url)}
+                        results.append(result)
+
+        return results
+        
     def _get_episode_url(self, season_url, video):
         url = urlparse.urljoin(self.base_url, season_url)
         html = self._http_get(url, cache_limit=2)

@@ -70,7 +70,7 @@ class OnlineDizi_Scraper(scraper.Scraper):
                             html = self._http_get(iframe_url[0], cache_limit=.25)
                             iframe_url = dom_parser.parse_dom(html, 'iframe', {'id': 'ifr'}, ret='src')
                             if iframe_url:
-                                html = self._http_get(iframe_url[0], allow_redirect=False, cache_limit=.25)
+                                html = self._http_get(iframe_url[0], allow_redirect=False, method='HEAD', cache_limit=.25)
                                 if html.startswith('http'):
                                     stream_url = html
                                     host = urlparse.urlparse(stream_url).hostname

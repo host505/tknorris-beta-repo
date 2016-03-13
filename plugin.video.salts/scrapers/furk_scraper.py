@@ -99,7 +99,7 @@ class Furk_Scraper(scraper.Scraper):
         if source_url and source_url != FORCE_NO_MATCH:
             params = urlparse.parse_qs(urlparse.urlparse(source_url).query)
             if 'title' in params:
-                query = params['title'][0].replace("'", "")
+                query = re.sub("['&:]", "", params['title'][0])
                 if video.video_type == VIDEO_TYPES.MOVIE:
                     if 'year' in params: query += ' %s' % (params['year'][0])
                 else:
@@ -109,7 +109,6 @@ class Furk_Scraper(scraper.Scraper):
                     if 'episode' in params:
                         sxe += 'E%02d' % (int(params['episode'][0]))
                     if sxe: query = '%s %s' % (query, sxe)
-                query = urllib.quote_plus(query)
                 query_url = '/search?query=%s' % (query)
                 hosters = self.__get_links(query_url, video)
                 if not hosters and video.video_type == VIDEO_TYPES.EPISODE and params['air_date'][0]:
@@ -183,7 +182,7 @@ class Furk_Scraper(scraper.Scraper):
             if video.video_type == VIDEO_TYPES.MOVIE:
                 query = 'title=%s&year=%s' % (urllib.quote_plus(video.title), video.year)
             else:
-                query = 'title=%s&season=%s&episode=%s&air_date=%s' % (urllib.quote_plus(video.title), video.season, video.episode, video.ep_airdate)
+                query = 'title=%s&season=%s&episode=%s&air_date=%s' % (video.title, video.season, video.episode, video.ep_airdate)
             url = '/search?%s' % (query)
             self.db_connection.set_related_url(video.video_type, video.title, video.year, self.get_name(), url)
         return url
@@ -239,5 +238,5 @@ class Furk_Scraper(scraper.Scraper):
     
     def __translate_search(self, url):
         query = {'sort': 'relevance', 'filter': 'all', 'moderated': 'yes', 'offset': 0, 'limit': self.max_results, 'match': 'all'}
-        query['q'] = urllib.quote_plus(urlparse.parse_qs(urlparse.urlparse(url).query)['query'][0])
+        query['q'] = urlparse.parse_qs(urlparse.urlparse(url).query)['query'][0]
         return query

@@ -20,7 +20,7 @@ import re
 import time
 import urllib
 import urlparse
-
+from salts_lib import dom_parser
 from salts_lib import kodi
 from salts_lib import log_utils
 from salts_lib import scraper_utils
@@ -33,6 +33,7 @@ import scraper
 
 BASE_URL = 'http://www.flixanity.is'
 EMBED_URL = '/ajax/embeds.php'
+SEARCH_URL = '/api/v1/cautare/mar'
 XHR = {'X-Requested-With': 'XMLHttpRequest'}
 
 class Flixanity_Scraper(scraper.Scraper):
@@ -107,7 +108,7 @@ class Flixanity_Scraper(scraper.Scraper):
     def search(self, video_type, title, year, season=''):
         self.__get_token()
         results = []
-        search_url = urlparse.urljoin(self.base_url, '/api/v1/cautare')
+        search_url = urlparse.urljoin(self.base_url, self.__get_search_url())
         timestamp = int(time.time() * 1000)
         query = {'q': title, 'limit': '100', 'timestamp': timestamp, 'verifiedCheck': self.__token}
         html = self._http_get(search_url, data=query, headers=XHR, cache_limit=1)
@@ -156,7 +157,7 @@ class Flixanity_Scraper(scraper.Scraper):
     def __get_token(self, html=''):
         if self.__token is None:
             if not html:
-                html = self._cached_http_get(self.base_url, self.base_url, self.timeout, cache_limit=0)
+                html = self._cached_http_get(self.base_url, self.base_url, self.timeout, cache_limit=8)
                 
             match = re.search("var\s+tok\s*=\s*'([^']+)", html)
             if match:
@@ -189,3 +190,17 @@ class Flixanity_Scraper(scraper.Scraper):
         for cookie in cj:
             if cookie.name == '__utmx':
                 return cookie.value
+    
+    def __get_search_url(self):
+        search_url = SEARCH_URL
+        html = self._cached_http_get(self.base_url, self.base_url, self.timeout, cache_limit=24)
+        for match in re.finditer('<script[^>]+src="([^"]+)', html):
+            script = match.group(1)
+            if 'flixanity' in script:
+                html = self._cached_http_get(script, self.base_url, self.timeout, cache_limit=24)
+                match = re.search('autocomplete\([^"]*"([^"]+)', html)
+                if match:
+                    search_url = match.group(1)
+                    search_url = search_url.replace('\\', '')
+                    break
+        return search_url
