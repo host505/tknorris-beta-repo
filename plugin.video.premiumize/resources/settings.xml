@@ -1,0 +1,6 @@
+<settings>
+        <setting id="customer_id" type="text" label="Premiumize Customer ID"/>
+        <setting id="pin" type="text" label="Premiumize PIN" option="hidden"/> 
+        <setting id="use_https" type="bool" label="Use HTTPS" default="false"/>
+        <setting id="addon_debug" type="bool" label="Addon debug" default="true" visible="false"/>
+</settings>

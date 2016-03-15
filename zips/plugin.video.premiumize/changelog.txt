@@ -1,0 +1,5 @@
+[B]Version 0.0.2[/B]
+- Add Torrent working
+
+[B]Version 0.0.1[/B]
+- Initial version
