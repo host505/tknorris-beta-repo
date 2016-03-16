@@ -1,12 +1,15 @@
-[B]Version 2.0.18[/B]
+[B]Version 2.0.19[/B]
 - Add MysticLand scraper
 - Replace onlinemovies.is with emovies.pro
 - Replace viewmovies.is with ganool.ag
-- Fix Farda scraper
 - Improve/Fix WatchHD scraper
 - Improve Furk scraper
+- Fix Farda scraper
 - Fix flixanity scraper
-- fix 9Movies scraper
+- Fix 9Movies scraper
+- Fix TVWTS scraper
+- Fix StreamLord scraper
+- Fix PubFilm scraper
 
 [B]Version 2.0.17[/B]
 - Add m4ufree scraper

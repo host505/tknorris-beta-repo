@@ -111,15 +111,11 @@ class TVWTVS_Scraper(scraper.Scraper):
         return self._default_get_url(video)
 
     def _get_episode_url(self, show_url, video):
-        results = self.__search(video.title)
+        results = self.__search(video.video_type, '', video.year)
         for result in results:
-            if result['show_url'] == show_url and re.search('\s+Season\s+0*%s( |$)' % (video.season), result['title'], re.I):
-                pages = [result['url']]
-                pages += self.__get_pages(result['url'])
-                for page in pages:
-                    ep_url = self.__find_episode(page, video.episode)
-                    if ep_url: return ep_url
-
+            if result['url'].startswith(show_url) and re.search('\s+season\s+%s( |$)' % (video.season), result['title'], re.I):
+                return self.__find_episode(result['url'], video.episode)
+                        
     def __find_episode(self, url, episode):
         url = urlparse.urljoin(self.base_url, url)
         html = self._http_get(url, cache_limit=2)
@@ -130,7 +126,7 @@ class TVWTVS_Scraper(scraper.Scraper):
                 label = re.sub('</?[^>]*>', '', label)
                 if re.search('\s+Episode\s+%s( |$)' % (episode), label):
                     return scraper_utils.pathify_url(url)
-        
+                
     def __get_pages(self, url):
         pages = []
         url = urlparse.urljoin(self.base_url, url)
@@ -141,29 +137,23 @@ class TVWTVS_Scraper(scraper.Scraper):
         return pages
     
     def search(self, video_type, title, year, season=''):
-        results = self.__search(title)
-        results = [result for result in results if result['url'] == result['show_url']]
+        results = self.__search(video_type, title, year)
+        results = [result for result in results if not re.search('season[- ]\d+', result['url'], re.I)]
         return results
 
-    def __search(self, title):
+    def __search(self, video_type, title, year):
+        url = urlparse.urljoin(self.base_url, '/categoryy')
+        html = self._http_get(url, cache_limit=48)
         results = []
-        html = self._http_get(self.base_url, cache_limit=48)
-        match = re.search('location\.href\s*=\s*"([^"]+)', html)
-        if match:
-            cat_url = match.group(1)
-            norm_title = scraper_utils.normalize_title(title)
-            titles = dom_parser.parse_dom(html, 'option', {'class': 'level-\d+'})
-            categories = dom_parser.parse_dom(html, 'option', {'class': 'level-\d+'}, ret='value')
-            classes = dom_parser.parse_dom(html, 'option', {'class': 'level-\d+'}, ret='class')
-            for match_title, category, div_cls in zip(titles, categories, classes):
-                match_url = scraper_utils.pathify_url(cat_url + category)
-                if div_cls == 'level-0':
-                    show_url = match_url
-                    
-                match_title = re.sub('&nbsp;', '', match_title)
-                match_title = re.sub('\s*\(\d+\)$', '', match_title)
+        norm_title = scraper_utils.normalize_title(title)
+        fragment = dom_parser.parse_dom(html, 'div', {'class': 'tagindex'})
+        if fragment:
+            for match in re.finditer('href="([^"]+)[^>]+>(.*?)</a>', fragment[0]):
+                url, match_title = match.groups()
+                match_title = re.sub('\s+\(\d+\)$', '', match_title)
+                match_title = match_title.replace('&amp;', '&')
                 if norm_title in scraper_utils.normalize_title(match_title):
-                    result = {'url': match_url, 'title': scraper_utils.cleanse_title(match_title), 'year': '', 'show_url': show_url}
+                    result = {'url': scraper_utils.pathify_url(url), 'title': match_title, 'year': ''}
                     results.append(result)
 
         return results

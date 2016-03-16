@@ -67,7 +67,7 @@ class StreamLord_Scraper(scraper.Scraper):
                         quality = QUALITIES.HD720
                     else:
                         quality = QUALITIES.HIGH
-                    stream_url = match.group(1) + '|User-Agent=%s&Referer=%s' % (scraper_utils.get_ua(), urllib.quote(url))
+                    stream_url = match.group(1) + '|User-Agent=%s&Referer=%s&Cookie=%s' % (scraper_utils.get_ua(), urllib.quote(url), self._get_stream_cookies())
                     hoster = {'multi-part': False, 'host': self._get_direct_hostname(stream_url), 'class': self, 'url': stream_url, 'quality': quality, 'views': None, 'rating': None, 'direct': True}
                     hosters.append(hoster)
 
@@ -85,7 +85,9 @@ class StreamLord_Scraper(scraper.Scraper):
         results = []
         url = urlparse.urljoin(self.base_url, '/search.html')
         data = {'search': title}
-        html = self._http_get(url, data=data, cache_limit=2)
+        headers = {'Referer': self.base_url}
+        html = self._http_get(url, data=data, headers=headers, cache_limit=2)
+        log_utils.log(html)
         if video_type == VIDEO_TYPES.MOVIE:
             query_type = 'watch-movie-'
         else:
