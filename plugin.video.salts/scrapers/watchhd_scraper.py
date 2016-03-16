@@ -35,6 +35,7 @@ import scraper
 
 BASE_URL = base64.decodestring('aHR0cDovL3dhdGNoMTA4MHAuY29t')
 SEARCH_URL = 'aHR0cHM6Ly93d3cuZ29vZ2xlYXBpcy5jb20vY3VzdG9tc2VhcmNoL3YxZWxlbWVudD9rZXk9QUl6YVN5Q1ZBWGlVelJZc01MMVB2NlJ3U0cxZ3VubU1pa1R6UXFZJnJzej1maWx0ZXJlZF9jc2UmbnVtPTEwJmhsPWVuJmN4PTAxMjg0NjI0MTAwMTc0NDgzNzMwNzpia210NWhrb3ZsZyZnb29nbGVob3N0PXd3dy5nb29nbGUuY29tJnE9JXM='
+INDIRECT_NAMES = {'ORIGINAL CDN 1': 'openload.co', 'FLASH CDN 1': 'vid.ag'}
 
 class WatchHD_Scraper(scraper.Scraper):
     base_url = BASE_URL
@@ -46,7 +47,7 @@ class WatchHD_Scraper(scraper.Scraper):
 
     @classmethod
     def provides(cls):
-        return frozenset([VIDEO_TYPES.MOVIE, VIDEO_TYPES.SEASON, VIDEO_TYPES.EPISODE])
+        return frozenset([VIDEO_TYPES.MOVIE])
 
     @classmethod
     def get_name(cls):
@@ -111,6 +112,12 @@ class WatchHD_Scraper(scraper.Scraper):
                             return best_stream + '|User-Agent=%s' % (scraper_utils.get_ua())
                 elif streams:
                     return streams[0][0] + '|User-Agent=%s' % (scraper_utils.get_ua())
+                
+                iframe_url = dom_parser.parse_dom(html, 'iframe', ret='src')
+                if iframe_url:
+                    return iframe_url[0]
+
+        log_utils.log('No WatchHD Link Found: %s' % (html), log_utils.LOGWARNING)
 
     def format_source_label(self, item):
         label = '[%s] %s' % (item['quality'], item['host'])
@@ -126,9 +133,6 @@ class WatchHD_Scraper(scraper.Scraper):
         if source_url and source_url != FORCE_NO_MATCH:
             url = urlparse.urljoin(self.base_url, source_url)
             html = self._http_get(url, cache_limit=.5)
-            if not html:
-                url = url.replace('/film/', '/filminfo/')
-                html = self._http_get(url, cache_limit=.5)
             match = re.search('<b>Views:.*?([\d,]+)', html)
             if match:
                 views = int(match.group(1).replace(',', ''))
@@ -141,21 +145,22 @@ class WatchHD_Scraper(scraper.Scraper):
                 for match in re.finditer('<a[^>]+id="ep_\d+"[^>]+href="([^"]+)[^>]+>\s*([^<]+)', fragment):
                     stream_url, name = match.groups()
                     match = re.search('(\d+)', name)
-                    if video.video_type == VIDEO_TYPES.MOVIE:
-                        if match:
-                            quality = scraper_utils.height_get_quality(match.group(1))
-                        else:
-                            quality = QUALITIES.HIGH
+                    if match:
+                        quality = scraper_utils.height_get_quality(match.group(1))
                     else:
-                        if not match or int(name) != int(video.episode):
-                            continue
-                        
                         quality = QUALITIES.HIGH
                         
                     if stream_url.startswith(self.base_url):
                         stream_url = stream_url[len(self.base_url):]
                     stream_url += '|User-Agent=%s&Referer=%s&Cookie=%s' % (scraper_utils.get_ua(), url, self._get_stream_cookies())
-                    hoster = {'multi-part': False, 'host': self._get_direct_hostname(stream_url), 'class': self, 'quality': quality, 'views': views, 'rating': None, 'url': stream_url, 'direct': True}
+                    if title.upper() in INDIRECT_NAMES:
+                        direct = False
+                        host = INDIRECT_NAMES[title.upper()]
+                        quality = scraper_utils.get_quality(video, host, quality)
+                    else:
+                        direct = True
+                        host = self._get_direct_hostname(stream_url)
+                    hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': quality, 'views': views, 'rating': None, 'url': stream_url, 'direct': direct}
                     hoster['title'] = title
                     hosters.append(hoster)
         return hosters
@@ -170,18 +175,34 @@ class WatchHD_Scraper(scraper.Scraper):
     def get_url(self, video):
         return self._default_get_url(video)
 
-    def _get_episode_url(self, season_url, video):
-        url = urlparse.urljoin(self.base_url, season_url)
-        html = self._http_get(url, cache_limit=2)
-        if not html:
-            url = url.replace('/film/', '/filminfo/')
-            html = self._http_get(url, cache_limit=.5)
-        html = self.__get_watch_now(html)
-        match = re.search('<a[^>]+id="ep_\d+"[^>]*>\s*%s\s*<' % (video.episode), html)
-        if match:
-            return season_url
-    
     def search(self, video_type, title, year, season=''):
+        results = self.__search(video_type, title, year, season)
+        if not results:
+            results = self.__alt_search(video_type, title, year, season)
+        return results
+
+    def __search(self, video_type, title, year, season=''):
+        results = []
+        search_url = urlparse.urljoin(self.base_url, '/search/')
+        search_url += urllib.quote(title)
+        html = self._http_get(search_url, cache_limit=2)
+        for item in dom_parser.parse_dom(html, 'div', {'class': 'name_top'}):
+            match = re.search('href="([^"]+)[^>]+>([^<]+)', item)
+            if match:
+                match_url, match_title_year = match.groups()
+                match = re.search('(.*?)(?:\s+\(?(\d{4})\)?)', match_title_year)
+                if match:
+                    match_title, match_year = match.groups()
+                else:
+                    match_title = match_title_year
+                    match_year = ''
+                
+                if not year or not match_year or year == match_year:
+                    result = {'title': scraper_utils.cleanse_title(match_title), 'year': match_year, 'url': scraper_utils.pathify_url(match_url)}
+                    results.append(result)
+        return results
+    
+    def __alt_search(self, video_type, title, year, season=''):
         search_url = base64.decodestring(SEARCH_URL) % (urllib.quote_plus(title))
         html = self._http_get(search_url, cache_limit=1)
         results = []
@@ -189,33 +210,22 @@ class WatchHD_Scraper(scraper.Scraper):
         if 'results' in js_data:
             norm_title = scraper_utils.normalize_title(title)
             for item in js_data['results']:
-                is_season = re.search('Season\s+(\d+)', item['titleNoFormatting'], re.IGNORECASE)
-                if not is_season and video_type == VIDEO_TYPES.MOVIE or is_season and VIDEO_TYPES.SEASON:
-                    match_title_year = item['titleNoFormatting']
-                    match_title_year = re.sub('^Watch\s+', '', match_title_year)
-                    match_url = item['url']
+                match_title_year = item['titleNoFormatting']
+                match_title_year = re.sub('^Watch\s+', '', match_title_year)
+                match_url = item['url']
+                match = re.search('(.*?)(?:\s+\(?(\d{4})\)?)', match_title_year)
+                if match:
+                    match_title, match_year = match.groups()
+                else:
+                    match_title = match_title_year
                     match_year = ''
-                    if video_type == VIDEO_TYPES.MOVIE:
-                        match = re.search('(.*?)(?:\s+\(?(\d{4})\)?)', match_title_year)
-                        if match:
-                            match_title, match_year = match.groups()
-                        else:
-                            match_title = match_title_year
-                    else:
-                        if season and int(is_season.group(1)) != int(season):
-                            continue
-                        match = re.search('(.*?)\s+\(\d{4}\)', match_title_year)
-                        if match:
-                            match_title = match.group(1)
-                        else:
-                            match_title = match_title_year
-                    
-                    if norm_title in scraper_utils.normalize_title(match_title) and (not year or not match_year or year == match_year):
-                        result = {'title': scraper_utils.cleanse_title(match_title), 'year': match_year, 'url': scraper_utils.pathify_url(match_url)}
-                        results.append(result)
+                
+                if norm_title in scraper_utils.normalize_title(match_title) and (not year or not match_year or year == match_year):
+                    result = {'title': scraper_utils.cleanse_title(match_title), 'year': match_year, 'url': scraper_utils.pathify_url(match_url)}
+                    results.append(result)
 
         return results
-
+        
     @classmethod
     def get_settings(cls):
         settings = super(cls, cls).get_settings()

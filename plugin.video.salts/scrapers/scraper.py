@@ -553,14 +553,17 @@ class Scraper(object):
                 except Exception as e:
                     log_utils.log('Google Plus Parse failure: %s - %s' % (link, e), log_utils.LOGWARNING)
         else:
-            i = link.rfind('#')
-            if i > -1:
-                link_id = link[i + 1:]
+            if 'picasaweb' in link:
+                i = link.rfind('#')
+                if i > -1:
+                    link_id = link[i + 1:]
+                else:
+                    link_id = ''
                 match = re.search('feedPreload:\s*(.*}]}})},', html, re.DOTALL)
                 if match:
                     js = scraper_utils.parse_json(match.group(1), link)
                     for item in js['feed']['entry']:
-                        if item['gphoto$id'] == link_id:
+                        if not link_id or item['gphoto$id'] == link_id:
                             for media in item['media']['content']:
                                 if media['type'].startswith('video'):
                                     sources.append(media['url'].replace('%3D', '='))
@@ -572,6 +575,7 @@ class Scraper(object):
                         if media['type'].startswith('video'):
                             sources.append(media['url'].replace('%3D', '='))
 
+        sources = list(set(sources))
         return sources
 
     def _parse_gdocs(self, link):

@@ -20,6 +20,8 @@ import re
 import time
 import urllib
 import urlparse
+import string
+import random
 from salts_lib import dom_parser
 from salts_lib import kodi
 from salts_lib import log_utils
@@ -110,7 +112,8 @@ class Flixanity_Scraper(scraper.Scraper):
         results = []
         search_url = urlparse.urljoin(self.base_url, self.__get_search_url())
         timestamp = int(time.time() * 1000)
-        query = {'q': title, 'limit': '100', 'timestamp': timestamp, 'verifiedCheck': self.__token}
+        s = self.__get_s()
+        query = {'q': title, 'limit': '100', 'timestamp': timestamp, 'verifiedCheck': self.__token, 'set': s, 'rt': self.__get_rt(self.__token + s)}
         html = self._http_get(search_url, data=query, headers=XHR, cache_limit=1)
         if video_type in [VIDEO_TYPES.TVSHOW, VIDEO_TYPES.EPISODE]:
             media_type = 'TV SHOW'
@@ -204,3 +207,16 @@ class Flixanity_Scraper(scraper.Scraper):
                     search_url = search_url.replace('\\', '')
                     break
         return search_url
+    
+    def __get_s(self):
+        return ''.join([random.choice(string.ascii_letters) for _ in xrange(25)])
+    
+    def __get_rt(self, s, shift=13):
+        s2 = ''
+        for c in s:
+            limit = 122 if c in string.ascii_lowercase else 90
+            new_code = ord(c) + shift
+            if new_code > limit:
+                new_code -= 26
+            s2 += chr(new_code)
+        return s2

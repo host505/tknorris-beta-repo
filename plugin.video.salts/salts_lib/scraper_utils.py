@@ -212,15 +212,16 @@ def gk_decrypt(name, key, cipher_link):
 
 def parse_episode_link(link):
     link = urllib.unquote(link)
-    match = re.match('(.*?)[._ ]S(\d+)[._ ]?E(\d+)(?:E\d+)*.*?(?:[._ ](\d+)p[._ ])(.*)', link, re.I)
+    file_name = link.split('/')[-1]
+    match = re.match('(.*?)[._ ]S(\d+)[._ ]?E(\d+)(?:E\d+)*.*?(?:[._ ](\d+)p[._ ])(.*)', file_name, re.I)
     if match:
         return match.groups()
     else:
-        match = re.match('(.*?)[._ ]S(\d+)[._ ]?E(\d+)(?:E\d+)*(.*)', link, re.I)
+        match = re.match('(.*?)[._ ]S(\d+)[._ ]?E(\d+)(?:E\d+)*(.*)', file_name, re.I)
         if match:
             return match.groups()[:-1] + ('480', ) + (match.groups()[-1],)  # assume no height = 480
         else:
-            match = re.search('[._ ](\d{3,})p[._ ]', link)
+            match = re.search('[._ ](\d{3,})p[._ ]', file_name)
             if match:
                 return ('', '-1', '-1', match.group(1), '')
             else:
@@ -275,6 +276,7 @@ def pathify_url(url):
     if not url.startswith('/'): url = '/' + url
     url = url.replace('/./', '/')
     url = url.replace('&amp;', '&')
+    url = url.replace('//', '/')
     return url
 
 def parse_json(html, url=''):
