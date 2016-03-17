@@ -74,3 +74,90 @@ msgctxt "#30014"
 msgid "Torrent Added"
 msgstr ""
 
+msgctxt "#30015"
+msgid "Failed to create directory"
+msgstr ""
+
+msgctxt "#30016"
+msgid "Downloading: %s..."
+msgstr ""
+
+msgctxt "#30017"
+msgid "Failed to write file"
+msgstr ""
+
+msgctxt "#30018"
+msgid "Download Complete: %s"
+msgstr ""
+
+msgctxt "#30019"
+msgid "Error (%s) during download: %s"
+msgstr ""
+
+msgctxt "#30020"
+msgid "Download Torrent"
+msgstr ""
+
+msgctxt "#30021"
+msgid "Select Target Directory"
+msgstr ""
+
+msgctxt "#30022"
+msgid "Download Video"
+msgstr ""
+
+msgctxt "#30023"
+msgid "Paste Torrent"
+msgstr ""
+
+msgctxt "#30024"
+msgid "Paste a magnet link or an http link to a torrent"
+msgstr ""
+
+msgctxt "#30500"
+msgid "Premiumize Customer ID"
+msgstr ""
+
+msgctxt "#30501"
+msgid "Premiumize PIN"
+msgstr ""
+
+msgctxt "#30502"
+msgid "Use HTTPS"
+msgstr ""
+
+msgctxt "#30503"
+msgid "Show Transcodes"
+msgstr ""
+
+msgctxt "#30504"
+msgid "Video Exclusion List (comma separated)"
+msgstr ""
+
+msgctxt "#30505"
+msgid "Show Download Progress"
+msgstr ""
+
+msgctxt "#30506"
+msgid "Off"
+msgstr ""
+
+msgctxt "#30507"
+msgid "Window"
+msgstr ""
+
+msgctxt "#30508"
+msgid "Background"
+msgstr ""
+
+msgctxt "#30509"
+msgid "Prompt for Download Folder"
+msgstr ""
+
+msgctxt "#30510"
+msgid "Default Download Folder"
+msgstr ""
+
+msgctxt "#30511"
+msgid "Minimum Allowed Video Duration (minutes)"
+msgstr ""

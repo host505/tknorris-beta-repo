@@ -44,7 +44,7 @@
 </addon>
 
 <!--suppress ALL -->
-<addon id="plugin.video.premiumize" version="0.0.2" name="Premiumize Cloud" provider-name="tknorris">
+<addon id="plugin.video.premiumize" version="0.0.3" name="Premiumize Cloud" provider-name="tknorris">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>

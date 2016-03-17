@@ -30,5 +30,15 @@ STRINGS = {
     'rename_folder': 30011,
     'add_torrent': 30012,
     'select_torrent': 30013,
-    'torrent_added': 30014
+    'torrent_added': 30014,
+    'failed_create_dir': 30015,
+    'downloading': 30016,
+    'failed_write_file': 30017,
+    'download_complete': 30018,
+    'download_error': 30019,
+    'download_torrent': 30020,
+    'select_directory': 30021,
+    'download_video': 30022,
+    'paste_torrent': 30023,
+    'paste_keyboard': 30024
 }

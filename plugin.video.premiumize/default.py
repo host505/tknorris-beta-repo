@@ -18,7 +18,7 @@
 import sys
 import os.path
 from local_lib.url_dispatcher import URL_Dispatcher
-from local_lib.premiumize_api import Premiumize_API,PremiumizeError
+from local_lib.premiumize_api import Premiumize_API, PremiumizeError
 from local_lib import log_utils
 from local_lib import kodi
 from local_lib import utils
@@ -35,10 +35,10 @@ VIDEO_EXTS = ['MP4', 'MKV', 'AVI']
 STATUS_COLORS = {'FINISHED': 'green', 'WAITING': 'blue', 'SEEDING': 'green', 'TIMEOUT': 'red', 'ERROR': 'red'}
 DEFAULT_COLOR = 'white'
 MODES = __enum(
-    MAIN='main', TRANSFER_LIST='transfer_list', FILE_LIST='file_list', BROWSE_TORRENT='browse_torrent',
-    PLAY_VIDEO='play_video', CLEAR_FINISHED='clear_finished', DELETE_TRANSFER='delete_transfer',
-    DELETE_ITEM='delete_item', CREATE_FOLDER='create_folder', DELETE_FOLDER='delete_folder',
-    RENAME_FOLDER='rename_folder', ADD_TORRENT='add_torrent'
+    MAIN='main', TRANSFER_LIST='transfer_list', FILE_LIST='file_list', BROWSE_TORRENT='browse_torrent', PLAY_VIDEO='play_video',
+    CLEAR_FINISHED='clear_finished', DELETE_TRANSFER='delete_transfer', DELETE_ITEM='delete_item', CREATE_FOLDER='create_folder',
+    DELETE_FOLDER='delete_folder', RENAME_FOLDER='rename_folder', ADD_TORRENT='add_torrent', DOWNLOAD_TORRENT='download_torrent',
+    DOWNLOAD_VIDEO='download_video', PASTE_TORRENT='paste_torrent'
 )
 
 customer_id = kodi.get_setting('customer_id')
@@ -54,10 +54,20 @@ def main_menu():
     menu_items = [(i18n('create_folder'), 'RunPlugin(%s)' % (kodi.get_plugin_url(queries)))]
     kodi.create_item({'mode': MODES.FILE_LIST}, i18n('file_list'), menu_items=menu_items)
     kodi.create_item({'mode': MODES.ADD_TORRENT}, i18n('add_torrent'))
+    kodi.create_item({'mode': MODES.PASTE_TORRENT}, i18n('paste_torrent'))
     kodi.end_of_directory()
 
+@url_dispatcher.register(MODES.PASTE_TORRENT)
+def paste_torrent():
+    keyboard = xbmc.Keyboard()
+    keyboard.setHeading(i18n('paste_keyboard'))
+    keyboard.doModal()
+    if keyboard.isConfirmed():
+        torrent = keyboard.getText()
+        add_torrent(torrent, torrent)
+
 @url_dispatcher.register(MODES.ADD_TORRENT)
-def add_torrent():
+def add_torrent_file():
     dialog = xbmcgui.Dialog()
     path = dialog.browse(1, i18n('select_torrent'), 'files', '.torrent|.magnet|.link')
     if path:
@@ -66,15 +76,17 @@ def add_torrent():
         f.close()
         if torrent.endswith('\n'):
             torrent = torrent[:-1]
+        add_torrent(torrent, path)
             
-        if torrent:
-            try:
-                premiumize_api.add_torrent(torrent)
-                msg = '%s: %s' % (i18n('torrent_added'), os.path.basename(path))
-            except PremiumizeError as e:
-                msg = str(e)
-            kodi.notify(msg=msg, duration=5000)
-
+def add_torrent(torrent, path):
+    if torrent:
+        try:
+            premiumize_api.add_torrent(torrent)
+            msg = '%s: %s' % (i18n('torrent_added'), os.path.basename(path))
+        except PremiumizeError as e:
+            msg = str(e)
+        kodi.notify(msg=msg, duration=5000)
+    
 @url_dispatcher.register(MODES.TRANSFER_LIST)
 def show_transfers():
     results = premiumize_api.get_transfers()
@@ -157,11 +169,36 @@ def show_files(folder_id=None):
                 label = result['name']
                 if 'size' in result:
                     label += ' (%s)' % (utils.format_size(int(result['size']), 'B'))
+                menu_items = []
+                queries = {'mode': MODES.DOWNLOAD_TORRENT, 'hash_id': result['hash'], 'name': result['name']}
+                menu_items.append((i18n('download_torrent'), 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))))
                 queries = {'mode': MODES.DELETE_ITEM, 'torrent_id': result['id']}
-                menu_items = [(i18n('delete_item'), 'RunPlugin(%s)' % (kodi.get_plugin_url(queries)))]
+                menu_items.append((i18n('delete_item'), 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))))
                 
                 kodi.create_item({'mode': MODES.BROWSE_TORRENT, 'hash_id': result['hash'], 'torrent_id': result['id']}, label, menu_items=menu_items)
     kodi.end_of_directory()
+
+@url_dispatcher.register(MODES.DOWNLOAD_TORRENT, ['hash_id', 'name'])
+def download_torrent(hash_id, name):
+    results = premiumize_api.browse_torrent(hash_id)
+    if 'zip' in results:
+        file_name = name if name.endswith('.zip') else name + '.zip'
+        download_item(results['zip'], file_name)
+
+@url_dispatcher.register(MODES.DOWNLOAD_VIDEO, ['url', 'name'])
+def download_video(url, name):
+    download_item(url, name)
+
+def download_item(url, file_name):
+    path = ''
+    if kodi.get_setting('down_prompt') == 'true':
+        dialog = xbmcgui.Dialog()
+        path = dialog.browse(3, i18n('select_directory'), 'files')
+    else:
+        path = kodi.get_setting('down_folder')
+        
+    if path:
+        utils.download_media(url, path, file_name)
 
 @url_dispatcher.register(MODES.BROWSE_TORRENT, ['hash_id'])
 def browse_torrent(hash_id):
@@ -169,9 +206,13 @@ def browse_torrent(hash_id):
     if 'content' in results:
         videos = get_videos(results['content'])
         for video in sorted(videos, key=lambda x: x['label']):
-            kodi.create_item({'mode': MODES.PLAY_VIDEO, 'name': video['name'], 'url': video['url']}, video['label'], is_folder=False, is_playable=True)
+            menu_items = []
+            queries = {'mode': MODES.DOWNLOAD_VIDEO, 'url': video['url'], 'name': video['name']}
+            menu_items.append((i18n('download_video'), 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))))
+            kodi.create_item({'mode': MODES.PLAY_VIDEO, 'name': video['name'], 'url': video['url']}, video['label'], is_folder=False, is_playable=True, menu_items=menu_items)
             
     kodi.end_of_directory()
+
 
 @url_dispatcher.register(MODES.PLAY_VIDEO, ['url'], ['name'])
 def play_video(url, name=None):
@@ -184,18 +225,34 @@ def play_video(url, name=None):
 
 def get_videos(content):
     videos = []
+    show_transcodes = kodi.get_setting('show_transcode') == 'true'
+    try: min_duration = int(kodi.get_setting('duration_filter')) * 60
+    except: min_duration = 0
+    exclusion_list = utils.make_excl_list()
     for key in content:
         item = content[key]
         if item['type'] == 'dir':
             videos += get_videos(item['children'])
         else:
             if 'ext' in item and item['ext'].upper() in VIDEO_EXTS:
+                if any([excl for excl in exclusion_list if excl in item['name'].upper()]):
+                    log_utils.log('Excluding %s matching %s' % (item['name'], exclusion_list), log_utils.LOGDEBUG)
+                    continue
+                
+                if min_duration and 'duration' in item and float(item['duration']) < min_duration:
+                    log_utils.log('Excluding: %s %s < %s' % (item['name'], item['duration'], min_duration), log_utils.LOGDEBUG)
+                    continue
+                
                 label = item['name']
                 if 'size' in item: label += ' (%s)' % (utils.format_size(int(item['size']), 'B'))
                 video = {'label': label, 'name': item['name'], 'url': item['url']}
                 videos.append(video)
-                if 'transcoded' in item:
+                if show_transcodes and 'transcoded' in item:
                     transcode = item['transcoded']
+                    if min_duration and 'duration' in transcode and float(transcode['duration']) < min_duration:
+                        log_utils.log('Excluding(T): %s %s < %s' % (item['name'], transcode['duration'], min_duration), log_utils.LOGDEBUG)
+                        continue
+                    
                     label = '%s (%s) (%s)' % (item['name'], i18n('transcode'), utils.format_size(int(transcode['size']), 'B'))
                     video = {'label': label, 'name': item['name'], 'url': transcode['url']}
                     videos.append(video)
