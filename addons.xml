@@ -273,7 +273,7 @@ Addons Included
 </addon>
 
 <!--suppress ALL -->
-<addon id="context.salts.tools" version="1.0.1" name="SALTS Context Tools" provider-name="tknorris">
+<addon id="context.salts.tools" version="1.0.2" name="SALTS Context Tools" provider-name="tknorris">
     <requires>
         <import addon="xbmc.python" version="2.2.0"/>
         <import addon="plugin.video.salts" version="1.0.65"/>

@@ -17,6 +17,7 @@
 """
 import sys
 import re
+import json
 import xbmc
 import xbmcaddon
 import xbmcvfs
@@ -57,12 +58,17 @@ def source_action(mode, li_path):
 
 def set_related_url(mode):
     video_type = __get_media_type()
+    year = None
     if video_type == VIDEO_TYPES.SEASON:
         title = xbmc.getInfoLabel('ListItem.TVShowtitle')
+        year = __get_show_year(title)
     else:
         title = xbmc.getInfoLabel('ListItem.Title')
+    
+    if year is None:
+        year = xbmc.getInfoLabel('ListItem.Year')
+        
     title = re.sub(' \(\d{4}\)$', '', title)
-    year = xbmc.getInfoLabel('ListItem.Year')
     queries = {'mode': mode, 'video_type': video_type, 'title': title, 'year': year, 'trakt_id': 0}  # trakt_id set to 0, not used and don't have it
     if video_type == VIDEO_TYPES.SEASON:
         queries['season'] = xbmc.getInfoLabel('ListItem.Season')
@@ -78,7 +84,7 @@ def add_to_list():
         show_id['id_type'] = 'tmdb'
         section = SECTIONS.MOVIES
 
-    # override id_type is it looks like an imdb #
+    # override id_type if it looks like an imdb #
     if show_id['show_id'].startswith('tt'):
         show_id['id_type'] = 'imdb'
     
@@ -101,9 +107,20 @@ def search(section):
     runstring = 'RunPlugin(plugin://plugin.video.salts%s)' % (kodi.get_plugin_url(queries))
     xbmc.executebuiltin(runstring)
     
+def __get_show_year(title):
+    filter_params = {'field': 'title', 'operator': 'contains', 'value': title}
+    properties = ['title', 'year']
+    sort = {'order': 'ascending', 'method': 'label', 'ignorearticle': True}
+    limits = {'start': 0, 'end': 25}
+    params = {'filter': filter_params, 'properties': properties, 'sort': sort, 'limits': limits}
+    cmd = {'jsonrpc': '2.0', 'method': 'VideoLibrary.GetTVShows', 'params': params, 'id': 'libTvShows'}
+    meta = json.loads(xbmc.executeJSONRPC(json.dumps(cmd)))
+    log_utils.log('Search Meta: %s' % (meta), log_utils.LOGDEBUG)
+    try: return meta['result']['tvshows'][0]['year']
+    except (KeyError, IndexError): return None
+
 def __autoplay_enabled():
-    auto_play = addon.getSetting('auto-play')
-    return auto_play == 'true'
+    return addon.getSetting('auto-play') == 'true'
     
 def __get_media_type():
     if xbmc.getCondVisibility('Container.Content(tvshows)'):
@@ -118,9 +135,8 @@ def __get_media_type():
         return None
     
 def __is_salts_listitem(li_path):
-    addon = xbmcaddon.Addon('plugin.video.salts')
-    tvshow_folder = xbmc.translatePath(addon.getSetting('tvshow-folder'))
-    movie_folder = xbmc.translatePath(addon.getSetting('movie-folder'))
+    tvshow_folder = __get_folder('tvshow-folder')
+    movie_folder = __get_folder('movie-folder')
     real_path = xbmc.translatePath(li_path)
     if not real_path.startswith(movie_folder) and not real_path.startswith(tvshow_folder):
         log_utils.log('Path Mismatch: |%s|%s|%s|' % (real_path, movie_folder, tvshow_folder))
@@ -136,6 +152,11 @@ def __is_salts_listitem(li_path):
     
     return True
 
+def __get_folder(setting):
+    folder = xbmc.translatePath(addon.getSetting(setting))
+    folder = re.sub('://[^/]+@', '://', folder)
+    return folder
+    
 def __get_tools(path):
     if __autoplay_enabled():
         action = MODES.SELECT_SOURCE
@@ -158,7 +179,7 @@ def __get_tools(path):
     ]
     
     media_type = __get_media_type()
-    new_tools = [(tool[1], tool[2], tool[3]) for tool in tools if media_type in tool[0]]
+    new_tools = [(tool[1:]) for tool in tools if media_type in tool[0]]
     return new_tools
 
 def main(argv=None):
