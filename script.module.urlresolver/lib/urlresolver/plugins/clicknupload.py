@@ -27,8 +27,8 @@ MAX_TRIES = 3
 
 class ClickNUploadResolver(UrlResolver):
     name = "clicknupload"
-    domains = ["clicknupload.com", "clicknupload.me"]
-    pattern = '(?://|\.)(clicknupload\.(?:com|me))/(?:f/)?([0-9A-Za-z]+)'
+    domains = ["clicknupload.com", "clicknupload.me", 'clicknupload.link']
+    pattern = '(?://|\.)(clicknupload\.(?:com|me|link))/(?:f/)?([0-9A-Za-z]+)'
 
     def __init__(self):
         self.net = common.Net()

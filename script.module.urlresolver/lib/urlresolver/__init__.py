@@ -59,16 +59,19 @@ def load_external_plugins():
                 sys.modules[mod_name] = imp
                 common.log_utils.log_debug('Loaded %s as %s from %s' % (imp, mod_name, filename))
 
-def relevant_resolvers(domain=None, include_universal=True, include_external=False, include_disabled=False, order_matters=False):
+def relevant_resolvers(domain=None, include_universal=None, include_external=False, include_disabled=False, order_matters=False):
     if include_external:
         load_external_plugins()
 
+    if include_universal is None:
+        include_universal = common.get_setting('allow_universal') == "true"
+        
     classes = UrlResolver.__class__.__subclasses__(UrlResolver)
     relevant = []
     for resolver in classes:
         if include_disabled or resolver._is_enabled():
             if include_universal or not resolver.isUniversal():
-                if domain is None or (domain in resolver.domains or '*' in resolver.domains):
+                if domain is None or (any(domain in res_domain for res_domain in resolver.domains) or '*' in resolver.domains):
                     relevant.append(resolver)
 
     if order_matters:
