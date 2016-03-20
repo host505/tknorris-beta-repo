@@ -62,7 +62,7 @@ class HostedMediaFile:
         must pass either ``url`` or ``host`` AND ``media_id``.
     '''
 
-    def __init__(self, url='', host='', media_id='', title='', include_disabled=False):
+    def __init__(self, url='', host='', media_id='', title='', include_disabled=False, include_universal=None):
         '''
         Args:
             url (str): a URL to a web page that represents a piece of media.
@@ -82,7 +82,7 @@ class HostedMediaFile:
         else:
             self._domain = self.__top_domain(self._host)
 
-        self.__resolvers = self.__get_resolvers(include_disabled)
+        self.__resolvers = self.__get_resolvers(include_disabled, include_universal)
         if not url:
             for resolver in self.__resolvers:  # Find a valid URL
                 try:
@@ -93,8 +93,10 @@ class HostedMediaFile:
                     # Shity resolver. Ignore
                     continue
 
-    def __get_resolvers(self, include_disabled):
-        include_universal = common.get_setting('allow_universal') == "true"
+    def __get_resolvers(self, include_disabled, include_universal):
+        if include_universal is None:
+            include_universal = common.get_setting('allow_universal') == "true"
+
         klasses = urlresolver.relevant_resolvers(self._domain, include_universal=include_universal,
                                                  include_external=True, include_disabled=include_disabled, order_matters=True)
         resolvers = []
@@ -143,7 +145,7 @@ class HostedMediaFile:
         if validated: self.valid_url()
         return self.__resolvers
         
-    def resolve(self):
+    def resolve(self, include_universal=True):
         '''
         Resolves this :class:`HostedMediaFile` to a media URL.
 
@@ -165,15 +167,16 @@ class HostedMediaFile:
         '''
         for resolver in self.__resolvers:
             try:
-                if resolver.valid_url(self._url, self._host):
-                    common.log_utils.log_debug('Resolving using %s plugin' % (resolver.name))
-                    resolver.login()
-                    self._host, self._media_id = resolver.get_host_and_id(self._url)
-                    stream_url = resolver.get_media_url(self._host, self._media_id)
-                    if stream_url and self.__test_stream(stream_url):
-                        self.__resolvers = [resolver]  # Found a working resolver, throw out the others
-                        self._valid_url = True
-                        return stream_url
+                if include_universal or not resolver.isUniversal():
+                    if resolver.valid_url(self._url, self._host):
+                        common.log_utils.log_debug('Resolving using %s plugin' % (resolver.name))
+                        resolver.login()
+                        self._host, self._media_id = resolver.get_host_and_id(self._url)
+                        stream_url = resolver.get_media_url(self._host, self._media_id)
+                        if stream_url and self.__test_stream(stream_url):
+                            self.__resolvers = [resolver]  # Found a working resolver, throw out the others
+                            self._valid_url = True
+                            return stream_url
             except Exception as e:
                 common.log_utils.log_error('%s Error - From: %s Link: %s: %s' % (type(e).__name__, resolver.name, self._url, e))
                 if resolver == self.__resolvers[-1]:
