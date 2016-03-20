@@ -148,6 +148,7 @@ class RealDebridResolver(UrlResolver):
         common.log_utils.log_debug('Authorizing Real Debrid Result: |%s|' % (js_result))
         self.set_setting('token', js_result['access_token'])
         self.set_setting('refresh', js_result['refresh_token'])
+        return True
 
     def reset_authorization(self):
         self.set_setting('client_id', '')

@@ -15,7 +15,15 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
+
+# this is to add urlresolver's own lib to sys path because (sometimes) kodi
+# crashes on update when an addon is dependent on itself
+import os
 import sys
+import xbmcaddon
+addon_path = xbmcaddon.Addon().getAddonInfo('path')
+sys.path.insert(0, os.path.join(addon_path, 'lib'))
+
 from urlresolver.lib import kodi
 from urlresolver.lib import log_utils
 from urlresolver.lib.url_dispatcher import URL_Dispatcher
@@ -30,9 +38,8 @@ MODES = __enum(AUTH_RD='auth_rd', RESET_RD='reset_rd')
 def auth_rd():
     kodi.close_all()
     from urlresolver.plugins import realdebrid
-    rd = realdebrid.RealDebridResolver()
-    rd.authorize_resolver()
-    kodi.notify(msg='Real-Debrid Resolver Authorized', duration=5000)
+    if realdebrid.RealDebridResolver().authorize_resolver():
+        kodi.notify(msg='Real-Debrid Resolver Authorized', duration=5000)
 
 @url_dispatcher.register(MODES.RESET_RD)
 def reset_rd():
