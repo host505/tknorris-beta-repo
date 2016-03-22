@@ -229,6 +229,10 @@
          <setting id="Dizibox-base_url" type="text" label="    Base Url" default="http://www.dizibox.com" visible="eq(-1,true)"/>
          <setting id="Dizibox-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="Dizibox_last_results" type="number" default="0" visible="false"/>
+         <setting id="DiziFilmHD-enable" type="bool" label="DiziFilmHD Enabled" default="true" visible="true"/>
+         <setting id="DiziFilmHD-base_url" type="text" label="    Base Url" default="http://dizifilmhd.net" visible="eq(-1,true)"/>
+         <setting id="DiziFilmHD-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
+         <setting id="DiziFilmHD_last_results" type="number" default="0" visible="false"/>
          <setting id="Dizigold-enable" type="bool" label="Dizigold Enabled" default="true" visible="true"/>
          <setting id="Dizigold-base_url" type="text" label="    Base Url" default="http://www.dizigold.net" visible="eq(-1,true)"/>
          <setting id="Dizigold-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
@@ -241,13 +245,17 @@
          <setting id="Dizimag-base_url" type="text" label="    Base Url" default="http://dizimag.co" visible="eq(-1,true)"/>
          <setting id="Dizimag-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="Dizimag_last_results" type="number" default="0" visible="false"/>
+    </category>
+
+    <category label="Scrapers 2">
          <setting id="Dizipas-enable" type="bool" label="Dizipas Enabled" default="true" visible="true"/>
          <setting id="Dizipas-base_url" type="text" label="    Base Url" default="http://dizipas.com" visible="eq(-1,true)"/>
          <setting id="Dizipas-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="Dizipas_last_results" type="number" default="0" visible="false"/>
-    </category>
-
-    <category label="Scrapers 2">
+         <setting id="DL-Pars-enable" type="bool" label="DL-Pars Enabled" default="true" visible="true"/>
+         <setting id="DL-Pars-base_url" type="text" label="    Base Url" default="http://tv.dl-pars.in" visible="eq(-1,true)"/>
+         <setting id="DL-Pars-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
+         <setting id="DL-Pars_last_results" type="number" default="0" visible="false"/>
          <setting id="EasyNews-enable" type="bool" label="EasyNews Enabled" default="true" visible="true"/>
          <setting id="EasyNews-base_url" type="text" label="    Base Url" default="http://members.easynews.com" visible="eq(-1,true)"/>
          <setting id="EasyNews-sub_check" type="bool" label="    Include in Page Existence checks?" default="false" visible="eq(-2,true)"/>
@@ -308,10 +316,6 @@
          <setting id="iWatchOnline-base_url" type="text" label="    Base Url" default="https://www.iwatchonline.ag" visible="eq(-1,true)"/>
          <setting id="iWatchOnline-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="iWatchOnline_last_results" type="number" default="0" visible="false"/>
-         <setting id="IzlemeyeDeger-enable" type="bool" label="IzlemeyeDeger Enabled" default="true" visible="true"/>
-         <setting id="IzlemeyeDeger-base_url" type="text" label="    Base Url" default="http://www.izlemeyedeger.com" visible="eq(-1,true)"/>
-         <setting id="IzlemeyeDeger-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
-         <setting id="IzlemeyeDeger_last_results" type="number" default="0" visible="false"/>
          <setting id="Local-enable" type="bool" label="Local Enabled" default="true" visible="true"/>
          <setting id="Local-base_url" type="text" label="    Base Url" default="" visible="eq(-1,true)"/>
          <setting id="Local-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
@@ -337,13 +341,13 @@
          <setting id="MiraDeTodo-base_url" type="text" label="    Base Url" default="http://miradetodo.com.ar" visible="eq(-1,true)"/>
          <setting id="MiraDeTodo-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="MiraDeTodo_last_results" type="number" default="0" visible="false"/>
+    </category>
+
+    <category label="Scrapers 3">
          <setting id="MovCav-enable" type="bool" label="MovCav Enabled" default="true" visible="true"/>
          <setting id="MovCav-base_url" type="text" label="    Base Url" default="http://movcav.com" visible="eq(-1,true)"/>
          <setting id="MovCav-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="MovCav_last_results" type="number" default="0" visible="false"/>
-    </category>
-
-    <category label="Scrapers 3">
          <setting id="movie25-enable" type="bool" label="movie25 Enabled" default="true" visible="true"/>
          <setting id="movie25-base_url" type="text" label="    Base Url" default="http://movie25.hk" visible="eq(-1,true)"/>
          <setting id="movie25-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
@@ -399,10 +403,6 @@
          <setting id="MWM-base_url" type="text" label="    Base Url" default="http://usmovieshd.com" visible="eq(-1,true)"/>
          <setting id="MWM-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="MWM_last_results" type="number" default="0" visible="false"/>
-         <setting id="MysticLand-enable" type="bool" label="MysticLand Enabled" default="true" visible="true"/>
-         <setting id="MysticLand-base_url" type="text" label="    Base Url" default="http://mysticland1.org" visible="eq(-1,true)"/>
-         <setting id="MysticLand-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
-         <setting id="MysticLand_last_results" type="number" default="0" visible="false"/>
          <setting id="MyVideoLinks.eu-enable" type="bool" label="MyVideoLinks.eu Enabled" default="true" visible="true"/>
          <setting id="MyVideoLinks.eu-base_url" type="text" label="    Base Url" default="http://myvideolinks.xyz" visible="eq(-1,true)"/>
          <setting id="MyVideoLinks.eu-sub_check" type="bool" label="    Include in Page Existence checks?" default="false" visible="eq(-2,true)"/>

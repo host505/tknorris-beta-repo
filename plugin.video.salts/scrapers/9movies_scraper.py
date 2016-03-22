@@ -30,7 +30,7 @@ import scraper
 
 
 BASE_URL = 'http://fmovies.to'
-HASH_URL = '/ajax/film/episode'
+HASH_URL = '/ajax/episode/info'
 Q_MAP = {'TS': QUALITIES.LOW, 'CAM': QUALITIES.LOW, 'HDTS': QUALITIES.LOW, 'HD 720P': QUALITIES.HD720}
 XHR = {'X-Requested-With': 'XMLHttpRequest'}
 MAX_SOURCES = 5
@@ -78,38 +78,58 @@ class NineMovies_Scraper(scraper.Scraper):
                     headers['Referer'] = url
                     html = self._http_get(hash_url, headers=headers, cache_limit=.5)
                     js_data = scraper_utils.parse_json(html, hash_url)
-                    if 'target' in js_data:
-                        stream_url = js_data['target']
-                        if self._get_direct_hostname(stream_url) == 'gvideo':
-                            direct = True
-                            g_sources = self._parse_google(stream_url)
-                            if not g_sources:
-                                g_sources = self._parse_gdocs(stream_url)
-                            else:
-                                random.shuffle(g_sources)
-                                g_sources = g_sources[:MAX_SOURCES]
-                                
-                            sources = {}
-                            for source in g_sources:
-                                sources[source] = scraper_utils.gv_get_quality(source)
+                    sources = {}
+                    link_type = js_data.get('type')
+                    target = js_data.get('target')
+                    grabber = js_data.get('grabber')
+                    params = js_data.get('params')
+                    if link_type == 'iframe' and target:
+                        sources[target] = {'direct': False, 'quality': QUALITIES.HD720}
+                    elif grabber and params:
+                        sources = self.__grab_links(grabber, params, url)
+                        
+                    for source in sources:
+                        direct = sources[source]['direct']
+                        quality = sources[source]['quality']
+                        if direct:
+                            host = self._get_direct_hostname(source)
                         else:
-                            direct = False
-                            sources = {stream_url: QUALITIES.HD720}
-            
-                        for source in sources:
-                            if direct:
-                                host = self._get_direct_hostname(source)
-                            else:
-                                host = urlparse.urlparse(source).hostname
-                            hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': sources[source], 'views': None, 'rating': None, 'url': source, 'direct': direct}
-                            hosters.append(hoster)
+                            host = urlparse.urlparse(source).hostname
+                        hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': quality, 'views': None, 'rating': None, 'url': source, 'direct': direct}
+                        hosters.append(hoster)
         return hosters
 
+    def __grab_links(self, grab_url, query, referer):
+        try:
+            sources = {}
+            query['mobile'] = '0'
+            query.update(self.__get_token(query))
+            grab_url = grab_url + '?' + urllib.urlencode(query)
+            headers = XHR
+            headers['Referer'] = referer
+            html = self._http_get(grab_url, headers=headers, cache_limit=.5)
+            js_data = scraper_utils.parse_json(html, grab_url)
+            if 'data' in js_data:
+                for link in js_data['data']:
+                    stream_url = link['file']
+                    if self._get_direct_hostname(stream_url) == 'gvideo':
+                        quality = scraper_utils.gv_get_quality(stream_url)
+                    elif 'label' in link:
+                        quality = scraper_utils.height_get_quality(link['label'])
+                    else:
+                        quality = QUALITIES.HIGH
+                    sources[stream_url] = {'direct': True, 'quality': quality}
+        except Exception as e:
+            log_utils.log('9Movies Link Parse Error: %s' % (e), log_utils.LOGWARNING)
+                
+        return sources
+    
     def __get_token(self, data):
         n = 0
         for key in data:
-            for i, c in enumerate(data[key]):
-                n += ord(c) * (i + 1990)
+            if not key.startswith('_'):
+                for i, c in enumerate(data[key]):
+                    n += ord(c) * (i + 1990)
         return {'_token': hex(n)[2:]}
                 
     def get_url(self, video):

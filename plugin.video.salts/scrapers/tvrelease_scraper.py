@@ -86,7 +86,7 @@ class TVReleaseNet_Scraper(scraper.Scraper):
                         if video.video_type == VIDEO_TYPES.EPISODE:
                             _title, _season, _episode, height, _extra = scraper_utils.parse_episode_link(q_str)
                         else:
-                            _title, _year, height, _extra = scraper_utils.parse_episode_link(q_str)
+                            _title, _year, height, _extra = scraper_utils.parse_movie_link(q_str)
                         quality = scraper_utils.height_get_quality(height)
                     else:
                         quality = QUALITY_MAP.get(match.group(1).upper(), QUALITIES.HIGH)

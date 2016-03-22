@@ -712,7 +712,7 @@ def get_progress(cached=True):
         if in_cache:
             return [], utils2.sort_progress(result, sort_order=SORT_MAP[int(kodi.get_setting('sort_progress'))])
         
-    with gui_utils.ProgressDialog(i18n('discover_mne'), background=True) as pd:
+    with kodi.ProgressDialog(i18n('discover_mne'), background=True) as pd:
         timeout = max_timeout = int(kodi.get_setting('trakt_timeout'))
         pd.update(0, line1=i18n('retr_history'))
         progress_list = trakt_api.get_watched(SECTIONS.TV, full=True, noseasons=True, cached=cached)
@@ -1030,7 +1030,7 @@ def get_sources(mode, video_type, title, year, trakt_id, season='', episode='', 
         video = ScraperVideo(video_type, title, year, trakt_id, season, episode, ep_title, ep_airdate)
         active = kodi.get_setting('show_pd') == 'true' or (not dialog and not utils2.from_playlist())
         if kodi.get_setting('pd_force_disable') == 'true': active = False
-        with gui_utils.ProgressDialog(i18n('getting_sources'), utils2.make_progress_msg(video_type, title, year, season, episode), '', '', active=active) as pd:
+        with kodi.ProgressDialog(i18n('getting_sources'), utils2.make_progress_msg(video_type, title, year, season, episode), '', '', active=active) as pd:
             scrapers = utils.relevant_scrapers(video_type)
             total = len(scrapers)
             for cls in scrapers:
@@ -1331,7 +1331,7 @@ def auto_play_sources(hosters, video_type, trakt_id, dialog, season, episode):
     active = kodi.get_setting('show_pd') == 'true' or not dialog
     if kodi.get_setting('pd_force_disable') == 'true': active = False
     total_hosters = len(hosters)
-    with gui_utils.ProgressDialog(i18n('trying_autoplay'), line1=' ', line2=' ', active=active) as pd:
+    with kodi.ProgressDialog(i18n('trying_autoplay'), line1=' ', line2=' ', active=active) as pd:
         prev = ''
         for i, item in enumerate(hosters):
             if item['multi-part']:
@@ -1408,7 +1408,7 @@ def set_related_url(mode, video_type, title, year, trakt_id, season='', episode=
     q = Queue()
     begin = time.time()
     video = ScraperVideo(video_type, title, year, trakt_id, season, episode, ep_title, ep_airdate)
-    with gui_utils.ProgressDialog(i18n('set_related_url'), utils2.make_progress_msg(video_type, title, year, season, episode)) as pd:
+    with kodi.ProgressDialog(i18n('set_related_url'), utils2.make_progress_msg(video_type, title, year, season, episode)) as pd:
         scrapers = utils.relevant_scrapers(video_type, order_matters=True)
         total = len(scrapers)
         for cls in scrapers:
@@ -1698,7 +1698,7 @@ def toggle_url_exists(trakt_id):
 def update_subscriptions():
     log_utils.log('Updating Subscriptions', xbmc.LOGDEBUG)
     active = kodi.get_setting(MODES.UPDATE_SUBS + '-notify') == 'true'
-    with gui_utils.ProgressDialog('Stream All The Sources', line1=i18n('updating_subscriptions'), background=True, active=active) as pd:
+    with kodi.ProgressDialog('Stream All The Sources', line1=i18n('updating_subscriptions'), background=True, active=active) as pd:
         update_strms(SECTIONS.TV, pd)
         if kodi.get_setting('include_movies') == 'true':
             update_strms(SECTIONS.MOVIES, pd)

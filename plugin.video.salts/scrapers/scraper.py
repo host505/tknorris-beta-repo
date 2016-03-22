@@ -216,7 +216,7 @@ class Scraper(object):
         result = self.db_connection.get_related_url(temp_video_type, video.title, video.year, self.get_name(), season)
         if result:
             url = result[0][0]
-            log_utils.log('Got local related url: |%s|%s|%s|%s|%s|%s|' % (temp_video_type, video.title, video.year, season, self.get_name(), url))
+            log_utils.log('Got local related url: |%s|%s|%s|%s|%s|%s|' % (temp_video_type, video.title, video.year, season, self.get_name(), url), log_utils.LOGDEBUG)
         else:
             results = self.search(temp_video_type, video.title, video.year, season)
             if results:
@@ -230,7 +230,7 @@ class Scraper(object):
                 result = self.db_connection.get_related_url(VIDEO_TYPES.EPISODE, video.title, video.year, self.get_name(), video.season, video.episode)
                 if result:
                     url = result[0][0]
-                    log_utils.log('Got local related url: |%s|%s|%s|' % (video, self.get_name(), url))
+                    log_utils.log('Got local related url: |%s|%s|%s|' % (video, self.get_name(), url), log_utils.LOGDEBUG)
                 else:
                     landing_url = url
                     url = self._get_episode_url(landing_url, video)
@@ -248,7 +248,7 @@ class Scraper(object):
         if timeout == 0: timeout = None
         if headers is None: headers = {}
         referer = headers['Referer'] if 'Referer' in headers else url
-        log_utils.log('Getting Url: %s cookie=|%s| data=|%s| extra headers=|%s|' % (url, cookies, data, headers))
+        log_utils.log('Getting Url: %s cookie=|%s| data=|%s| extra headers=|%s|' % (url, cookies, data, headers), log_utils.LOGDEBUG)
         if data is not None:
             if isinstance(data, basestring):
                 data = data
@@ -473,7 +473,7 @@ class Scraper(object):
         result = self.db_connection.get_related_url(video.video_type, video.title, video.year, self.get_name(), video.season, video.episode)
         if result:
             url = result[0][0]
-            log_utils.log('Got local related url: |%s|%s|%s|%s|%s|' % (video.video_type, video.title, video.year, self.get_name(), url))
+            log_utils.log('Got local related url: |%s|%s|%s|%s|%s|' % (video.video_type, video.title, video.year, self.get_name(), url), log_utils.LOGDEBUG)
         else:
             select = int(kodi.get_setting('%s-select' % (self.get_name())))
             if video.video_type == VIDEO_TYPES.EPISODE:

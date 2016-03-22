@@ -123,7 +123,6 @@ class PubFilm_Scraper(scraper.Scraper):
         headers = {'Referer': iframe_url}
         html = self._http_get(GK_URL, data=data, headers=headers, cache_limit=.5)
         js_data = scraper_utils.parse_json(html, GK_URL)
-        log_utils.log(js_data)
         if 'link' in js_data:
             if isinstance(js_data['link'], basestring):
                 sources[js_data['link']] = {'quality': QUALITIES.HIGH, 'direct': False}

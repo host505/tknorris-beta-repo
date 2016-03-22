@@ -113,7 +113,7 @@ class SezonLukDizi_Scraper(scraper.Scraper):
 
     def _get_episode_url(self, show_url, video):
         url = urlparse.urljoin(self.base_url, show_url)
-        html = self._http_get(url, cache_limit=1)
+        html = self._http_get(url, cache_limit=.25)
         data_id = dom_parser.parse_dom(html, 'div', {'id': 'dizidetay'}, ret='data-id')
         data_dizi = dom_parser.parse_dom(html, 'div', {'id': 'dizidetay'}, ret='data-dizi')
         if data_id and data_dizi:

@@ -101,6 +101,7 @@ def blog_get_quality(video, q_str, host):
     return get_quality(video, host, post_quality)
 
 def get_quality(video, host, base_quality=None):
+    if host is None: host = ''
     host = host.lower()
     # Assume movies are low quality, tv shows are high quality
     if base_quality is None:

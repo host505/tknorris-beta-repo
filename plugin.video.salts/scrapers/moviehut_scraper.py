@@ -17,7 +17,7 @@
 """
 import re
 import urlparse
-
+from salts_lib import log_utils
 from salts_lib import dom_parser
 from salts_lib import kodi
 from salts_lib import scraper_utils
@@ -74,16 +74,17 @@ class MovieHut_Scraper(scraper.Scraper):
                 else:
                     multipart = False
                 host = urlparse.urlparse(stream_url).hostname
-                quality = scraper_utils.get_quality(video, host, QUALITY_MAP.get(q_str, QUALITIES.HIGH))
-                hoster = {'multi-part': multipart, 'host': host, 'class': self, 'quality': quality, 'views': views, 'rating': None, 'url': stream_url, 'direct': False}
-                hoster['label'] = label
-                hosters.append(hoster)
-                for part in parts:
-                    stream_url, part_label = part
-                    part_hoster = hoster.copy()
-                    part_hoster['part_label'] = part_label
-                    part_hoster['url'] = stream_url
-                    hosters.append(part_hoster)
+                if host is not None:
+                    quality = scraper_utils.get_quality(video, host, QUALITY_MAP.get(q_str, QUALITIES.HIGH))
+                    hoster = {'multi-part': multipart, 'host': host, 'class': self, 'quality': quality, 'views': views, 'rating': None, 'url': stream_url, 'direct': False}
+                    hoster['label'] = label
+                    hosters.append(hoster)
+                    for part in parts:
+                        stream_url, part_label = part
+                        part_hoster = hoster.copy()
+                        part_hoster['part_label'] = part_label
+                        part_hoster['url'] = stream_url
+                        hosters.append(part_hoster)
             
         return hosters
 

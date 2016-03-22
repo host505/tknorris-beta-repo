@@ -99,7 +99,8 @@ class Furk_Scraper(scraper.Scraper):
         if source_url and source_url != FORCE_NO_MATCH:
             params = urlparse.parse_qs(urlparse.urlparse(source_url).query)
             if 'title' in params:
-                query = re.sub("['&:!]", "", params['title'][0])
+                search_title = re.sub("['&:!]", "", urllib.unquote_plus(params['title'][0]))
+                query = search_title
                 if video.video_type == VIDEO_TYPES.MOVIE:
                     if 'year' in params: query += ' %s' % (params['year'][0])
                 else:
@@ -112,7 +113,7 @@ class Furk_Scraper(scraper.Scraper):
                 query_url = '/search?query=%s' % (query)
                 hosters = self.__get_links(query_url, video)
                 if not hosters and video.video_type == VIDEO_TYPES.EPISODE and params['air_date'][0]:
-                    query = urllib.quote_plus('%s %s' % (params['title'][0], params['air_date'][0].replace('-', '.')))
+                    query = urllib.quote_plus('%s %s' % (search_title, params['air_date'][0].replace('-', '.')))
                     query_url = '/search?query=%s' % (query)
                     hosters = self.__get_links(query_url, video)
 
@@ -177,12 +178,12 @@ class Furk_Scraper(scraper.Scraper):
         result = self.db_connection.get_related_url(video.video_type, video.title, video.year, self.get_name(), video.season, video.episode)
         if result:
             url = result[0][0]
-            log_utils.log('Got local related url: |%s|%s|%s|%s|%s|' % (video.video_type, video.title, video.year, self.get_name(), url))
+            log_utils.log('Got local related url: |%s|%s|%s|%s|%s|' % (video.video_type, video.title, video.year, self.get_name(), url), log_utils.LOGDEBUG)
         else:
             if video.video_type == VIDEO_TYPES.MOVIE:
                 query = 'title=%s&year=%s' % (urllib.quote_plus(video.title), video.year)
             else:
-                query = 'title=%s&season=%s&episode=%s&air_date=%s' % (video.title, video.season, video.episode, video.ep_airdate)
+                query = 'title=%s&season=%s&episode=%s&air_date=%s' % (urllib.quote_plus(video.title), video.season, video.episode, video.ep_airdate)
             url = '/search?%s' % (query)
             self.db_connection.set_related_url(video.video_type, video.title, video.year, self.get_name(), url)
         return url
