@@ -22,7 +22,7 @@ from urlresolver.resolver import UrlResolver, ResolverError
 class YoutubeResolver(UrlResolver):
     name = "youtube"
     domains = ['youtube.com', 'youtu.be']
-    pattern = '(?://|\.)(youtube.com|youtu.be)/(?:embed/|.+?\?v=|.+?\&v=)([0-9A-Za-z_\-]+)'
+    pattern = '(?://|\.)(youtube.com|youtu.be)/(?:embed/|.+?\?v=|.+?\&v=|v/)([0-9A-Za-z_\-]+)'
 
     def get_media_url(self, host, media_id):
         plugin = 'plugin://plugin.video.youtube/play/?video_id=' + media_id

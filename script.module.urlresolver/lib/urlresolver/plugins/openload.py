@@ -34,16 +34,48 @@ class OpenLoadResolver(UrlResolver):
         self.net = common.Net()
 
     def get_media_url(self, host, media_id):
+        def baseN(num,b,numerals="0123456789abcdefghijklmnopqrstuvwxyz"):
+            return ((num == 0) and numerals[0]) or (baseN(num // b, b, numerals).lstrip(numerals[0]) + numerals[num % b])
+
+        def conv(s,addfactor=None):
+            #print s
+            if 'function()' in s:
+                addfactor=s.split('b.toString(')[1].split(')')[0]
+                fname=re.findall('function\(\)\{function (.*?)\(',s)[0]
+                s=s.replace(fname,'myfunc')
+                s=''.join(s.split('}')[1:])
+            if '+' not in s:
+                if '.0.toString' in s:
+                    ival,b=s.split('.0.toString(')
+                    b=b.replace(')','')
+                    #print  ival, b
+                    return baseN(int(ival),int(eval(b)))
+                elif 'myfunc' in s:
+                    b,ival=s.split('myfunc(')[1].split(',')
+                    ival=ival.replace(')','').replace('(','')
+                    b=b.replace(')','').replace('(','')
+                    b=eval(addfactor.replace('a',b))
+                    #print  ival, b
+                    return baseN(int(ival),int(b))
+                else:
+                    #print s
+                    return eval(s)
+            r=''
+            for ss in s.split('+'):
+                r+=conv(ss,addfactor)
+            return r
+
         try:
             web_url = self.get_url(host, media_id)
             headers = {'User-Agent': common.FF_USER_AGENT}
             html = self.net.http_GET(web_url, headers=headers).content.encode('utf-8')
             common.log_utils.log(html)
-            aaencoded = re.search('id="videooverlay".*?<script[^>]*>(.*)</script>', html, re.DOTALL)
-            dtext = AADecoder(aaencoded.group(1)).decode()
-            stream_url = re.search('[\'"](http.*?)[\'"]', dtext)
-            if stream_url:
-                return stream_url.group(1) + '|User-Agent=%s' % (common.FF_USER_AGENT)
+            aaencoded = re.findall('id=\"olvideo\".*\n.*?text/javascript\">(.*)</script>',html)[0] 
+            dtext = AADecoder(aaencoded).decode()
+            dtext = re.findall('window.vs=(.*?);',dtext)[0]
+            dtext = conv(dtext)
+            return dtext.replace("https","http") + '|User-Agent=%s' % (common.FF_USER_AGENT)
+            
         except Exception as e:
             common.log_utils.log_debug('Exception during openload resolve parse: %s' % (e))
 

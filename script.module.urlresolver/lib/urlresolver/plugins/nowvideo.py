@@ -54,7 +54,7 @@ class NowvideoResolver(UrlResolver):
         return stream_url
 
     def get_url(self, host, media_id):
-        return 'http://embed.nowvideo.sx/embed.php?v=%s' % media_id
+        return 'http://embed.nowvideo.sx/embed/?v=%s' % media_id
 
     def get_host_and_id(self, url):
         r = re.search(self.pattern, url)

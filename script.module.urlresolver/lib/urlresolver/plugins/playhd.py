@@ -23,8 +23,8 @@ from urlresolver.resolver import UrlResolver, ResolverError
 
 class PlayHDResolver(UrlResolver):
     name = "playhd.video"
-    domains = ["www.playhd.video"]
-    pattern = '(?://|\.)(playhd\.video)/embed\.php?.*?vid=([0-9]+)[\?&]*'
+    domains = ["www.playhd.video","www.playhd.fo"]
+    pattern = '(?://|\.)(playhd\.(?:video|fo))/embed\.php?.*?vid=([0-9]+)[\?&]*'
 
     def __init__(self):
         self.net = common.Net()
@@ -33,10 +33,10 @@ class PlayHDResolver(UrlResolver):
         web_url = self.get_url(host, media_id)
         resp = self.net.http_GET(web_url)
         html = resp.content
-        headers = dict(resp._response.info().items())
+        headers = dict(self.net.get_cookies())
         r = re.search('"content_video".*\n.*?src="(.*?)"', html)
         if r:
-            stream_url = r.group(1) + '|' + urllib.urlencode({'Cookie': headers['set-cookie']})
+            stream_url = r.group(1) + '|' + urllib.urlencode({ 'Cookie': headers['www.playhd.video']['/']['AVS'], 'Referer': 'http://www.playhd.video/embed.php' })
         else:
             raise ResolverError('no file located')
 

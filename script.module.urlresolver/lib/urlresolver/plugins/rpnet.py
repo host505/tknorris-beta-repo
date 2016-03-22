@@ -55,30 +55,35 @@ class RPnetResolver(UrlResolver):
     def get_host_and_id(self, url):
         return 'rpnet.biz', url
 
+    @common.cache.cache_method(cache_limit=8)
     def get_all_hosters(self):
-        if self.patterns is None:
-            url = 'http://premium.rpnet.biz/hoster.json'
-            response = self.net.http_GET(url).content
-            hosters = json.loads(response)
-            common.log_utils.log_debug('rpnet patterns: %s' % hosters)
-            self.patterns = [re.compile(pattern) for pattern in hosters['supported']]
-        return self.patterns
+        url = 'http://premium.rpnet.biz/hoster.json'
+        response = self.net.http_GET(url).content
+        hosters = json.loads(response)
+        common.log_utils.log_debug('rpnet patterns: %s' % hosters)
+        patterns = [re.compile(pattern) for pattern in hosters['supported']]
+        return patterns
 
+    @common.cache.cache_method(cache_limit=8)
     def get_hosts(self):
-        if self.hosts is None:
-            url = 'http://premium.rpnet.biz/hoster2.json'
-            response = self.net.http_GET(url).content
-            common.log_utils.log_debug('rpnet hosts: %s' % response)
-            self.hosts = json.loads(response)['supported']
+        url = 'http://premium.rpnet.biz/hoster2.json'
+        response = self.net.http_GET(url).content
+        common.log_utils.log_debug('rpnet hosts: %s' % response)
+        hosts = json.loads(response)['supported']
+        return hosts
 
     def valid_url(self, url, host):
         if url:
-            self.get_all_hosters()
+            if self.patterns is None:
+                self.patterns = self.get_all_hosters()
+                
             for pattern in self.patterns:
                 if pattern.search(url):
                     return True
         elif host:
-            self.get_hosts()
+            if self.hosts is None:
+                self.hosts = self.get_hosts()
+                
             if host.startswith('www.'): host = host.replace('www.', '')
             if host in self.hosts or any(host in item for item in self.hosts):
                 return True

@@ -18,6 +18,7 @@
 import os
 from lib import log_utils  # @UnusedImport
 from lib.net import Net  # @UnusedImport
+from lib import cache  # @UnusedImport
 import xbmcaddon
 import xbmc
 

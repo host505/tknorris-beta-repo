@@ -1,4 +1,7 @@
 '''
+FilmShow urlresolver plugin
+Copyright (C) 2016 Gujal
+
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
@@ -18,10 +21,11 @@ from lib import jsunpack
 from urlresolver import common
 from urlresolver.resolver import UrlResolver, ResolverError
 
-class LetwatchResolver(UrlResolver):
-    name = "letwatch.us"
-    domains = ['letwatch.us', 'letwatch.to']
-    pattern = '(?://|\.)(letwatch\.(?:us|to))/(?:embed-)?([0-9a-zA-Z]+)'
+class FilmShowResolver(UrlResolver):
+    name = "www.filmshowonline.net"
+    domains = ["www.filmshowonline.net"]
+    pattern = '(?://|\.)(filmshowonline\.net)/(?:videos/)?([0-9A-Za-z]+)'
+
 
     def __init__(self):
         self.net = common.Net()
@@ -29,28 +33,16 @@ class LetwatchResolver(UrlResolver):
     def get_media_url(self, host, media_id):
         web_url = self.get_url(host, media_id)
         html = self.net.http_GET(web_url).content
+        r = re.search('data-config="(.*?)"', html)
+        if r:
+            rid = re.search('com/(\d*)/.*/(\d*)/', r.group(1))
+            rurl = 'https://cdn.video.playwire.com/' + str(rid.group(1)) + '/videos/' + str(rid.group(2)) + '/video-sd.mp4?hosting_id=' + str(rid.group(1))
+            return rurl
 
-        if html.find('404 Not Found') >= 0:
-            raise ResolverError('File Removed')
-
-        if html.find('Video is processing') >= 0:
-            raise ResolverError('File still being processed')
-
-        packed = re.search('(eval\(function.*?)\s*</script>', html, re.DOTALL)
-        if packed:
-            js = jsunpack.unpack(packed.group(1))
-        else:
-            js = html
-
-        link = re.search('file\s*:\s*"([^"]+)', js)
-        if link:
-            common.log_utils.log_debug('letwatch.us Link Found: %s' % link.group(1))
-            return link.group(1)
-
-        raise ResolverError('Unable to find letwatch.us video')
+        raise ResolverError('File Not Found or removed')
 
     def get_url(self, host, media_id):
-        return 'http://%s/embed-%s-640x400.html' % (host,media_id)
+        return 'http://www.filmshowonline.net/videos/%s/' % media_id
 
     def get_host_and_id(self, url):
         r = re.search(self.pattern, url)

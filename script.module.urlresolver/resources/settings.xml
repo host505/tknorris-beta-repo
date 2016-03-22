@@ -243,6 +243,9 @@
 		<setting label="thevideo" type="lsep"/>
 		<setting default="100" id="TheVideoResolver_priority" label="Priority" type="number"/>
 		<setting default="true" id="TheVideoResolver_enabled" label="Enabled" type="bool"/>
+		<setting label="thevideobee.to" type="lsep"/>
+		<setting default="100" id="VideoBeeResolver_priority" label="Priority" type="number"/>
+		<setting default="true" id="VideoBeeResolver_enabled" label="Enabled" type="bool"/>
 		<setting label="trollvid.net" type="lsep"/>
 		<setting default="100" id="TrollVidResolver_priority" label="Priority" type="number"/>
 		<setting default="true" id="TrollVidResolver_enabled" label="Enabled" type="bool"/>
@@ -274,14 +277,11 @@
 		<setting label="UsersFiles" type="lsep"/>
 		<setting default="100" id="UsersFilesResolver_priority" label="Priority" type="number"/>
 		<setting default="true" id="UsersFilesResolver_enabled" label="Enabled" type="bool"/>
-		<setting label="VeeHD" type="lsep"/>
-		<setting default="100" id="VeeHDResolver_priority" label="Priority" type="number"/>
-		<setting default="true" id="VeeHDResolver_enabled" label="Enabled" type="bool"/>
-		<setting default="false" id="VeeHDResolver_login" label="login" type="bool"/>
-		<setting default="" enable="eq(-1,true)" id="VeeHDResolver_username" label="Username" type="text"/>
-		<setting default="" enable="eq(-2,true)" id="VeeHDResolver_password" label="Password" option="hidden" type="text"/>
 	</category>
 	<category label="Resolvers 4">
+		<setting label="veoh" type="lsep"/>
+		<setting default="100" id="VeohResolver_priority" label="Priority" type="number"/>
+		<setting default="true" id="VeohResolver_enabled" label="Enabled" type="bool"/>
 		<setting label="vid.ag" type="lsep"/>
 		<setting default="100" id="VidAgResolver_priority" label="Priority" type="number"/>
 		<setting default="true" id="VidAgResolver_enabled" label="Enabled" type="bool"/>
@@ -355,11 +355,14 @@
 		<setting label="vshare" type="lsep"/>
 		<setting default="100" id="VshareResolver_priority" label="Priority" type="number"/>
 		<setting default="true" id="VshareResolver_enabled" label="Enabled" type="bool"/>
-		<setting label="vshare.eu" type="lsep"/>
-		<setting default="100" id="VshareEuResolver_priority" label="Priority" type="number"/>
-		<setting default="true" id="VshareEuResolver_enabled" label="Enabled" type="bool"/>
 	</category>
 	<category label="Resolvers 5">
+		<setting label="watchvideo.us" type="lsep"/>
+		<setting default="100" id="WatchVideoResolver_priority" label="Priority" type="number"/>
+		<setting default="true" id="WatchVideoResolver_enabled" label="Enabled" type="bool"/>
+		<setting label="www.filmshowonline.net" type="lsep"/>
+		<setting default="100" id="FilmShowResolver_priority" label="Priority" type="number"/>
+		<setting default="true" id="FilmShowResolver_enabled" label="Enabled" type="bool"/>
 		<setting label="xvidstage" type="lsep"/>
 		<setting default="100" id="XvidstageResolver_priority" label="Priority" type="number"/>
 		<setting default="true" id="XvidstageResolver_enabled" label="Enabled" type="bool"/>

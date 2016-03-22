@@ -37,6 +37,12 @@ class AllVidResolver(UrlResolver):
         self.headers['Referer'] = web_url
         html = self.net.http_GET(web_url, headers=self.headers).content
 
+        r = re.search('<iframe\s+src\s*=\s*"([^"]+)', html, re.DOTALL)
+
+        if r:
+            web_url = r.group(1)
+            html = self.net.http_GET(web_url, headers=self.headers).content
+
         for match in re.finditer('(eval\(function.*?)</script>', html, re.DOTALL):
             js_data = jsunpack.unpack(match.group(1))
             js_data = js_data.replace('\\\'', '\'')
