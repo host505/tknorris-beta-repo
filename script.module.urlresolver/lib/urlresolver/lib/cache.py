@@ -22,10 +22,9 @@ import pickle
 import hashlib
 import os
 import kodi
-import xbmc
 
 try:
-    cache_path = xbmc.translatePath(os.path.join(kodi.get_profile(), 'cache'))
+    cache_path = kodi.translate_path(os.path.join(kodi.get_profile(), 'cache'))
     if not os.path.exists(cache_path):
         os.makedirs(cache_path)
 except Exception as e:

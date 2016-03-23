@@ -417,10 +417,10 @@ def test_stream(hoster):
     log_utils.log('Testing Stream: %s from %s using Headers: %s' % (hoster['url'], hoster['class'].get_name(), headers), xbmc.LOGDEBUG)
     request = urllib2.Request(hoster['url'].split('|')[0], headers=headers)
 
+    msg = ''
     opener = urllib2.build_opener(urllib2.HTTPRedirectHandler)
     urllib2.install_opener(opener)
-    #  set urlopen timeout to 1 seconds
-    try: http_code = urllib2.urlopen(request, timeout=2).getcode()
+    try: http_code = urllib2.urlopen(request, timeout=1).getcode()
     except urllib2.URLError as e:
         # treat an unhandled url type as success
         if hasattr(e, 'reason') and 'unknown url type' in str(e.reason).lower():
@@ -430,15 +430,17 @@ def test_stream(hoster):
                 http_code = e.code
             else:
                 http_code = 600
+        msg = str(e)
     except Exception as e:
         if 'unknown url type' in str(e).lower():
             return True
         else:
             log_utils.log('Exception during test_stream: (%s) %s' % (type(e).__name__, e), xbmc.LOGDEBUG)
             http_code = 601
+        msg = str(e)
 
     if int(http_code) >= 400:
-        log_utils.log('Test Stream Failed: Url: %s HTTP Code: %s' % (hoster['url'], http_code), xbmc.LOGDEBUG)
+        log_utils.log('Test Stream Failed: Url: %s HTTP Code: %s Msg: %s' % (hoster['url'], http_code, msg), xbmc.LOGDEBUG)
 
     return int(http_code) < 400
 

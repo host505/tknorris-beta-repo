@@ -81,14 +81,15 @@ class Premiumize_Scraper(scraper.Scraper):
                 browse_url = BROWSE_URL % (hash_id)
                 browse_url = urlparse.urljoin(self.base_url, browse_url)
                 js_data = self._json_get(browse_url, cache_limit=0)
-                videos = self.__get_videos(js_data['content'])
-                
-                if len(videos) > 1:
-                    result = xbmcgui.Dialog().select(i18n('choose_stream'), [video['label'] for video in videos])
-                    if result > -1:
-                        return videos[result]['url']
-                elif videos:
-                    return videos[0]['url']
+                if 'content' in js_data:
+                    videos = self.__get_videos(js_data['content'])
+                    
+                    if len(videos) > 1:
+                        result = xbmcgui.Dialog().select(i18n('choose_stream'), [video['label'] for video in videos])
+                        if result > -1:
+                            return videos[result]['url']
+                    elif videos:
+                        return videos[0]['url']
                 
     def __add_torrent(self, hash_id):
         list_url = urlparse.urljoin(self.base_url, LIST_URL)

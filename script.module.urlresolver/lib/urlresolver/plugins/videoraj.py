@@ -1,6 +1,6 @@
 """
-    urlresolver XBMC Addon
-    Copyright (C) 2011 t0mm0
+    urlresolver Kodi Addon
+    Copyright (C) 2016 Gujal
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,13 +17,14 @@
 """
 
 import re
+import urllib
 from urlresolver import common
 from urlresolver.resolver import UrlResolver, ResolverError
 
-class MovshareResolver(UrlResolver):
-    name = "movshare"
-    domains = ["movshare.net", 'wholecloud.net']
-    pattern = '(?://|\.)(movshare.net|wholecloud.net)/(?:video/|embed(?:/|\.php)\?v=)([A-Za-z0-9]+)'
+class VideoRajResolver(UrlResolver):
+    name = 'videoraj.to'
+    domains = ['videoraj.ec', 'videoraj.eu', 'videoraj.sx', 'videoraj.ch', 'videoraj.com', 'videoraj.to', 'videoraj.co']
+    pattern = '(?://|\.)(videoraj\.(?:ec|eu|sx|ch|com|co|to))/(?:v(?:ideo)*/|embed\.php\?id=)([0-9a-z]+)'
 
     def __init__(self):
         self.net = common.Net()
@@ -33,14 +34,14 @@ class MovshareResolver(UrlResolver):
 
         html = self.net.http_GET(web_url).content
 
-        r = re.search('flashvars.filekey=(.+?);', html)
+        r = re.search('key: "(.+?)"', html)
         if r:
             r = r.group(1)
 
             try: filekey = re.compile('\s+%s="(.+?)"' % r).findall(html)[-1]
             except: filekey = r
 
-            player_url = 'http://www.wholecloud.net/api/player.api.php?key=%s&file=%s' % (filekey, media_id)
+            player_url = 'http://www.videoraj.to/api/player.api.php?pass=&numOfErrors=0&cid=1&cid3=&key=%s&user=&cid2=&file=%s' % (filekey, media_id)
 
             html = self.net.http_GET(player_url).content
 
@@ -51,10 +52,10 @@ class MovshareResolver(UrlResolver):
             else:
                 raise ResolverError('File Not Found or removed')
 
-        return stream_url
+        return urllib.unquote(stream_url)
 
     def get_url(self, host, media_id):
-        return 'http://www.wholecloud.net/embed/?v=%s' % media_id
+        return 'http://www.videoraj.to/embed.php?id=%s' % media_id
 
     def get_host_and_id(self, url):
         r = re.search(self.pattern, url)

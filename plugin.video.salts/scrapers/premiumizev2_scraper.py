@@ -23,6 +23,7 @@ from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import VIDEO_TYPES
 from salts_lib.kodi import i18n
+from salts_lib.constants import QUALITIES
 import scraper
 
 
@@ -116,16 +117,18 @@ class PremiumizeV2_Scraper(scraper.Scraper):
         return videos
     
     def __get_quality(self, item, video):
-        if 'width' in item:
+        if 'width' in item and item['width']:
             return scraper_utils.width_get_quality(item['width'])
-        elif 'height' in item:
+        elif 'height' in item and item['height']:
             return scraper_utils.height_get_quality(item['height'])
-        else:
+        elif 'name' in item:
             if video.video_type == VIDEO_TYPES.MOVIE:
                 _title, _year, height, _extra = scraper_utils.parse_movie_link(item['name'])
             else:
                 _title, _season, _episode, height, _extra = scraper_utils.parse_episode_link(item['name'])
             return scraper_utils.height_get_quality(height)
+        else:
+            return QUALITIES.HIGH
         
     def get_url(self, video):
         url = self._default_get_url(video)

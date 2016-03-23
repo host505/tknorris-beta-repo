@@ -103,14 +103,14 @@ def perform_auto_conf(responses):
                  ['WatchHD', 'IFlix', 'MoviesPlanet', 'TVWTVS', 'MWM', '9Movies', '123Movies', 'niter.tv', 'HDMovie14', 'ororo.tv', 'm4ufree'],
                  ['torba.se', 'StreamLord', 'CyberReel', 'MovCav', 'tunemovie', 'MovieMax', 'afdah.org', 'xmovies8', 'xmovies8.v2', 'MovieXK'],
                  ['Rainierland', 'DayT.se', 'FardaDownload', 'zumvo.com', 'PutMV', 'vivo.to', 'MiraDeTodo', 'beinmovie', 'FireMoviesHD'],
-                 ['DiziFilmHD', 'SezonLukDizi', 'Dizimag', 'Dizilab', 'Dizigold', 'Dizibox', 'Diziay', 'Dizipas', 'OneClickTVShows', 'OnlineDizi'],
-                 ['DL-Pars', 'DDLValley', '2DDL', 'ReleaseBB', 'MyVideoLinks.eu', 'OCW', 'TheExtopia', 'RLSSource.net', 'TVRelease.Net'],
-                 ['IceFilms', 'WatchEpisodes', 'PrimeWire', 'tvonline', 'SantaSeries', 'Flixanity', 'wso.ch', 'WatchSeries', 'UFlix.org', 'Putlocker'],
-                 ['MovieWatcher', 'alluc.com', 'VKFlix', 'WatchFree.to', 'pftv', 'streamallthis.is', 'Movie4K', 'afdah', 'SolarMovie'],
-                 ['MovieSub', 'MovieHut', 'CouchTunerV2', 'CouchTunerV1', 'Watch8Now', 'yshows', 'iWatchOnline'],
-                 ['Ganool', 'vidics.ch', 'pubfilm', 'eMovies.Pro', 'OnlineMoviesPro', 'movie25', 'viooz.ac', 'view47', 'MoviesHD'],
-                 ['wmo.ch', 'stream-tv.co', 'clickplay.to', 'MintMovies', 'MovieNight', 'cmz', 'ch131', 'filmikz.ch'],
-                 ['MovieTube', 'LosMovies', 'FilmStreaming.in', 'moviestorm.eu', 'MerDB']]
+                 ['SezonLukDizi', 'Dizimag', 'Dizilab', 'Dizigold', 'Dizibox', 'Diziay', 'Dizipas', 'OneClickTVShows', 'OnlineDizi'],
+                 ['DiziFilmHD', 'DL-Pars', 'DDLValley', '2DDL', 'ReleaseBB', 'MyVideoLinks.eu', 'OCW', 'TVRelease.Net', 'alluc.com'],
+                 ['IceFilms', 'Flixanity', 'WatchEpisodes', 'PrimeWire', 'tvonline', 'SantaSeries', 'WatchSeries', 'Putlocker'],
+                 ['Ganool', 'MovieWatcher', 'VKFlix', 'WatchFree.to', 'pftv', 'streamallthis.is', 'Movie4K', 'afdah', 'SolarMovie'],
+                 ['UFlix.org', 'wso.ch', 'MovieSub', 'MovieHut', 'CouchTunerV1', 'Watch8Now', 'yshows', 'iWatchOnline', 'MerDB'],
+                 ['vidics.ch', 'pubfilm', 'eMovies.Pro', 'OnlineMoviesPro', 'movie25', 'viooz.ac', 'view47', 'MoviesHD', 'LosMovies'],
+                 ['wmo.ch', 'stream-tv.co', 'clickplay.to', 'MintMovies', 'MovieNight', 'cmz', 'ch131', 'filmikz.ch', 'moviestorm.eu'],
+                 ['TheExtopia', 'MovieTube', 'FilmStreaming.in', 'RLSSource.net']]
     
         sso = []
         random_sso = kodi.get_setting('random_sso') == 'true'
@@ -129,6 +129,68 @@ def perform_auto_conf(responses):
         kodi.set_setting('scraper_download', 'true')
         
     kodi.notify(msg=i18n('auto_conf_complete'))
+
+def do_ip_auth(scraper, visit_url, qr_code):
+    EXPIRE_DURATION = 60 * 5
+    ACTION_PREVIOUS_MENU = 10
+    ACTION_BACK = 92
+    CANCEL_BUTTON = 200
+    INSTR_LABEL = 101
+    QR_CODE_CTRL = 102
+    PROGRESS_CTRL = 103
+    
+    class IpAuthDialog(xbmcgui.WindowXMLDialog):
+        def onInit(self):
+            # log_utils.log('onInit:', log_utils.LOGDEBUG)
+            self.cancel = False
+            self.getControl(INSTR_LABEL).setLabel(i18n('ip_auth_line1') + visit_url + i18n('ip_auth_line2'))
+            self.progress = self.getControl(PROGRESS_CTRL)
+            self.progress.setPercent(100)
+            if qr_code:
+                img = self.getControl(QR_CODE_CTRL)
+                img.setImage(qr_code)
+            
+        def onAction(self, action):
+            # log_utils.log('Action: %s' % (action.getId()), log_utils.LOGDEBUG)
+            if action == ACTION_PREVIOUS_MENU or action == ACTION_BACK:
+                self.cancel = True
+                self.close()
+
+        def onControl(self, control):
+            # log_utils.log('onControl: %s' % (control), log_utils.LOGDEBUG)
+            pass
+
+        def onFocus(self, control):
+            # log_utils.log('onFocus: %s' % (control), log_utils.LOGDEBUG)
+            pass
+
+        def onClick(self, control):
+            # log_utils.log('onClick: %s' % (control), log_utils.LOGDEBUG)
+            if control == CANCEL_BUTTON:
+                self.cancel = True
+                self.close()
+        
+        def setProgress(self, progress):
+            self.progress.setPercent(progress)
+
+    dialog = IpAuthDialog('IpAuthDialog.xml', kodi.get_path())
+    dialog.show()
+    interval = 5000
+    begin = time.time()
+    try:
+        while True:
+            for _ in range(INTERVALS):
+                kodi.sleep(interval / INTERVALS)
+                elapsed = time.time() - begin
+                progress = int((EXPIRE_DURATION - elapsed) * 100 / EXPIRE_DURATION)
+                dialog.setProgress(progress)
+                if progress <= 0 or dialog.cancel:
+                    return False
+                
+            authorized, result = scraper.check_auth()
+            if authorized: return result
+    finally:
+        del dialog
 
 def do_auto_config():
     ACTION_PREVIOUS_MENU = 10

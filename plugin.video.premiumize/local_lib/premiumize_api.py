@@ -18,7 +18,6 @@
 import urllib2
 import urllib
 import json
-import os.path
 from local_lib import log_utils
 
 BASE_URL = 'premiumize.me'

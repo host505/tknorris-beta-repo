@@ -146,7 +146,7 @@ def i18n(string_id):
     try:
         return addon.getLocalizedString(strings.STRINGS[string_id]).encode('utf-8', 'ignore')
     except Exception as e:
-        log_utils.log('Failed String Lookup: %s (%s)' % (string_id, e))
+        log_utils.log('Failed String Lookup: %s (%s)' % (string_id, e), log_utils.LOGWARNING)
         return string_id
 
 class ProgressDialog(object):

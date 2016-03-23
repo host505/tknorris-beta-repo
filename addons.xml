@@ -24,7 +24,7 @@
 </addon>
 
 <!--suppress ALL -->
-<addon id="plugin.video.salts" version="2.0.20" name="Stream All The Sources" provider-name="tknorris">
+<addon id="plugin.video.salts" version="2.0.21" name="Stream All The Sources" provider-name="tknorris">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
         <import addon="script.module.urlresolver" version="2.2.0"/>
@@ -44,7 +44,7 @@
 </addon>
 
 <!--suppress ALL -->
-<addon id="plugin.video.premiumize" version="0.0.3" name="Premiumize Cloud" provider-name="tknorris">
+<addon id="plugin.video.premiumize" version="0.0.4" name="Premiumize Cloud" provider-name="tknorris">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -122,7 +122,7 @@
   </extension>
 </addon>
 
-<addon id="script.module.urlresolver" name="URLResolver" version="2.10.13~beta7" provider-name="Eldorado">
+<addon id="script.module.urlresolver" name="URLResolver" version="2.10.13~beta8" provider-name="Eldorado">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0" />
 	</requires>

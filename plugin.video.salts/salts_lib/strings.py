@@ -276,5 +276,7 @@ STRINGS = {
     'prompt_code': 30267,
     'code_expires': 30268,
     'user_reject_auth': 30269,
-    'use_https': 30548
+    'use_https': 30548,
+    'ip_auth_line1': 30270,
+    'ip_auth_line2': 30271
 }

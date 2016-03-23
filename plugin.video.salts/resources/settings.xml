@@ -200,10 +200,6 @@
          <setting id="CouchTunerV1-base_url" type="text" label="    Base Url" default="http://www.couchtuner.ch" visible="eq(-1,true)"/>
          <setting id="CouchTunerV1-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="CouchTunerV1_last_results" type="number" default="0" visible="false"/>
-         <setting id="CouchTunerV2-enable" type="bool" label="CouchTunerV2 Enabled" default="true" visible="true"/>
-         <setting id="CouchTunerV2-base_url" type="text" label="    Base Url" default="http://couchtuner.at" visible="eq(-1,true)"/>
-         <setting id="CouchTunerV2-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
-         <setting id="CouchTunerV2_last_results" type="number" default="0" visible="false"/>
          <setting id="CyberReel-enable" type="bool" label="CyberReel Enabled" default="true" visible="true"/>
          <setting id="CyberReel-base_url" type="text" label="    Base Url" default="http://cyberreel.com" visible="eq(-1,true)"/>
          <setting id="CyberReel-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
@@ -245,13 +241,13 @@
          <setting id="Dizimag-base_url" type="text" label="    Base Url" default="http://dizimag.co" visible="eq(-1,true)"/>
          <setting id="Dizimag-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="Dizimag_last_results" type="number" default="0" visible="false"/>
-    </category>
-
-    <category label="Scrapers 2">
          <setting id="Dizipas-enable" type="bool" label="Dizipas Enabled" default="true" visible="true"/>
          <setting id="Dizipas-base_url" type="text" label="    Base Url" default="http://dizipas.com" visible="eq(-1,true)"/>
          <setting id="Dizipas-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="Dizipas_last_results" type="number" default="0" visible="false"/>
+    </category>
+
+    <category label="Scrapers 2">
          <setting id="DL-Pars-enable" type="bool" label="DL-Pars Enabled" default="true" visible="true"/>
          <setting id="DL-Pars-base_url" type="text" label="    Base Url" default="http://tv.dl-pars.in" visible="eq(-1,true)"/>
          <setting id="DL-Pars-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
@@ -313,7 +309,7 @@
          <setting id="IFlix_last_results" type="number" default="0" visible="false"/>
          <setting id="IFlix-base_url2" type="text" label="    TV Shows Base Url" default="http://tvshows.cnfstudio.com" visible="eq(-4,true)"/>
          <setting id="iWatchOnline-enable" type="bool" label="iWatchOnline Enabled" default="true" visible="true"/>
-         <setting id="iWatchOnline-base_url" type="text" label="    Base Url" default="https://www.iwatchonline.ag" visible="eq(-1,true)"/>
+         <setting id="iWatchOnline-base_url" type="text" label="    Base Url" default="https://www.iwatchonline.ph" visible="eq(-1,true)"/>
          <setting id="iWatchOnline-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="iWatchOnline_last_results" type="number" default="0" visible="false"/>
          <setting id="Local-enable" type="bool" label="Local Enabled" default="true" visible="true"/>
@@ -341,19 +337,19 @@
          <setting id="MiraDeTodo-base_url" type="text" label="    Base Url" default="http://miradetodo.com.ar" visible="eq(-1,true)"/>
          <setting id="MiraDeTodo-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="MiraDeTodo_last_results" type="number" default="0" visible="false"/>
-    </category>
-
-    <category label="Scrapers 3">
          <setting id="MovCav-enable" type="bool" label="MovCav Enabled" default="true" visible="true"/>
          <setting id="MovCav-base_url" type="text" label="    Base Url" default="http://movcav.com" visible="eq(-1,true)"/>
          <setting id="MovCav-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="MovCav_last_results" type="number" default="0" visible="false"/>
+    </category>
+
+    <category label="Scrapers 3">
          <setting id="movie25-enable" type="bool" label="movie25 Enabled" default="true" visible="true"/>
          <setting id="movie25-base_url" type="text" label="    Base Url" default="http://movie25.hk" visible="eq(-1,true)"/>
          <setting id="movie25-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="movie25_last_results" type="number" default="0" visible="false"/>
          <setting id="Movie4K-enable" type="bool" label="Movie4K Enabled" default="true" visible="true"/>
-         <setting id="Movie4K-base_url" type="text" label="    Base Url" default="http://www.movie4k.to" visible="eq(-1,true)"/>
+         <setting id="Movie4K-base_url" type="text" label="    Base Url" default="http://movie4k.to" visible="eq(-1,true)"/>
          <setting id="Movie4K-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="Movie4K_last_results" type="number" default="0" visible="false"/>
          <setting id="MovieHut-enable" type="bool" label="MovieHut Enabled" default="true" visible="true"/>
@@ -436,13 +432,13 @@
          <setting id="OnlineDizi-base_url" type="text" label="    Base Url" default="http://onlinedizi.co" visible="eq(-1,true)"/>
          <setting id="OnlineDizi-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="OnlineDizi_last_results" type="number" default="0" visible="false"/>
-    </category>
-    
-    <category label="Scrapers 4">
          <setting id="OnlineMoviesPro-enable" type="bool" label="OnlineMoviesPro Enabled" default="true" visible="true"/>
          <setting id="OnlineMoviesPro-base_url" type="text" label="    Base Url" default="http://www.onlinemovies-pro.com" visible="eq(-1,true)"/>
          <setting id="OnlineMoviesPro-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="OnlineMoviesPro_last_results" type="number" default="0" visible="false"/>
+    </category>
+    
+    <category label="Scrapers 4">
          <setting id="ororo.tv-enable" type="bool" label="ororo.tv Enabled" default="true" visible="true"/>
          <setting id="ororo.tv-base_url" type="text" label="    Base Url" default="https://ororo.tv" visible="eq(-1,true)"/>
          <setting id="ororo.tv-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
@@ -528,6 +524,10 @@
          <setting id="TheExtopia-sub_check" type="bool" label="    Include in Page Existence checks?" default="false" visible="eq(-2,true)"/>
          <setting id="TheExtopia_last_results" type="number" default="0" visible="false"/>
          <setting id="TheExtopia-select" type="enum" label="     Automatically Select" lvalues="30636|30637" default="0" visible="eq(-4,true)"/>
+         <setting id="torba.se-enable" type="bool" label="torba.se Enabled" default="true" visible="true"/>
+         <setting id="torba.se-base_url" type="text" label="    Base Url" default="http://torba.se" visible="eq(-1,true)"/>
+         <setting id="torba.se-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
+         <setting id="torba.se_last_results" type="number" default="0" visible="false"/>
          <setting id="tunemovie-enable" type="bool" label="tunemovie Enabled" default="true" visible="true"/>
          <setting id="tunemovie-base_url" type="text" label="    Base Url" default="http://tunemovie.is" visible="eq(-1,true)"/>
          <setting id="tunemovie-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>

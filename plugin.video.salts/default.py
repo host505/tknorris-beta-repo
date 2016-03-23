@@ -249,7 +249,7 @@ def add_search_item(queries, label, thumb, clear_mode):
 @url_dispatcher.register(MODES.FORCE_REFRESH, ['refresh_mode'], ['section', 'slug', 'username'])
 def force_refresh(refresh_mode, section=None, slug=None, username=None):
     kodi.notify(msg=i18n('forcing_refresh'))
-    log_utils.log('Forcing refresh for mode: |%s|%s|%s|%s|' % (refresh_mode, section, slug, username))
+    log_utils.log('Forcing refresh for mode: |%s|%s|%s|%s|' % (refresh_mode, section, slug, username), log_utils.LOGDEBUG)
     now = datetime.datetime.now()
     offset = int(kodi.get_setting('calendar-day'))
     start_date = now + datetime.timedelta(days=offset)
@@ -274,10 +274,10 @@ def force_refresh(refresh_mode, section=None, slug=None, username=None):
     elif refresh_mode == MODES.LIKED_LISTS:
         trakt_api.get_liked_lists(cached=False)
     else:
-        log_utils.log('Force refresh on unsupported mode: |%s|' % (refresh_mode))
+        log_utils.log('Force refresh on unsupported mode: |%s|' % (refresh_mode), log_utils.LOGWARNING)
         return
 
-    log_utils.log('Force refresh complete: |%s|%s|%s|%s|' % (refresh_mode, section, slug, username))
+    log_utils.log('Force refresh complete: |%s|%s|%s|%s|' % (refresh_mode, section, slug, username), log_utils.LOGDEBUG)
     kodi.notify(msg=i18n('force_refresh_complete'))
 
 @url_dispatcher.register(MODES.MOSTS, ['section'])
@@ -780,7 +780,7 @@ def get_progress(cached=True):
                 log_utils.log('Get Progress Process Timeout', xbmc.LOGWARNING)
                 break
         else:
-            log_utils.log('All progress results received')
+            log_utils.log('All progress results received', log_utils.LOGDEBUG)
             
         total = len(workers)
         if worker_count > 0:
@@ -1066,12 +1066,12 @@ def get_sources(mode, video_type, title, year, trakt_id, season='', episode='', 
                     break
 
                 if max_results > 0 and len(hosters) >= max_results:
-                    log_utils.log('Exceeded max results: %s/%s' % (max_results, len(hosters)))
+                    log_utils.log('Exceeded max results: %s/%s' % (max_results, len(hosters)), log_utils.LOGDEBUG)
                     fails = {}
                     break
 
             else:
-                log_utils.log('All source results received')
+                log_utils.log('All source results received', log_utils.LOGDEBUG)
     
             utils2.record_failures(fails, counts)
             timeouts = len(fails)
@@ -1083,7 +1083,7 @@ def get_sources(mode, video_type, title, year, trakt_id, season='', episode='', 
                 timeout_msg = ''
             workers = utils2.reap_workers(workers)
             if not hosters:
-                log_utils.log('No Sources found for: |%s|' % (video))
+                log_utils.log('No Sources found for: |%s|' % (video), log_utils.LOGWARNING)
                 msg = i18n('no_sources')
                 msg += ' (%s)' % timeout_msg if timeout_msg else ''
                 kodi.notify(msg=msg, duration=5000)
@@ -1107,7 +1107,7 @@ def get_sources(mode, video_type, title, year, trakt_id, season='', episode='', 
             if pd.is_canceled(): return False
     
         if not hosters:
-            log_utils.log('No Usable Sources found for: |%s|' % (video))
+            log_utils.log('No Usable Sources found for: |%s|' % (video), log_utils.LOGDEBUG)
             msg = ' (%s)' % timeout_msg if timeout_msg else ''
             kodi.notify(msg=i18n('no_useable_sources') % (msg), duration=5000)
             return False
@@ -1189,7 +1189,7 @@ def resolve_source(mode, class_url, direct, video_type, trakt_id, class_name, se
             scraper_instance = cls()
             break
     else:
-        log_utils.log('Unable to locate scraper with name: %s' % (class_name))
+        log_utils.log('Unable to locate scraper with name: %s' % (class_name), log_utils.LOGWARNING)
         return False
 
     hoster_url = scraper_instance.resolve_link(class_url)
@@ -1226,13 +1226,13 @@ def play_source(mode, hoster_url, direct, video_type, trakt_id, dialog, season='
 
     with kodi.WorkingDialog():
         if direct:
-            log_utils.log('Treating hoster_url as direct: %s' % (hoster_url))
+            log_utils.log('Treating hoster_url as direct: %s' % (hoster_url), log_utils.LOGDEBUG)
             stream_url = hoster_url
         else:
             import urlresolver
             hmf = urlresolver.HostedMediaFile(url=hoster_url)
             if not hmf:
-                log_utils.log('Indirect hoster_url not supported by urlresolver: %s' % (hoster_url))
+                log_utils.log('Indirect hoster_url not supported by urlresolver: %s' % (hoster_url), log_utils.LOGDEBUG)
                 stream_url = hoster_url
             else:
                 try:
@@ -1443,7 +1443,7 @@ def set_related_url(mode, video_type, title, year, trakt_id, season='', episode=
                 log_utils.log('Get Url Timeout', xbmc.LOGWARNING)
                 break
         else:
-            log_utils.log('All source results received')
+            log_utils.log('All source results received', log_utils.LOGDEBUG)
 
     utils2.record_failures(fails)
     timeouts = len(fails)
@@ -1522,7 +1522,7 @@ def set_related_url(mode, video_type, title, year, trakt_id, season='', episode=
                             else:
                                 break
                         except NotImplementedError:
-                            log_utils.log('%s Scraper does not support searching.' % (related_list[index]['class'].get_name()))
+                            log_utils.log('%s Scraper does not support searching.' % (related_list[index]['class'].get_name()), log_utils.LOGDEBUG)
                             kodi.notify(msg=i18n('scraper_no_search'), duration=5000)
                             break
             else:

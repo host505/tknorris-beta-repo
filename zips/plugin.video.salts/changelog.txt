@@ -1,3 +1,12 @@
+[B]Version 2.0.21[/B]
+- Add torba scraper back
+- Improve PremiumizeV2 scraper
+- Improve TV-Release.net scraper
+- Improve TuneMovie scraper
+- Improve VKFlix scraper
+- Remove CouchTunerV2 scraper
+- Fix episode SRU bug for blog scrapers
+
 [B]Version 2.0.20[/B]
 - Add dizifilmhd scraper
 - Add dl-pars scraper

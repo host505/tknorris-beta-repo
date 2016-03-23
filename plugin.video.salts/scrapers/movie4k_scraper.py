@@ -27,7 +27,7 @@ from salts_lib.constants import VIDEO_TYPES
 import scraper
 
 
-BASE_URL = 'http://www.movie4k.to'
+BASE_URL = 'http://movie4k.to'
 QUALITY_MAP = {None: None, '0': QUALITIES.LOW, '1': QUALITIES.LOW, '2': QUALITIES.MEDIUM, '3': QUALITIES.MEDIUM, '4': QUALITIES.HIGH, '5': QUALITIES.HIGH}
 
 class Movie4K_Scraper(scraper.Scraper):

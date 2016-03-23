@@ -185,7 +185,7 @@ class Furk_Scraper(scraper.Scraper):
             else:
                 query = 'title=%s&season=%s&episode=%s&air_date=%s' % (urllib.quote_plus(video.title), video.season, video.episode, video.ep_airdate)
             url = '/search?%s' % (query)
-            self.db_connection.set_related_url(video.video_type, video.title, video.year, self.get_name(), url)
+            self.db_connection.set_related_url(video.video_type, video.title, video.year, self.get_name(), url, video.season, video.episode)
         return url
 
     def search(self, video_type, title, year, season=''):

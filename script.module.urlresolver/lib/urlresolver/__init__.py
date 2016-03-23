@@ -188,7 +188,7 @@ def display_settings():
         affect any addon that uses :mod:`urlresolver` and its plugins.
     '''
     _update_settings_xml()
-    common.addon.openSettings()
+    common.open_settings()
 
 def _update_settings_xml():
     '''

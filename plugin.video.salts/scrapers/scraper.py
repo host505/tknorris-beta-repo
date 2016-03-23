@@ -512,7 +512,7 @@ class Scraper(object):
                                 best_qorder = Q_ORDER[quality]
 
                 url = best_result['url']
-                self.db_connection.set_related_url(video.video_type, video.title, video.year, self.get_name(), url)
+                self.db_connection.set_related_url(video.video_type, video.title, video.year, self.get_name(), url, video.season, video.episode)
         return url
 
     def _get_direct_hostname(self, link):

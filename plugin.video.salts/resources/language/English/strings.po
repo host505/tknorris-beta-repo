@@ -1050,6 +1050,14 @@ msgctxt "#30269"
 msgid "Authorization was Rejected"
 msgstr ""
 
+msgctxt "#30270"
+msgid "To watch this video scan the QR Code below or visit [COLOR blue]"
+msgstr ""
+
+msgctxt "#30271"
+msgid "[/COLOR] from any device on the same network as this device."
+msgstr ""
+
 msgctxt "#30500"
 msgid "Addon Theme"
 msgstr ""
@@ -1759,4 +1767,8 @@ msgstr ""
 
 msgctxt "#30674"
 msgid "Trakt API Offline Mode"
+msgstr ""
+
+msgctxt "#30675"
+msgid "Torba IP Authorization"
 msgstr ""

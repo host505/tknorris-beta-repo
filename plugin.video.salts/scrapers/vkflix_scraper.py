@@ -119,7 +119,7 @@ class MoxieXK_Scraper(scraper.Scraper):
     def _get_episode_url(self, show_url, video):
         url = urlparse.urljoin(self.base_url, show_url)
         html = self._http_get(url, cache_limit=8)
-        pattern = '<h3>[^>]*Season\s+%s\s+Series?\s+%s$' % (video.season, video.episode)
+        pattern = '<h3>[^>]*Season\s+%s\s+Series?\s+%s<' % (video.season, video.episode)
         match = re.search(pattern, html, re.I)
         if match:
             return show_url

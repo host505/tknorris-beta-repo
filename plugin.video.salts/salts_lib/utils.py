@@ -271,7 +271,7 @@ def url_exists(video):
                 log_utils.log('Found url for |%s| @ %s: %s' % (video, cls.get_name(), url), log_utils.LOGDEBUG)
                 return True
 
-    log_utils.log('No url found for: |%s|' % (video))
+    log_utils.log('No url found for: |%s|' % (video), log_utils.LOGDEBUG)
     return False
 
 def do_disable_check():

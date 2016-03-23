@@ -239,7 +239,9 @@ def get_videos(content):
                     log_utils.log('Excluding %s matching %s' % (item['name'], exclusion_list), log_utils.LOGDEBUG)
                     continue
                 
-                if min_duration and 'duration' in item and float(item['duration']) < min_duration:
+                try: duration = float(item['duration'])
+                except: duration = min_duration
+                if min_duration and duration < min_duration:
                     log_utils.log('Excluding: %s %s < %s' % (item['name'], item['duration'], min_duration), log_utils.LOGDEBUG)
                     continue
                 
@@ -249,7 +251,9 @@ def get_videos(content):
                 videos.append(video)
                 if show_transcodes and 'transcoded' in item:
                     transcode = item['transcoded']
-                    if min_duration and 'duration' in transcode and float(transcode['duration']) < min_duration:
+                    try: duration = float(transcode['duration'])
+                    except: duration = min_duration
+                    if min_duration and duration < min_duration:
                         log_utils.log('Excluding(T): %s %s < %s' % (item['name'], transcode['duration'], min_duration), log_utils.LOGDEBUG)
                         continue
                     
@@ -269,8 +273,12 @@ def main(argv=None):
     if argv[0] != plugin_url:
         return
 
-    mode = queries.get('mode', None)
-    url_dispatcher.dispatch(mode, queries)
+    try:
+        mode = queries.get('mode', None)
+        url_dispatcher.dispatch(mode, queries)
+    except PremiumizeError as e:
+        log_utils.log('Premiumize Error: %s' % (str(e)), log_utils.LOGERROR)
+        kodi.notify(msg=str(e), duration=7500)
 
 if __name__ == '__main__':
     sys.exit(main())

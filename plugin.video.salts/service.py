@@ -45,7 +45,7 @@ class Service(xbmc.Player):
         self.reset()
 
     def reset(self):
-        log_utils.log('Service: Resetting...')
+        log_utils.log('Service: Resetting...', log_utils.LOGDEBUG)
         self.win.clearProperty('salts.playing')
         self.win.clearProperty('salts.playing.trakt_id')
         self.win.clearProperty('salts.playing.season')
@@ -73,7 +73,7 @@ class Service(xbmc.Player):
             log_utils.log('Service: tracking progress...')
             self.tracked = True
             if srt_path:
-                log_utils.log('Service: Enabling subtitles: %s' % (srt_path))
+                log_utils.log('Service: Enabling subtitles: %s' % (srt_path), log_utils.LOGDEBUG)
                 self.setSubtitles(srt_path)
             else:
                 self.showSubtitles(False)

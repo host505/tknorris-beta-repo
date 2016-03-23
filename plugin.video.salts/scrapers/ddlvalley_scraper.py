@@ -116,7 +116,7 @@ class DDLValley_Scraper(scraper.Scraper):
     def search(self, video_type, title, year, season=''):
         results = []
         search_url = urlparse.urljoin(self.base_url, '/search/')
-        search_url += urllib.quote_plus(title)
+        search_url += urllib.quote_plus(title.lower())
         html = self._http_get(search_url, cache_limit=1)
         if video_type == VIDEO_TYPES.TVSHOW:
             seen_urls = {}

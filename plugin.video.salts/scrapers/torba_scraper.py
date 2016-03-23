@@ -20,9 +20,10 @@ import re
 import urllib
 import urlparse
 import xbmcvfs
-import xbmcgui
-import xbmc
+# import xbmcgui
+# import xbmc
 import json
+# import time
 from salts_lib import dom_parser
 from salts_lib import kodi
 from salts_lib import log_utils
@@ -30,6 +31,7 @@ from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
 from salts_lib.constants import VIDEO_TYPES
+from salts_lib import gui_utils
 import scraper
 
 
@@ -40,6 +42,7 @@ SEARCH_URL = '/search?title=%s&order=recent&_pjax=#films-pjax-container'
 TOR_URL = BASE_URL2 + '/api/torrent/%s.json'
 PL_URL = BASE_URL2 + '/api/torrent/%s/%s.m3u8'
 INTERVALS = 5
+EXPIRE_DURATION = 5 * 60
 KODI_UA = 'Lavf/56.40.101'
 M3U8_PATH = os.path.join(kodi.translate_path(kodi.get_profile()), 'torbase.m3u8')
 M3U8_TEMPLATE = [
@@ -55,6 +58,7 @@ class TorbaSe_Scraper(scraper.Scraper):
     def __init__(self, timeout=scraper.DEFAULT_TIMEOUT):
         self.timeout = timeout
         self.base_url = kodi.get_setting('%s-base_url' % (self.get_name()))
+        self.auth_url = False
 
     @classmethod
     def provides(cls):
@@ -80,30 +84,29 @@ class TorbaSe_Scraper(scraper.Scraper):
         except Exception as e:
             log_utils.log('Failure during torba resolver: %s' % (e), log_utils.LOGWARNING)
 
-    def __authorize_ip(self, stream_url):
-        headers = {'User-Agent': KODI_UA}
-        html = self._http_get(stream_url, headers=headers, cache_limit=0)
-        try: js_data = json.loads(html)
-        except: return html
-        
-        if 'url' in js_data:
-            try:
-                pd = xbmcgui.DialogProgress()
-                line1 = 'Visit: %s' % (js_data['url'])
-                pd.create('Torba IP Authorization', line1)
-                interval = 5000
-                while True:
-                    for _ in range(INTERVALS):
-                        if pd.iscanceled(): return False
-                        xbmc.sleep(interval / INTERVALS)
-
-                    html = self._http_get(stream_url, headers=headers, cache_limit=0)
-                    try: js_data = json.loads(html)
-                    except: return html
-            finally:
-                pd.close()
+    def __authorize_ip(self, auth_url):
+        self.auth_url = auth_url
+        authorized, response = self.check_auth()
+        if authorized:
+            return response
         else:
-            log_utils.log('Unusable JSON from Torba: %s' % (js_data), log_utils.LOGWARNING)
+            if 'url' in response:
+                return gui_utils.do_ip_auth(self, response['url'], response.get('qrcode'))
+            else:
+                log_utils.log('Unusable JSON from Torba: %s' % (response), log_utils.LOGWARNING)
+                return False
+    
+    def check_auth(self):
+        if not self.auth_url:
+            return True, None
+        
+        headers = {'User-Agent': KODI_UA}
+        html = self._http_get(self.auth_url, headers=headers, cache_limit=0)
+        try:
+            js_data = json.loads(html)
+            return False, js_data
+        except:
+            return True, html
     
     def format_source_label(self, item):
         label = '[%s] %s' % (item['quality'], item['host'])
