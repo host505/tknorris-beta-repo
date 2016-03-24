@@ -99,7 +99,7 @@ class Furk_Scraper(scraper.Scraper):
         if source_url and source_url != FORCE_NO_MATCH:
             params = urlparse.parse_qs(urlparse.urlparse(source_url).query)
             if 'title' in params:
-                search_title = re.sub("['&:!]", "", urllib.unquote_plus(params['title'][0]))
+                search_title = re.sub("[^A-Za-z0-9. ]", "", urllib.unquote_plus(params['title'][0]))
                 query = search_title
                 if video.video_type == VIDEO_TYPES.MOVIE:
                     if 'year' in params: query += ' %s' % (params['year'][0])

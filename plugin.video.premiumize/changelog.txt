@@ -1,3 +1,6 @@
+[B]Version 0.0.5[/B]
+- Make addon self updating
+
 [B]Version 0.0.4[/B]
 - Fail more gracefully when premiumize has issues.
 

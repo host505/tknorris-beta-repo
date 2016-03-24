@@ -169,20 +169,20 @@ class RealDebridResolver(UrlResolver):
             url = 'https://api.real-debrid.com/rest/1.0/hosts/regex'
             js_result = json.loads(self.net.http_GET(url, headers=self.headers).content)
             regexes = [regex.lstrip('/').rstrip('/').replace('\/', '/') for regex in js_result]
+            common.log_utils.log_debug('RealDebrid hosters : %s' % (regexes))
             hosters = [re.compile(regex) for regex in regexes]
         except Exception as e:
             common.log_utils.log_error('Error getting RD regexes: %s' % (e))
-        # common.log_utils.log_debug('RealDebrid hosters : %s' % (hosters))
         return hosters
 
     @common.cache.cache_method(cache_limit=8)
     def get_hosts(self):
         try:
+            hosts = []
             url = 'https://api.real-debrid.com/rest/1.0/hosts/domains'
             hosts = json.loads(self.net.http_GET(url, headers=self.headers).content)
         except Exception as e:
             common.log_utils.log_error('Error getting RD hosts: %s' % (e))
-            hosts = []
         common.log_utils.log_debug('RealDebrid hosts : %s' % (hosts))
         return hosts
 

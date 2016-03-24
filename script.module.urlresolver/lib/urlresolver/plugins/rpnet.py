@@ -35,9 +35,9 @@ class RPnetResolver(UrlResolver):
     def get_media_url(self, host, media_id):
         username = self.get_setting('username')
         password = self.get_setting('password')
-        url = 'https://premium.rpnet.biz/client_api.php?'
+        url = 'https://premium.rpnet.biz/client_api.php'
         query = urllib.urlencode({'username': username, 'password': password, 'action': 'generate', 'links': media_id})
-        url = url + query
+        url = url + '?' + query
         response = self.net.http_GET(url).content
         response = json.loads(response)
         if 'links' in response and response['links']:
@@ -47,7 +47,10 @@ class RPnetResolver(UrlResolver):
             elif 'error' in link:
                 raise ResolverError(link['error'])
         else:
-            raise ResolverError('No Link Returned')
+            msg = 'No Link Returned'
+            if 'error' in response and response['error']:
+                msg += ': %s' % (response['error'][0])
+            raise ResolverError(msg)
 
     def get_url(self, host, media_id):
         return media_id
@@ -57,19 +60,27 @@ class RPnetResolver(UrlResolver):
 
     @common.cache.cache_method(cache_limit=8)
     def get_all_hosters(self):
-        url = 'http://premium.rpnet.biz/hoster.json'
-        response = self.net.http_GET(url).content
-        hosters = json.loads(response)
-        common.log_utils.log_debug('rpnet patterns: %s' % hosters)
-        patterns = [re.compile(pattern) for pattern in hosters['supported']]
+        try:
+            patterns = []
+            url = 'http://premium.rpnet.biz/hoster.json'
+            response = self.net.http_GET(url).content
+            hosters = json.loads(response)
+            common.log_utils.log_debug('rpnet patterns: %s' % (hosters))
+            patterns = [re.compile(pattern) for pattern in hosters['supported']]
+        except Exception as e:
+            common.log_utils.log_error('Error getting RPNet patterns: %s' % (e))
         return patterns
 
     @common.cache.cache_method(cache_limit=8)
     def get_hosts(self):
-        url = 'http://premium.rpnet.biz/hoster2.json'
-        response = self.net.http_GET(url).content
-        common.log_utils.log_debug('rpnet hosts: %s' % response)
-        hosts = json.loads(response)['supported']
+        try:
+            hosts = []
+            url = 'http://premium.rpnet.biz/hoster2.json'
+            response = self.net.http_GET(url).content
+            hosts = json.loads(response)['supported']
+            common.log_utils.log_debug('rpnet hosts: %s' % (hosts))
+        except Exception as e:
+            common.log_utils.log_error('Error getting RPNet hosts: %s' % (e))
         return hosts
 
     def valid_url(self, url, host):
@@ -77,15 +88,14 @@ class RPnetResolver(UrlResolver):
             if self.patterns is None:
                 self.patterns = self.get_all_hosters()
                 
-            for pattern in self.patterns:
-                if pattern.search(url):
-                    return True
+            if any(pattern.search(url) for pattern in self.patterns):
+                return True
         elif host:
             if self.hosts is None:
                 self.hosts = self.get_hosts()
                 
             if host.startswith('www.'): host = host.replace('www.', '')
-            if host in self.hosts or any(host in item for item in self.hosts):
+            if any(host in item for item in self.hosts):
                 return True
 
         return False
@@ -95,7 +105,7 @@ class RPnetResolver(UrlResolver):
         xml = super(cls, cls).get_settings_xml()
         xml.append('<setting id="%s_login" type="bool" label="login" default="false"/>' % (cls.__name__))
         xml.append('<setting id="%s_username" enable="eq(-1,true)" type="text" label="Username" default=""/>' % (cls.__name__))
-        xml.append('<setting id="%s_password" enable="eq(-2,true)" type="text" label="Password" option="hidden" default=""/>' % (cls.__name__))
+        xml.append('<setting id="%s_password" enable="eq(-2,true)" type="text" label="Password (API KEY)" option="hidden" default=""/>' % (cls.__name__))
         return xml
 
     @classmethod

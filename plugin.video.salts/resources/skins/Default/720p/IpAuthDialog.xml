@@ -1,5 +1,6 @@
 <window id="9998">
 	<defaultcontrol always="false">200</defaultcontrol>
+	<zorder>100</zorder>
 	<coordinates>
 		<system>1</system>
 		<posx>440</posx>

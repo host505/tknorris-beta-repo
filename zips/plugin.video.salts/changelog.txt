@@ -1,3 +1,7 @@
+[B]Version 2.0.22[/B]
+- Increase zorder on IPAuthDialog
+- Minor Furk Improvement
+
 [B]Version 2.0.21[/B]
 - Add torba scraper back
 - Improve PremiumizeV2 scraper

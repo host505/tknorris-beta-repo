@@ -2,6 +2,8 @@
 <settings>
 	<category label="URLResolver">
 		<setting default="true" id="allow_universal" label="Enable Universal Resolvers" type="bool"/>
+		<setting default="true" id="use_cache" label="Use Function Cache" type="bool"/>
+		<setting action="RunPlugin(plugin://script.module.urlresolver/?mode=reset_cache)" id="reset_cache" label="Reset Function Cache" type="action"/>
 		<setting id="personal_nid" label="Your NID" type="text" visible="false"/>
 	</category>
 	<category label="Universal Resolvers">
@@ -33,7 +35,7 @@
 		<setting default="true" id="RPnetResolver_enabled" label="Enabled" type="bool"/>
 		<setting default="false" id="RPnetResolver_login" label="login" type="bool"/>
 		<setting default="" enable="eq(-1,true)" id="RPnetResolver_username" label="Username" type="text"/>
-		<setting default="" enable="eq(-2,true)" id="RPnetResolver_password" label="Password" option="hidden" type="text"/>
+		<setting default="" enable="eq(-2,true)" id="RPnetResolver_password" label="Password (API KEY)" option="hidden" type="text"/>
 		<setting label="Simply-Debrid" type="lsep"/>
 		<setting default="100" id="SimplyDebridResolver_priority" label="Priority" type="number"/>
 		<setting default="true" id="SimplyDebridResolver_enabled" label="Enabled" type="bool"/>
