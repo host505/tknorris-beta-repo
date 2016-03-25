@@ -28,7 +28,7 @@ from salts_lib.constants import VIDEO_TYPES
 import scraper
 
 
-BASE_URL = 'http://sermov.com'
+BASE_URL = 'http://seriestv.us'
 LINK_URL = '/plugins/gkpluginsphp.php'
 
 class TVWTVS_Scraper(scraper.Scraper):

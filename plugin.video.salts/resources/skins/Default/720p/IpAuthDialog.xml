@@ -60,6 +60,7 @@
 				<posy>60</posy>
 				<width>340</width>
 				<height>150</height>
+				<aligny>top</aligny>
 				<font>font12</font>
 				<wrapmultiline>true</wrapmultiline>
 				<label></label>
