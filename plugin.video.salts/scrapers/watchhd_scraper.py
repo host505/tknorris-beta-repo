@@ -91,7 +91,7 @@ class WatchHD_Scraper(scraper.Scraper):
                         html = base64.decodestring(html)
                 
                 streams = []
-                for match in re.finditer('''<source[^>]+src=["']([^'"]+)[^>]+label=['"]([^'"]+)''', html):
+                for match in re.finditer('''<source[^>]+src=["']([^;'"]+)[^>]+label=['"]([^'"]+)''', html):
                     streams.append(match.groups())
                 
                 if len(streams) > 1:

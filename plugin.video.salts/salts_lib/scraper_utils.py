@@ -79,6 +79,7 @@ def force_title(video):
 
 def normalize_title(title):
     if title is None: title = ''
+    title = cleanse_title(title)
     new_title = title.upper()
     new_title = re.sub('[^A-Za-z0-9]', '', new_title)
     # log_utils.log('In title: |%s| Out title: |%s|' % (title,new_title), log_utils.LOGDEBUG)
@@ -126,7 +127,8 @@ def get_quality(video, host, base_quality=None):
     return quality
 
 def width_get_quality(width):
-    width = int(width)
+    try: width = int(width)
+    except: width = 320
     if width > 1280:
         quality = QUALITIES.HD1080
     elif width > 800:
@@ -283,7 +285,11 @@ def pathify_url(url):
 def parse_json(html, url=''):
     if html:
         try:
-            return json.loads(html)
+            js_data = json.loads(html)
+            if js_data is None:
+                return {}
+            else:
+                return js_data
         except ValueError:
             log_utils.log('Invalid JSON returned: %s: %s' % (html, url), log_utils.LOGWARNING)
             return {}

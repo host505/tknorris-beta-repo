@@ -1,3 +1,11 @@
+[B]Version 2.0.24[/B]
+- Add PelisPedia
+- Improve DiziBox
+- Fix WatchHD
+- Fix StreamLord
+- Fix TVWTS
+- Remove MovCav
+
 [B]Version 2.0.23[/B]
  - Fix sezon scraper
  - Fix tvwts scraper

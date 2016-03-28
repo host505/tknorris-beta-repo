@@ -24,6 +24,7 @@
 
 import re
 import urllib2
+import urllib
 import urlparse
 import log_utils
 import xbmc
@@ -109,7 +110,7 @@ def solve(url, cj, user_agent=None, wait=True):
                 log_utils.log('Sleeping for 5 Seconds', log_utils.LOGDEBUG)
                 xbmc.sleep(5000)
                 
-        url = '%s://%s/cdn-cgi/l/chk_jschl?jschl_vc=%s&jschl_answer=%s&pass=%s' % (scheme, domain, vc, result, password)
+        url = '%s://%s/cdn-cgi/l/chk_jschl?jschl_vc=%s&jschl_answer=%s&pass=%s' % (scheme, domain, vc, result, urllib.quote(password))
         log_utils.log('url: %s' % (url), log_utils.LOGDEBUG)
         request = urllib2.Request(url)
         for key in headers: request.add_header(key, headers[key])
@@ -128,6 +129,7 @@ def solve(url, cj, user_agent=None, wait=True):
                 response = urllib2.urlopen(request)
             final = response.read()
             if 'cf-browser-verification' in final:
+                log_utils.log('CF Failure: html: %s url: %s' % (html, url), log_utils.LOGWARNING)
                 tries += 1
                 html = final
             else:

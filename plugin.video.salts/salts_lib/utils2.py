@@ -420,7 +420,7 @@ def test_stream(hoster):
     msg = ''
     opener = urllib2.build_opener(urllib2.HTTPRedirectHandler)
     urllib2.install_opener(opener)
-    try: http_code = urllib2.urlopen(request, timeout=1).getcode()
+    try: http_code = urllib2.urlopen(request, timeout=2).getcode()
     except urllib2.URLError as e:
         # treat an unhandled url type as success
         if hasattr(e, 'reason') and 'unknown url type' in str(e.reason).lower():

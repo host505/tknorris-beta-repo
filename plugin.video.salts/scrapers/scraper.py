@@ -528,30 +528,7 @@ class Scraper(object):
         match = re.search('pid=([^&]+)', link)
         if match:
             vid_id = match.group(1)
-            match = re.search('return\s+(\[\[.*?)\s*}}', html, re.DOTALL)
-            if match:
-                try:
-                    js = scraper_utils.parse_json(match.group(1), link)
-                    for item in js[1]:
-                        vid_match = False
-                        for e in item:
-                            if e == vid_id:
-                                vid_match = True
-
-                            if vid_match:
-                                    if isinstance(e, dict):
-                                        for key in e:
-                                            for item2 in e[key]:
-                                                try:
-                                                    for item3 in item2:
-                                                        for item4 in item3:
-                                                            if isinstance(item4, basestring):
-                                                                for match in re.finditer('url=([^&]+)', item4):
-                                                                    sources.append(urllib.unquote(match.group(1)))
-                                                except Exception as e:
-                                                    log_utils.log('Exception during google plus parse: %s' % (e), log_utils.LOGDEBUG)
-                except Exception as e:
-                    log_utils.log('Google Plus Parse failure: %s - %s' % (link, e), log_utils.LOGWARNING)
+            sources = self.__parse_gplus(vid_id, html, link)
         else:
             if 'picasaweb' in link:
                 i = link.rfind('#')
@@ -567,17 +544,52 @@ class Scraper(object):
                             for media in item['media']['content']:
                                 if media['type'].startswith('video'):
                                     sources.append(media['url'].replace('%3D', '='))
-            else:
-                match = re.search('preload\'?:\s*(.*}})},', html, re.DOTALL)
-                if match:
-                    js = scraper_utils.parse_json(match.group(1), link)
-                    for media in js['feed']['media']['content']:
-                        if media['type'].startswith('video'):
-                            sources.append(media['url'].replace('%3D', '='))
+                else:
+                    match = re.search('preload\'?:\s*(.*}})},', html, re.DOTALL)
+                    if match:
+                        js = scraper_utils.parse_json(match.group(1), link)
+                        for media in js['feed']['media']['content']:
+                            if media['type'].startswith('video'):
+                                sources.append(media['url'].replace('%3D', '='))
 
         sources = list(set(sources))
         return sources
 
+    def __parse_gplus(self, vid_id, html, link=''):
+        sources = []
+        match = re.search('return\s+(\[\[.*?)\s*}}', html, re.DOTALL)
+        if match:
+            try:
+                js = scraper_utils.parse_json(match.group(1), link)
+                for top_item in js:
+                    if isinstance(top_item, list):
+                        for item in top_item:
+                            if isinstance(item, list):
+                                for item2 in item:
+                                    if isinstance(item2, list):
+                                        for item3 in item2:
+                                            if item3 == vid_id:
+                                                sources = self.__extract_video(item2)
+            except Exception as e:
+                log_utils.log('Google Plus Parse failure: %s - %s' % (link, e), log_utils.LOGWARNING)
+            return sources
+
+    def __extract_video(self, item):
+        sources = []
+        for e in item:
+            if isinstance(e, dict):
+                for key in e:
+                    for item2 in e[key]:
+                        if isinstance(item2, list):
+                            for item3 in item2:
+                                if isinstance(item3, list):
+                                    for item4 in item3:
+                                        if isinstance(item4, basestring):
+                                            s = urllib.unquote(item4).replace('\\0026', '&').replace('\\003D', '=')
+                                            for match in re.finditer('url=([^&]+)', s):
+                                                sources.append(match.group(1))
+        return sources
+        
     def _parse_gdocs(self, link):
         urls = {}
         html = self._http_get(link, cache_limit=.5)

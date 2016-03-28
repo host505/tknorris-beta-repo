@@ -17,13 +17,14 @@
 """
 import re
 import urlparse
-
+import urllib
 from salts_lib import dom_parser
 from salts_lib import kodi
 from salts_lib import log_utils
 from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import VIDEO_TYPES
+from salts_lib.constants import QUALITIES
 import scraper
 
 
@@ -67,6 +68,10 @@ class Dizibox_Scraper(scraper.Scraper):
                     if iframe_url:
                         html = self._http_get(iframe_url[0], cache_limit=.25)
 
+                        flashvars = dom_parser.parse_dom(html, 'param', {'name': 'flashvars'}, ret='value')
+                        if flashvars:
+                            hosters += self.__get_ok(flashvars[0])
+                            
                         seen_urls = {}
                         for match in re.finditer('"?file"?\s*:\s*"([^"]+)"\s*,\s*"?label"?\s*:\s*"(\d+)p?[^"]*"', html):
                             stream_url, height = match.groups()
@@ -83,6 +88,20 @@ class Dizibox_Scraper(scraper.Scraper):
     
         return hosters
 
+    def __get_ok(self, link):
+        hosters = []
+        match = re.search('metadataUrl=([^"]+)', link)
+        if match:
+            ok_url = urllib.unquote(match.group(1))
+            html = self._http_get(ok_url, cache_limit=1)
+            js_data = scraper_utils.parse_json(html, ok_url)
+            if 'movie' in js_data and 'url' in js_data['movie']:
+                stream_url = js_data['movie']['url']
+                host = urlparse.urlparse(stream_url).hostname
+                hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': QUALITIES.HD720, 'views': None, 'rating': None, 'url': stream_url, 'direct': False}
+                hosters.append(hoster)
+        return hosters
+    
     def get_url(self, video):
         return self._default_get_url(video)
 
