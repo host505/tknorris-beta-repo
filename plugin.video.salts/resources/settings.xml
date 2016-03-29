@@ -158,7 +158,7 @@
          <setting id="123Movies-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="123Movies_last_results" type="number" default="0" visible="false"/>
          <setting id="2DDL-enable" type="bool" label="2DDL Enabled" default="true" visible="true"/>
-         <setting id="2DDL-base_url" type="text" label="    Base Url" default="http://2ddl.co" visible="eq(-1,true)"/>
+         <setting id="2DDL-base_url" type="text" label="    Base Url" default="http://twoddl.org" visible="eq(-1,true)"/>
          <setting id="2DDL-sub_check" type="bool" label="    Include in Page Existence checks?" default="false" visible="eq(-2,true)"/>
          <setting id="2DDL_last_results" type="number" default="0" visible="false"/>
          <setting id="2DDL-filter" type="slider" range="0,180" option="int" label="     Filter results older than (0=No Filter) (days)" default="60" visible="eq(-4,true)"/>
@@ -180,10 +180,6 @@
          <setting id="alluc.com_last_results" type="number" default="0" visible="false"/>
          <setting id="alluc.com-username" type="text" label="     Username" default="" visible="eq(-4,true)"/>
          <setting id="alluc.com-password" type="text" label="     Password" option="hidden" default="" visible="eq(-5,true)"/>
-         <setting id="beinmovie-enable" type="bool" label="beinmovie Enabled" default="true" visible="true"/>
-         <setting id="beinmovie-base_url" type="text" label="    Base Url" default="https://beinmovie.com" visible="eq(-1,true)"/>
-         <setting id="beinmovie-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
-         <setting id="beinmovie_last_results" type="number" default="0" visible="false"/>
          <setting id="ch131-enable" type="bool" label="ch131 Enabled" default="true" visible="true"/>
          <setting id="ch131-base_url" type="text" label="    Base Url" default="http://www.ch131.me" visible="eq(-1,true)"/>
          <setting id="ch131-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
@@ -245,13 +241,13 @@
          <setting id="Dizipas-base_url" type="text" label="    Base Url" default="http://dizipas.com" visible="eq(-1,true)"/>
          <setting id="Dizipas-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="Dizipas_last_results" type="number" default="0" visible="false"/>
-    </category>
-
-    <category label="Scrapers 2">
          <setting id="DL-Pars-enable" type="bool" label="DL-Pars Enabled" default="true" visible="true"/>
          <setting id="DL-Pars-base_url" type="text" label="    Base Url" default="http://tv.dl-pars.in" visible="eq(-1,true)"/>
          <setting id="DL-Pars-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="DL-Pars_last_results" type="number" default="0" visible="false"/>
+    </category>
+
+    <category label="Scrapers 2">
          <setting id="EasyNews-enable" type="bool" label="EasyNews Enabled" default="true" visible="true"/>
          <setting id="EasyNews-base_url" type="text" label="    Base Url" default="http://members.easynews.com" visible="eq(-1,true)"/>
          <setting id="EasyNews-sub_check" type="bool" label="    Include in Page Existence checks?" default="false" visible="eq(-2,true)"/>
@@ -334,24 +330,28 @@
          <setting id="MintMovies-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="MintMovies_last_results" type="number" default="0" visible="false"/>
          <setting id="MiraDeTodo-enable" type="bool" label="MiraDeTodo Enabled" default="true" visible="true"/>
-         <setting id="MiraDeTodo-base_url" type="text" label="    Base Url" default="http://miradetodo.com.ar" visible="eq(-1,true)"/>
+         <setting id="MiraDeTodo-base_url" type="text" label="    Base Url" default="http://miradetodo.net" visible="eq(-1,true)"/>
          <setting id="MiraDeTodo-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="MiraDeTodo_last_results" type="number" default="0" visible="false"/>
          <setting id="movie25-enable" type="bool" label="movie25 Enabled" default="true" visible="true"/>
          <setting id="movie25-base_url" type="text" label="    Base Url" default="http://movie25.hk" visible="eq(-1,true)"/>
          <setting id="movie25-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="movie25_last_results" type="number" default="0" visible="false"/>
-    </category>
-
-    <category label="Scrapers 3">
          <setting id="Movie4K-enable" type="bool" label="Movie4K Enabled" default="true" visible="true"/>
          <setting id="Movie4K-base_url" type="text" label="    Base Url" default="http://movie4k.to" visible="eq(-1,true)"/>
          <setting id="Movie4K-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="Movie4K_last_results" type="number" default="0" visible="false"/>
+    </category>
+
+    <category label="Scrapers 3">
          <setting id="MovieHut-enable" type="bool" label="MovieHut Enabled" default="true" visible="true"/>
          <setting id="MovieHut-base_url" type="text" label="    Base Url" default="http://netflix-putlocker.com" visible="eq(-1,true)"/>
          <setting id="MovieHut-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="MovieHut_last_results" type="number" default="0" visible="false"/>
+         <setting id="MovieLocker-enable" type="bool" label="MovieLocker Enabled" default="true" visible="true"/>
+         <setting id="MovieLocker-base_url" type="text" label="    Base Url" default="http://movielocker.eu" visible="eq(-1,true)"/>
+         <setting id="MovieLocker-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
+         <setting id="MovieLocker_last_results" type="number" default="0" visible="false"/>
          <setting id="MovieMax-enable" type="bool" label="MovieMax Enabled" default="true" visible="true"/>
          <setting id="MovieMax-base_url" type="text" label="    Base Url" default="http://moviehdmax.com" visible="eq(-1,true)"/>
          <setting id="MovieMax-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>

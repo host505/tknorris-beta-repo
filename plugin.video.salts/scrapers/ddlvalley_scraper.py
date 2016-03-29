@@ -19,7 +19,7 @@ import datetime
 import re
 import urllib
 import urlparse
-
+from salts_lib import log_utils
 from salts_lib import dom_parser
 from salts_lib import kodi
 from salts_lib import scraper_utils
@@ -115,27 +115,29 @@ class DDLValley_Scraper(scraper.Scraper):
     
     def search(self, video_type, title, year, season=''):
         results = []
-        search_url = urlparse.urljoin(self.base_url, '/search/')
-        search_url += urllib.quote_plus(title.lower())
-        html = self._http_get(search_url, cache_limit=1)
-        if video_type == VIDEO_TYPES.TVSHOW:
-            seen_urls = {}
-            for post in dom_parser.parse_dom(html, 'div', {'id': 'post-\d+'}):
-                if CATEGORIES[video_type] in post:
-                    match = re.search('<div[^>]*>\s*show\s+name:.*?<a\s+href="([^"]+)[^>]+>(?!Season\s+\d+)([^<]+)', post, re.I)
-                    if match:
-                        show_url, match_title = match.groups()
-                        if show_url not in seen_urls:
-                            result = {'url': scraper_utils.pathify_url(show_url), 'title': scraper_utils.cleanse_title(match_title), 'year': ''}
-                            seen_urls[show_url] = result
-                            results.append(result)
+        if video_type == VIDEO_TYPES.TVSHOW and title:
+            test_url = '/show/%s' % (self.__to_slug(title))
+            test_url = urlparse.urljoin(self.base_url, test_url)
+            html = self._http_get(test_url, cache_limit=24)
+            posts = dom_parser.parse_dom(html, 'div', {'id': 'post-\d+'})
+            if posts and CATEGORIES[video_type] in posts[0]:
+                match = re.search('<div[^>]*>\s*show\s+name:.*?<a\s+href="([^"]+)[^>]+>(?!Season\s+\d+)([^<]+)', posts[0], re.I)
+                if match:
+                    show_url, match_title = match.groups()
+                    result = {'url': scraper_utils.pathify_url(show_url), 'title': scraper_utils.cleanse_title(match_title), 'year': ''}
+                    results.append(result)
         elif video_type == VIDEO_TYPES.MOVIE:
-            headings = re.findall('<h2>\s*<a\s+href="([^"]+)[^>]+>(.*?)</a>', html)
+            search_url = urlparse.urljoin(self.base_url, '/search/')
+            search_title = re.sub('[^A-Za-z0-9 ]', '', title.lower())
+            search_url += urllib.quote_plus(search_title)
+            html = self._http_get(search_url, cache_limit=1)
+            headings = re.findall('<h2>\s*<a\s+href="([^"]+).*?">(.*?)</a>', html)
             posts = dom_parser.parse_dom(html, 'div', {'id': 'post-\d+'})
             norm_title = scraper_utils.normalize_title(title)
             for heading, post in zip(headings, posts):
-                if CATEGORIES[video_type] in post and not self.__too_old(post):
+                if not re.search('[._ -]S\d+E\d+[._ -]', heading[1], re.I) and not self.__too_old(post):
                     post_url, post_title = heading
+                    post_title = re.sub('<[^>]*>', '', post_title)
                     match = re.search('(.*?)\s*[.\[(]?(\d{4})[.)\]]?\s*(.*)', post_title)
                     if match:
                         match_title, match_year, extra_title = match.groups()
@@ -151,6 +153,13 @@ class DDLValley_Scraper(scraper.Scraper):
         
         return results
 
+    def __to_slug(self, title):
+        slug = title.lower()
+        slug = re.sub('[^A-Za-z0-9 ]', '', slug)
+        slug = re.sub('\s\s+', ' ', slug)
+        slug = re.sub(' ', '-', slug)
+        return slug
+        
     def __too_old(self, post):
         filter_days = datetime.timedelta(days=int(kodi.get_setting('%s-filter' % (self.get_name()))))
         if filter_days:

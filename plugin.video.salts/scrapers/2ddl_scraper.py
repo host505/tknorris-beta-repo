@@ -29,7 +29,7 @@ from salts_lib.constants import VIDEO_TYPES
 from salts_lib.kodi import i18n
 import scraper
 
-BASE_URL = 'http://2ddl.co'
+BASE_URL = 'http://twoddl.org'
 CATEGORIES = {VIDEO_TYPES.MOVIE: '/category/movies/', VIDEO_TYPES.TVSHOW: '/category/tv-shows/'}
 EXCLUDE_LINKS = ['adf.ly', '2ddl.link']
 

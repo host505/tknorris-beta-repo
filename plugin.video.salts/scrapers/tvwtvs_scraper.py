@@ -73,7 +73,8 @@ class TVWTVS_Scraper(scraper.Scraper):
 
     def __get_iframe_links(self, html, page_url):
         sources = {}
-        for iframe_url in dom_parser.parse_dom(html, 'iframe', ret='data-lazy-src'):
+        urls = dom_parser.parse_dom(html, 'iframe', ret='data-lazy-src') + dom_parser.parse_dom(html, 'iframe', ret='src')
+        for iframe_url in urls:
             headers = {'Referer': page_url}
             html = self._http_get(iframe_url, headers=headers, cache_limit=0)
             for match in re.finditer('"file"\s*:\s*"([^"]+)"\s*,\s*"label"\s*:\s*"([^"]+)', html, re.DOTALL):

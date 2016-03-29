@@ -18,6 +18,7 @@
 import re
 import urllib
 import urlparse
+from salts_lib import log_utils
 from salts_lib import dom_parser
 from salts_lib import kodi
 from salts_lib import scraper_utils
@@ -27,7 +28,7 @@ from salts_lib.constants import QUALITIES
 import scraper
 
 
-BASE_URL = 'http://miradetodo.com.ar'
+BASE_URL = 'http://miradetodo.net'
 
 class MiraDetodo_Scraper(scraper.Scraper):
     base_url = BASE_URL
@@ -35,7 +36,7 @@ class MiraDetodo_Scraper(scraper.Scraper):
     def __init__(self, timeout=scraper.DEFAULT_TIMEOUT):
         self.timeout = timeout
         self.base_url = kodi.get_setting('%s-base_url' % (self.get_name()))
-        self.gk_url = self.base_url + '/gkphp/plugins/gkpluginsphp.php'
+        self.gk_url = self.base_url + '/stream/plugins/gkpluginsphp.php'
 
     @classmethod
     def provides(cls):
@@ -58,10 +59,9 @@ class MiraDetodo_Scraper(scraper.Scraper):
         if source_url and source_url != FORCE_NO_MATCH:
             url = urlparse.urljoin(self.base_url, source_url)
             html = self._http_get(url, cache_limit=.5)
-            fragment = dom_parser.parse_dom(html, 'div', {'class': 'player_container'})
-            if fragment:
-                iframe_url = dom_parser.parse_dom(fragment[0], 'IFRAME', ret='SRC')
-                if iframe_url:
+            for fragment in dom_parser.parse_dom(html, 'div', {'class': 'movieplay'}):
+                iframe_url = dom_parser.parse_dom(fragment, 'iframe', ret='src')
+                if iframe_url and 'miradetodo' in iframe_url[0]:
                     html = self._http_get(iframe_url[0], cache_limit=.5)
                     match = re.search('{link\s*:\s*"([^"]+)', html)
                     if match:
@@ -96,21 +96,27 @@ class MiraDetodo_Scraper(scraper.Scraper):
         return self._default_get_url(video)
 
     def search(self, video_type, title, year, season=''):
-        search_url = urlparse.urljoin(self.base_url, '/search_result.php?search=&query=')
-        search_url += urllib.quote_plus('%s' % (title))
+        search_url = urlparse.urljoin(self.base_url, '/?s=')
+        search_url += urllib.quote_plus(title)
         html = self._http_get(search_url, cache_limit=1)
         results = []
-        for item in dom_parser.parse_dom(html, 'div', {'class': 'BrVidCon'}):
-            match = re.search('href="([^"]+).*?alt="([^"]+)', item)
-            if match:
-                url, match_title_year = match.groups()
-                if re.search('\d+\s*x\s*\d+', match_title_year): continue  # exclude episodes
-                match = re.search('(.*?)\s+\((\d{4})\)', match_title_year)
+        for item in dom_parser.parse_dom(html, 'div', {'class': 'item'}):
+            match = re.search('href="([^"]+)', item)
+            match_title = dom_parser.parse_dom(item, 'span', {'class': 'tt'})
+            year_frag = dom_parser.parse_dom(item, 'span', {'class': 'year'})
+            if match and match_title:
+                url = match.group(1)
+                match_title = match_title[0]
+                if re.search('\d+\s*x\s*\d+', match_title): continue  # exclude episodes
+                match = re.search('(.*?)\s+\((\d{4})\)', match_title)
                 if match:
                     match_title, match_year = match.groups()
                 else:
-                    match_title = match_title_year
+                    match_title = match_title
                     match_year = ''
+                
+                if year_frag:
+                    match_year = year_frag[0]
 
                 if not year or not match_year or year == match_year:
                     result = {'title': scraper_utils.cleanse_title(match_title), 'year': match_year, 'url': scraper_utils.pathify_url(url)}

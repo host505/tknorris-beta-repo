@@ -71,7 +71,7 @@ class PubFilm_Scraper(scraper.Scraper):
             
             iframe_url = ''
             if video.video_type == VIDEO_TYPES.MOVIE:
-                iframe_url = dom_parser.parse_dom(html, 'iframe', {'name': 'EZWebPlayer'}, ret='src')
+                iframe_url = dom_parser.parse_dom(html, 'a', {'target': 'EZWebPlayer'}, ret='href')
                 if iframe_url:
                     iframe_url = iframe_url[0]
             else:
@@ -87,7 +87,7 @@ class PubFilm_Scraper(scraper.Scraper):
                 if match:
                     sources = self.__get_gk_links(match.group(1))
                 else:
-                    sources = self.__get_iframe_links(html)
+                    sources = self.__get_links(html)
                     
                 for source in sources:
                     stream_url = source + '|User-Agent=%s' % (scraper_utils.get_ua())
@@ -102,21 +102,18 @@ class PubFilm_Scraper(scraper.Scraper):
 
         return hosters
 
-    def __get_iframe_links(self, html):
+    def __get_links(self, html):
         sources = {}
-        for match in re.finditer('''<source[^>]+src=['"]([^'"]+)([^>]+)''', html):
-            source, extra = match.groups()
-            if self._get_direct_hostname(source) == 'gvideo':
-                quality = scraper_utils.gv_get_quality(source)
-            else:
-                match = re.search('''data-res\s*=\s*["']([^"']+)''', extra)
-                if match:
-                    quality = scraper_utils.height_get_quality(match.group(1))
+        match = re.search('sources\s*:\s*\[(.*?)\]', html, re.DOTALL)
+        if match:
+            for match in re.finditer('''['"]*file['"]*\s*:\s*['"]*([^'"]+)['"][^}]*['"]label['"]:['"]([^'"])''', match.group(1), re.DOTALL):
+                stream_url, label = match.groups()
+                if self._get_direct_hostname(stream_url) == 'gvideo':
+                    sources[stream_url] = {'quality': scraper_utils.gv_get_quality(stream_url), 'direct': True}
                 else:
-                    quality = QUALITIES.HIGH
-            sources[source] = {'quality': quality, 'direct': True}
+                    sources[stream_url] = {'quality': scraper_utils.height_get_quality(label), 'direct': True}
         return sources
-    
+
     def __get_gk_links(self, iframe_url):
         sources = {}
         data = {'link': iframe_url}

@@ -16,9 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 import re
-import urllib
 import urlparse
-
 from salts_lib import dom_parser
 from salts_lib import kodi
 from salts_lib import log_utils
@@ -30,6 +28,8 @@ import scraper
 
 
 BASE_URL = 'http://m4ufree.info/'
+AJAX_URL = '/ajax.php?action=ts-ajax&p=%s'
+XHR = {'X-Requested-With': 'XMLHttpRequest'}
 
 class M4UFree_Scraper(scraper.Scraper):
     base_url = BASE_URL
@@ -69,43 +69,43 @@ class M4UFree_Scraper(scraper.Scraper):
                 if match:
                     views = match.group(1)
                 
-            fragment = dom_parser.parse_dom(html, 'div', {'itemprop': 'potentialAction'})
-            if fragment:
-                match = re.search('href="([^"]+)', fragment[0])
-                if match:
-                    html = self._http_get(match.group(1), cache_limit=.5)
+            match = re.search('href="([^"]+-full-movie-[^"]+)', html)
+            if match:
+                url = match.group(1)
+                html = self._http_get(url, cache_limit=.5)
             
-            sources = self.__get_sources(html)
+            sources = self.__get_sources(html, url)
+            
             match = re.search('href="([^"]+)[^>]*>\s*<button', html)
             if match:
                 html = self._http_get(match.group(1), cache_limit=.5)
-                sources += self.__get_sources(html)
+                sources += self.__get_sources(html, url)
             
             for source in sources:
                 host = self._get_direct_hostname(source)
                 stream_url = source + '|User-Agent=%s' % (scraper_utils.get_ua())
-                if host == 'gvideo':
-                    quality = scraper_utils.gv_get_quality(stream_url)
-                else:
-                    quality = QUALITIES.HIGH
-                hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': quality, 'views': views, 'rating': None, 'url': stream_url, 'direct': True}
+                hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': source[source], 'views': views, 'rating': None, 'url': stream_url, 'direct': True}
                 hosters.append(hoster)
 
         return hosters
 
-    def __get_sources(self, html):
-        sources = []
-        for source in dom_parser.parse_dom(html, 'source', {'type': 'video/mp4'}, ret='src'):
-            if source:
-                if self._get_direct_hostname(source) == 'gvideo':
-                    sources.append(source)
-                else:
-                    redir_url = self._http_get(source, allow_redirect=False, method='HEAD', cache_limit=.5)
-                    if redir_url.startswith('http'):
-                        sources.append(redir_url)
+    def __get_sources(self, html, page_url):
+        sources = {}
+        log_utils.log(html)
+        for link in dom_parser.parse_dom(html, 'span', {'class': '[^"]*btn-eps[^"]*'}, ret='data-link'):
+            ajax_url = AJAX_URL % (link)
+            ajax_url = urlparse.urljoin(self.base_url, ajax_url)
+            headers = XHR
+            headers['Referer'] = page_url
+            html = self._http_get(ajax_url, headers=headers, cache_limit=.5)
+            match = re.search('sources\s*:\s*\[(.*?)\]', html, re.DOTALL)
+            if match:
+                for match in re.finditer('''['"]*file['"]*\s*:\s*['"]*([^'"]+)['"][^}]*['"]label['"]:['"]([^'"])''', match.group(1), re.DOTALL):
+                    stream_url, label = match.groups()
+                    if self._get_direct_hostname(stream_url) == 'gvideo':
+                        sources[stream_url] = scraper_utils.gv_get_quality(stream_url)
                     else:
-                        sources.append(source)
-                
+                        sources[stream_url] = scraper_utils.height_get_quality(label)
         return sources
     
     def get_url(self, video):

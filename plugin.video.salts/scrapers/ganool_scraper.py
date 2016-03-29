@@ -74,20 +74,22 @@ class Ganool_Scraper(scraper.Scraper):
         return hosters
 
     def __decode(self, html):
-        match = re.search('var\s+s\s*=\s*"([^"]+)', html)
-        source = ''
-        if match:
-            for c in match.group(1):
-                if ord(c) == 28:
-                    source += '&'
-                elif ord(c) == 23:
-                    source += '!'
-                else:
-                    source += chr(ord(c) - 1)
-            
-            match = re.search('<iframe[^>]+src="([^"]+)', source, re.I)
+        fragment = dom_parser.parse_dom(html, 'div', {'id': 'watchonlinearea\d*'})
+        if fragment:
+            match = re.search('var\s+s\s*=\s*"([^"]+)', fragment[0])
+            source = ''
             if match:
-                return match.group(1)
+                for c in match.group(1):
+                    if ord(c) == 28:
+                        source += '&'
+                    elif ord(c) == 23:
+                        source += '!'
+                    else:
+                        source += chr(ord(c) - 1)
+                
+                match = re.search('<iframe[^>]+src="([^"]+)', source, re.I)
+                if match:
+                    return match.group(1)
     
     def get_url(self, video):
         return self._default_get_url(video)

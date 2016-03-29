@@ -83,6 +83,8 @@ class Diziay_Scraper(scraper.Scraper):
                     for stream_url in dom_parser.parse_dom(html, 'source', {'type': 'video/mp4'}, ret='src'):
                         sources.append(stream_url)
                         
+                    sources += self.__get_hex_sources(html)
+                    
                     for source in sources:
                             if self._get_direct_hostname(source) == 'gvideo':
                                 quality = scraper_utils.gv_get_quality(source)
@@ -91,6 +93,16 @@ class Diziay_Scraper(scraper.Scraper):
     
         return hosters
 
+    def __get_hex_sources(self, html):
+        sources = []
+        match = re.search("document\.write\('(.*?)'\)", html)
+        if match:
+            for match in re.finditer("<source\s+src=\\\\'(.*?)\\\\'", match.group(1)):
+                    source = match.group(1).replace('\\x', '')
+                    sources.append(source.decode('hex'))
+                    
+        return sources
+    
     def __get_stream_cookies2(self):
         cj = self._set_cookies(self.base_url, {})
         cookies = {}

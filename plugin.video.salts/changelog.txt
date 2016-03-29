@@ -1,3 +1,17 @@
+[B]Version 2.0.25[/B]
+- Fix IWatch scraper scraper
+- Fix StreamLord scraper
+- Fix PubFilm scraper
+- Fix Miradetodo scraper
+- Fix Ganool scraper
+- Fix m4ufree scraper
+- Fix Dizibox scraper
+- Fix Diziay scraper
+- Fix TVWTS scraper
+- Fix DDLValley scraper
+- Fix 2dDL scraper
+- Remove beinmovie
+
 [B]Version 2.0.24[/B]
 - Add PelisPedia
 - Improve DiziBox

@@ -120,11 +120,13 @@ class StreamLord_Scraper(scraper.Scraper):
         html = self._http_get(url, data=data, headers=headers, cache_limit=2)
         if video_type == VIDEO_TYPES.MOVIE:
             query_type = 'watch-movie-'
+            class_type = 'add-to-watchlist'
         else:
             query_type = 'watch-tvshow-'
+            class_type = 'add-show-to-watchlist'
 
         norm_title = scraper_utils.normalize_title(title)
-        for item in dom_parser.parse_dom(html, 'div', {'class': 'item movie'}):
+        for item in dom_parser.parse_dom(html, 'a', {'class': class_type}):
             match = re.search('href="(%s[^"]+)' % (query_type), item)
             if match:
                 link = match.group(1)

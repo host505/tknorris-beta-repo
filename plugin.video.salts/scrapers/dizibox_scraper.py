@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     SALTS XBMC Addon
     Copyright (C) 2014 tknorris
@@ -58,36 +59,49 @@ class Dizibox_Scraper(scraper.Scraper):
         if source_url and source_url != FORCE_NO_MATCH:
             page_url = urlparse.urljoin(self.base_url, source_url)
             html = self._http_get(page_url, cache_limit=.25)
-            match = re.search('''<option[^>]+value\s*=\s*["']([^"']+)[^>]*>(?:Altyaz.{1,3}s.{1,3}z)<''', html)
-            if match:
-                option_url = urlparse.urljoin(self.base_url, match.group(1))
-                html = self._http_get(option_url, cache_limit=.25)
+            fragment = dom_parser.parse_dom(html, 'div', {'class': 'video-toolbar'})
+            if fragment:
+                match = re.search('''href="([^"]+)[^>]*>Altyaz''', fragment[0])
+                if match:
+                    option_url = urlparse.urljoin(self.base_url, match.group(1))
+                    html = self._http_get(option_url, cache_limit=.25)
+                else:
+                    trans = dom_parser.parse_dom(html, 'span', {'class': 'woca-current-page'})
+                    if trans and trans[0].startswith('Altyaz'):
+                        pass
+                    else:
+                        return hosters
+                    
                 fragment = dom_parser.parse_dom(html, 'span', {'class': 'object-wrapper'})
                 if fragment:
                     iframe_url = dom_parser.parse_dom(fragment[0], 'iframe', ret='src')
                     if iframe_url:
                         html = self._http_get(iframe_url[0], cache_limit=.25)
 
+                        hosters += self.__get_page_links(html)
                         flashvars = dom_parser.parse_dom(html, 'param', {'name': 'flashvars'}, ret='value')
                         if flashvars:
                             hosters += self.__get_ok(flashvars[0])
-                            
-                        seen_urls = {}
-                        for match in re.finditer('"?file"?\s*:\s*"([^"]+)"\s*,\s*"?label"?\s*:\s*"(\d+)p?[^"]*"', html):
-                            stream_url, height = match.groups()
-                            if stream_url not in seen_urls:
-                                seen_urls[stream_url] = True
-                                stream_url += '|User-Agent=%s' % (scraper_utils.get_ua())
-                                host = self._get_direct_hostname(stream_url)
-                                if host == 'gvideo':
-                                    quality = scraper_utils.gv_get_quality(stream_url)
-                                else:
-                                    quality = scraper_utils.height_get_quality(height)
-                                hoster = {'multi-part': False, 'host': self._get_direct_hostname(stream_url), 'class': self, 'quality': quality, 'views': None, 'rating': None, 'url': stream_url, 'direct': True}
-                                hosters.append(hoster)
     
         return hosters
 
+    def __get_page_links(self, html):
+        hosters = []
+        seen_urls = {}
+        for match in re.finditer('"?file"?\s*:\s*"([^"]+)"\s*,\s*"?label"?\s*:\s*"(\d+)p?[^"]*"', html):
+            stream_url, height = match.groups()
+            if stream_url not in seen_urls:
+                seen_urls[stream_url] = True
+                stream_url += '|User-Agent=%s' % (scraper_utils.get_ua())
+                host = self._get_direct_hostname(stream_url)
+                if host == 'gvideo':
+                    quality = scraper_utils.gv_get_quality(stream_url)
+                else:
+                    quality = scraper_utils.height_get_quality(height)
+                hoster = {'multi-part': False, 'host': self._get_direct_hostname(stream_url), 'class': self, 'quality': quality, 'views': None, 'rating': None, 'url': stream_url, 'direct': True}
+                hosters.append(hoster)
+        return hosters
+        
     def __get_ok(self, link):
         hosters = []
         match = re.search('metadataUrl=([^"]+)', link)
