@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.salts.themepak" version="0.0.8" name="SALTS Themepak" provider-name="tknorris">
+<addon id="script.salts.themepak" version="0.0.9" name="SALTS Themepak" provider-name="tknorris">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
