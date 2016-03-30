@@ -82,7 +82,6 @@ class IWatchOnline_Scraper(scraper.Scraper):
                     match = re.search(pattern, row, re.DOTALL)
                     if match:
                         url, host, age, quality = match.groups()
-                        log_utils.log(match.groups())
                         age = self.__get_age(now, age)
                         quality = quality.upper()
                         if age > max_age: max_age = age
@@ -92,7 +91,6 @@ class IWatchOnline_Scraper(scraper.Scraper):
                         hoster['quality'] = scraper_utils.get_quality(video, host, QUALITY_MAP.get(quality, QUALITIES.HIGH))
                         hosters.append(hoster)
     
-                log_utils.log('%s -%s' % (max_age, min_age))
                 unit = (max_age - min_age) / 100
                 if unit > 0:
                     for hoster in hosters:

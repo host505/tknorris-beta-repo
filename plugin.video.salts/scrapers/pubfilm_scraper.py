@@ -87,7 +87,7 @@ class PubFilm_Scraper(scraper.Scraper):
                 if match:
                     sources = self.__get_gk_links(match.group(1))
                 else:
-                    sources = self.__get_links(html)
+                    sources = self._parse_sources_list(html)
                     
                 for source in sources:
                     stream_url = source + '|User-Agent=%s' % (scraper_utils.get_ua())
@@ -101,18 +101,6 @@ class PubFilm_Scraper(scraper.Scraper):
                     hosters.append(hoster)
 
         return hosters
-
-    def __get_links(self, html):
-        sources = {}
-        match = re.search('sources\s*:\s*\[(.*?)\]', html, re.DOTALL)
-        if match:
-            for match in re.finditer('''['"]*file['"]*\s*:\s*['"]*([^'"]+)['"][^}]*['"]label['"]:['"]([^'"])''', match.group(1), re.DOTALL):
-                stream_url, label = match.groups()
-                if self._get_direct_hostname(stream_url) == 'gvideo':
-                    sources[stream_url] = {'quality': scraper_utils.gv_get_quality(stream_url), 'direct': True}
-                else:
-                    sources[stream_url] = {'quality': scraper_utils.height_get_quality(label), 'direct': True}
-        return sources
 
     def __get_gk_links(self, iframe_url):
         sources = {}

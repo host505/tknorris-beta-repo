@@ -71,24 +71,16 @@ class DiziFilmHD_Scraper(scraper.Scraper):
                 
                 for source in sources:
                     host = self._get_direct_hostname(source)
-                    hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': sources[source], 'views': None, 'rating': None, 'url': source, 'direct': True}
+                    quality = sources[source]['quality']
+                    hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': quality, 'views': None, 'rating': None, 'url': source, 'direct': True}
                     hosters.append(hoster)
                         
         return hosters
 
     def __get_links(self, url, page_url):
-        sources = {}
         headers = {'Referer': page_url}
         html = self._http_get(url, headers=headers, cache_limit=.5)
-        match = re.search('sources\s*:\s*\[(.*?)\]', html, re.DOTALL)
-        if match:
-            for match in re.finditer('''['"]*file['"]*\s*:\s*['"]*([^'"]+)['"]\s*,\s*['"]label['"]:['"]([^'"])''', match.group(1), re.DOTALL):
-                stream_url, label = match.groups()
-                if self._get_direct_hostname(stream_url) == 'gvideo':
-                    sources[stream_url] = scraper_utils.gv_get_quality(stream_url)
-                else:
-                    sources[stream_url] = scraper_utils.height_get_quality(label)
-        return sources
+        return self._parse_sources_list(html)
 
     def get_url(self, video):
         return self._default_get_url(video)

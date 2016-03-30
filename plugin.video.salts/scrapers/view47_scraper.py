@@ -75,41 +75,32 @@ class View47_Scraper(scraper.Scraper):
                     host = HOSTS.get(host, host)
                     if host in GVIDEO_NAMES:
                         sources = self.__get_links(urlparse.urljoin(self.base_url, url))
-                        direct = True
                     else:
-                        sources = {url: host}
-                        direct = False
+                        sources = {url: {'quality': scraper_utils.get_quality(video, host, QUALITIES.HIGH), 'direct': False, 'host': host}}
                     
                     for source in sources:
-                        if self._get_direct_hostname(source) == 'gvideo':
-                            quality = scraper_utils.gv_get_quality(source)
+                        direct = sources[source]['direct']
+                        quality = sources[source]['quality']
+                        host = self._get_direct_hostname(source)
+                        if host == 'gvideo':
                             stream_url = source + '|User-Agent=%s' % (scraper_utils.get_ua())
                         else:
-                            quality = scraper_utils.get_quality(video, source, QUALITIES.HIGH)
+                            host = sources[source]['host']
                             stream_url = source
-                    
-                        hoster = {'multi-part': False, 'host': sources[source], 'class': self, 'quality': quality, 'views': None, 'rating': None, 'url': stream_url, 'direct': direct}
+                        hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': quality, 'views': None, 'rating': None, 'url': stream_url, 'direct': direct}
                         hosters.append(hoster)
         return hosters
 
     def __get_links(self, url):
-        sources = {}
         html = self._http_get(url, cache_limit=.5)
-        match = re.search('sources\s*:\s*\[(.*?)\]', html, re.DOTALL)
-        if match:
-            for match in re.finditer('''['"]*file['"]*\s*:\s*['"]*([^'"]+)''', match.group(1), re.DOTALL):
-                stream_url = match.group(1)
-                if self._get_direct_hostname(stream_url) == 'gvideo':
-                    sources[stream_url] = self._get_direct_hostname(stream_url)
-        
+        sources = self._parse_sources_list(html)
         if not sources:
             fragment = re.search('setup_media(.*?)setup_media', html, re.DOTALL)
             if fragment:
                 match = re.search('<iframe[^>]*src="([^"]+)', fragment.group(1))
                 if match:
                     stream_url = match.group(1)
-                    host = urlparse.urlparse(stream_url).hostname
-                    sources[stream_url] = host
+                    sources[stream_url] = {'quality': scraper_utils.gv_get_quality(stream_url), 'direct': True}
                     
         return sources
     
@@ -121,33 +112,31 @@ class View47_Scraper(scraper.Scraper):
         return self._default_get_episode_url(season_url, video, episode_pattern)
     
     def search(self, video_type, title, year, season=''):
-        search_url = urlparse.urljoin(self.base_url, '/search.php?q=%s&limit=20&timestamp=%s' % (urllib.quote_plus(title), int(time.time())))
+        search_url = urlparse.urljoin(self.base_url, '/search/%s.html' % (urllib.quote_plus(title)))
         html = self._http_get(search_url, cache_limit=.25)
+        log_utils.log(html)
         results = []
-        items = dom_parser.parse_dom(html, 'li')
-        if len(items) >= 2:
-            items = items[1:]
-            for item in items:
-                match_url = dom_parser.parse_dom(item, 'a', ret='href')
-                match_title_year = dom_parser.parse_dom(item, 'strong')
-                if match_url and match_title_year:
-                    match_url = match_url[0]
-                    match_title_year = re.sub('</?strong>', '', match_title_year[0])
-                    is_season = re.search('S(?:eason\s+)?(\d+)$', match_title_year, re.I)
-                    if not is_season and video_type == VIDEO_TYPES.MOVIE or is_season and VIDEO_TYPES.SEASON:
-                        if video_type == VIDEO_TYPES.MOVIE:
-                            match = re.search('(.*?)(?:\s+\(?(\d{4})\)?)', match_title_year)
-                            if match:
-                                match_title, match_year = match.groups()
-                            else:
-                                match_title = match_title_year
-                                match_year = ''
+        for item in dom_parser.parse_dom(html, 'li', {'class': 'items-\d+-\d+'}):
+            log_utils.log(item)
+            match_url = dom_parser.parse_dom(item, 'a', {'class': 'play'}, ret='href')
+            match_title = dom_parser.parse_dom(item, 'a', {'class': 'play'}, ret='title')
+            year_frag = dom_parser.parse_dom(item, 'span', {'class': 'year'})
+            if match_url and match_title:
+                match_url = match_url[0]
+                match_title = match_title[0]
+                is_season = re.search('S(?:eason\s+)?(\d+)$', match_title, re.I)
+                if not is_season and video_type == VIDEO_TYPES.MOVIE or is_season and VIDEO_TYPES.SEASON:
+                    if video_type == VIDEO_TYPES.MOVIE:
+                        if year_frag:
+                            match_year = year_frag[0]
                         else:
-                            if season and int(is_season.group(1)) != int(season):
-                                continue
-                            match_title = match_title_year
                             match_year = ''
-                    
+                    else:
+                        if season and int(is_season.group(1)) != int(season):
+                            continue
+                        match_year = ''
+                
+                    if (not year or not match_year or year == match_year):
                         result = {'title': scraper_utils.cleanse_title(match_title), 'year': match_year, 'url': scraper_utils.pathify_url(match_url)}
                         results.append(result)
         return results

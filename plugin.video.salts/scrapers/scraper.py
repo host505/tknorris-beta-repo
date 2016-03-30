@@ -530,6 +530,8 @@ class Scraper(object):
             vid_id = match.group(1)
             sources = self.__parse_gplus(vid_id, html, link)
         else:
+            if 'drive.google' in link or 'docs.google' in link:
+                sources = self._parse_gdocs(link)
             if 'picasaweb' in link:
                 i = link.rfind('#')
                 if i > -1:
@@ -591,17 +593,17 @@ class Scraper(object):
         return sources
         
     def _parse_gdocs(self, link):
-        urls = {}
+        urls = []
         html = self._http_get(link, cache_limit=.5)
         for match in re.finditer('\[\s*"([^"]+)"\s*,\s*"([^"]+)"\s*\]', html):
             key, value = match.groups()
             if key == 'fmt_stream_map':
                 items = value.split(',')
                 for item in items:
-                    source_fmt, source_url = item.split('|')
+                    _source_fmt, source_url = item.split('|')
                     source_url = source_url.replace('\\u003d', '=').replace('\\u0026', '&')
                     source_url = urllib.unquote(source_url)
-                    urls[source_url] = source_fmt
+                    urls.append(source_url)
                     
         return urls
 
@@ -618,3 +620,18 @@ class Scraper(object):
         if self.db_connection is None or self.worker_id != worker_id:
             self.db_connection = DB_Connection()
             self.worker_id = worker_id
+
+    def _parse_sources_list(self, html):
+        sources = {}
+        match = re.search('sources\s*:\s*\[(.*?)\]', html, re.DOTALL)
+        if match:
+            for match in re.finditer('''['"]?file['"]?\s*:\s*['"]([^'"]+)['"][^}]*['"]?label['"]?\s*:\s*['"]([^'"]+)''', match.group(1), re.DOTALL):
+                stream_url, label = match.groups()
+                stream_url = stream_url.replace('\/', '/')
+                if self._get_direct_hostname(stream_url) == 'gvideo':
+                    sources[stream_url] = {'quality': scraper_utils.gv_get_quality(stream_url), 'direct': True}
+                elif re.search('\d+p?', label, re.I):
+                    sources[stream_url] = {'quality': scraper_utils.height_get_quality(label), 'direct': True}
+                else:
+                    sources[stream_url] = {'quality': label, 'direct': True}
+        return sources

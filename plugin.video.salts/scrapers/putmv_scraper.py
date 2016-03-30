@@ -30,7 +30,10 @@ import scraper
 
 
 BASE_URL = 'http://putmv.com'
+GK_URL = '/ip.temp/swf/ipplayer/ipplayer.php?u=%s&w=100%%&h=500'
 GVIDEO_NAMES = ['english sub', 'picasa', 'putlocker']
+XHR = {'X-Requested-With': 'XMLHttpRequest'}
+HOSTS = {'vidag': 'vid.ag', 'videott': 'video.tt'}
 
 class PutMV_Scraper(scraper.Scraper):
     base_url = BASE_URL
@@ -48,11 +51,11 @@ class PutMV_Scraper(scraper.Scraper):
         return 'PutMV'
 
     def resolve_link(self, link):
-        if self._get_direct_hostname(link) == 'gvideo':
-            return link
+        if self.base_url in link:
+            sources = self.__get_links(link)
+            if sources: return sources.items()[0][0]
         else:
-            for source in self.__get_links(link):
-                return source
+            return link
 
     def format_source_label(self, item):
         return '[%s] %s' % (item['quality'], item['host'])
@@ -68,20 +71,18 @@ class PutMV_Scraper(scraper.Scraper):
                 for match in re.finditer('href="([^"]+).*?/>(.*?)(?:-\d+)?</a>', fragment[0]):
                     url, host = match.groups()
                     host = host.lower()
+                    host = HOSTS.get(host, host)
                     if host in GVIDEO_NAMES:
                         sources = self.__get_links(urlparse.urljoin(self.base_url, url))
-                        direct = True
                     else:
-                        sources = {url: host}
-                        direct = False
+                        sources = {url: {'quality': scraper_utils.get_quality(video, host, QUALITIES.HIGH), 'direct': False, 'host': host}}
                     
                     for source in sources:
-                        if self._get_direct_hostname(source) == 'gvideo':
-                            quality = scraper_utils.gv_get_quality(source)
-                        else:
-                            quality = scraper_utils.get_quality(video, source, QUALITIES.HIGH)
-                    
-                        hoster = {'multi-part': False, 'host': sources[source], 'class': self, 'quality': quality, 'views': None, 'rating': None, 'url': source, 'direct': direct}
+                        direct = sources[source]['direct']
+                        quality = sources[source]['quality']
+                        host = sources[source]['host']
+                        stream_url = source if not direct else source + '|User-Agent=%s' % (scraper_utils.get_ua())
+                        hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': quality, 'views': None, 'rating': None, 'url': stream_url, 'direct': direct}
                         hosters.append(hoster)
             
         return hosters
@@ -89,21 +90,29 @@ class PutMV_Scraper(scraper.Scraper):
     def __get_links(self, url):
         sources = {}
         html = self._http_get(url, cache_limit=.5)
-        match = re.search('sources\s*:\s*\[(.*?)\]', html, re.DOTALL)
+        match = re.search("files\s*:\s*'([^']+)", html)
         if match:
-            for match in re.finditer('''['"]*file['"]*\s*:\s*['"]*([^'"]+)''', match.group(1), re.DOTALL):
-                stream_url = match.group(1)
-                if self._get_direct_hostname(stream_url) == 'gvideo':
-                    sources[stream_url] = self._get_direct_hostname(stream_url)
-        
-        if not sources:
-            fragment = dom_parser.parse_dom(html, 'div', {'class': 'bx-main'})
-            if fragment:
-                match = re.search('<iframe[^>]*src="([^"]+)', fragment[0])
-                if match:
-                    stream_url = match.group(1)
-                    host = urlparse.urlparse(stream_url).hostname
-                    sources[stream_url] = host
+            gk_url = GK_URL % (match.group(1))
+            gk_url = urlparse.urljoin(self.base_url, gk_url)
+            headers = XHR
+            headers['Referer'] = url
+            html = self._http_get(gk_url, headers=headers, cache_limit=.5)
+            try: html = html.decode('utf-8-sig')
+            except: pass
+            js_data = scraper_utils.parse_json(html, gk_url)
+            if 'data' in js_data:
+                if isinstance(js_data['data'], list):
+                    stream_list = [item['files'] for item in js_data['data']]
+                else:
+                    stream_list = [js_data['data']]
+                
+                for stream_url in stream_list:
+                    host = self._get_direct_hostname(stream_url)
+                    if host == 'gvideo':
+                        sources = {stream_url: {'quality': scraper_utils.gv_get_quality(stream_url), 'direct': True, 'host': host}}
+                    else:
+                        host = urlparse.urlparse(stream_url).hostname
+                        sources = {stream_url: {'quality': QUALITIES.HIGH, 'direct': False, 'host': host}}
                     
         return sources
     

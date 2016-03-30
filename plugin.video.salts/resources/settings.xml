@@ -1,7 +1,7 @@
 <settings>
     <category label="30545">
         <setting id="install_theme" label="30669" type="action" action="RunPlugin(plugin://plugin.video.salts/?mode=install_themes)" option="close" visible="!System.HasAddon(script.salts.themepak)"/>
-        <setting id="theme" type="enum" label="30500" values="Shine|Luna Blue|Iconic|Simple|SALTy|SALTy (Blended)|SALTy (Blue)|SALTy (Frog)|SALTy (Green)|SALTy (Macaw)|SALTier (Green)|SALTier (Orange)|SALTier (Red)|IGDB|Simply Elegant|IGDB Redux" default="0"
+        <setting id="theme" type="enum" label="30500" values="Shine|Luna Blue|Iconic|Simple|SALTy|SALTy (Blended)|SALTy (Blue)|SALTy (Frog)|SALTy (Green)|SALTy (Macaw)|SALTier (Green)|SALTier (Orange)|SALTier (Red)|IGDB|Simply Elegant|IGDB Redux|NaCl" default="0"
         visible="System.HasAddon(script.salts.themepak)"/>
         <setting id="mute_notifications" type="bool" label="30658" default="false"/>
         <setting id="calendar-day" type="slider" label="30502" default="0" range="-7,7" option="int"/>

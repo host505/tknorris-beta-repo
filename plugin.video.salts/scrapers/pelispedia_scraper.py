@@ -83,17 +83,11 @@ class PelisPedia_Scraper(scraper.Scraper):
 
     def __get_page_links(self, html):
         hosters = []
-        match = re.search('sources\s*:\s*\[(.*?)\]', html, re.DOTALL)
-        if match:
-            for match in re.finditer('''['"]*file['"]*\s*:\s*['"]*([^'"]+)['"]\s*,\s*['"]label['"]:['"]([^'"])''', match.group(1), re.DOTALL):
-                stream_url, label = match.groups()
-                stream_url = stream_url.replace('\\/', '/')
-                if self._get_direct_hostname(stream_url) == 'gvideo':
-                    quality = scraper_utils.gv_get_quality(stream_url)
-                else:
-                    quality = scraper_utils.height_get_quality(label)
-                hoster = {'multi-part': False, 'url': stream_url, 'class': self, 'quality': quality, 'host': self._get_direct_hostname(stream_url), 'rating': None, 'views': None, 'direct': True}
-                hosters.append(hoster)
+        sources = self._parse_sources_list(html)
+        for source in sources:
+            quality = sources[source]['quality']
+            hoster = {'multi-part': False, 'url': source, 'class': self, 'quality': quality, 'host': self._get_direct_hostname(source), 'rating': None, 'views': None, 'direct': True}
+            hosters.append(hoster)
         return hosters
 
     def __get_pk_links(self, html):

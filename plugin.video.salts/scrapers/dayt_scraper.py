@@ -53,7 +53,7 @@ class DayT_Scraper(scraper.Scraper):
     def get_sources(self, video):
         source_url = self.get_url(video)
         hosters = []
-        sources = {}
+        sources = []
         if source_url and source_url != FORCE_NO_MATCH:
             source_url = '/forum' + source_url
             page_url = urlparse.urljoin(self.base_url, source_url)
@@ -61,7 +61,7 @@ class DayT_Scraper(scraper.Scraper):
             iframes = dom_parser.parse_dom(html, 'iframe', ret='src')
             for iframe_url in iframes:
                 if 'docs.google.com' in iframe_url:
-                    sources = self._parse_gdocs(iframe_url)
+                    sources = self._parse_google(iframe_url)
                     break
                 elif 'banner' in iframe_url or not iframe_url.startswith('http'):
                     pass

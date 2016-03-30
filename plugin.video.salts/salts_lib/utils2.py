@@ -39,7 +39,7 @@ from constants import *
 from kodi import i18n
 
 THEME_LIST = ['Shine', 'Luna_Blue', 'Iconic', 'Simple', 'SALTy', 'SALTy (Blended)', 'SALTy (Blue)', 'SALTy (Frog)', 'SALTy (Green)',
-              'SALTy (Macaw)', 'SALTier (Green)', 'SALTier (Orange)', 'SALTier (Red)', 'IGDB', 'Simply Elegant', 'IGDB Redux']
+              'SALTy (Macaw)', 'SALTier (Green)', 'SALTier (Orange)', 'SALTier (Red)', 'IGDB', 'Simply Elegant', 'IGDB Redux', 'NaCl']
 THEME = THEME_LIST[int(kodi.get_setting('theme'))]
 if xbmc.getCondVisibility('System.HasAddon(script.salts.themepak)'):
     themepak_path = xbmcaddon.Addon('script.salts.themepak').getAddonInfo('path')
@@ -62,7 +62,7 @@ def art(name):
         if name == 'fanart.jpg':
             path = os.path.join(kodi.get_path(), name)
         else:
-            path.replace('.png', '.jpg')
+            path = path.replace('.png', '.jpg')
     return path
 
 def show_id(show):

@@ -1,3 +1,10 @@
+[B]Version 2.0.26[/B]
+- Add NaCl Theme (from Jokster)
+- Fix m4ufree scraper
+- Fix PutMV scraper
+- Fix Miradetodo scraper
+- Fix DiziFilmHD scraper
+
 [B]Version 2.0.25[/B]
 - Fix IWatch scraper scraper
 - Fix StreamLord scraper

@@ -79,33 +79,26 @@ class M4UFree_Scraper(scraper.Scraper):
             match = re.search('href="([^"]+)[^>]*>\s*<button', html)
             if match:
                 html = self._http_get(match.group(1), cache_limit=.5)
-                sources += self.__get_sources(html, url)
+                sources.update(self.__get_sources(html, url))
             
             for source in sources:
                 host = self._get_direct_hostname(source)
                 stream_url = source + '|User-Agent=%s' % (scraper_utils.get_ua())
-                hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': source[source], 'views': views, 'rating': None, 'url': stream_url, 'direct': True}
+                quality = sources[source]['quality']
+                hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': quality, 'views': views, 'rating': None, 'url': stream_url, 'direct': True}
                 hosters.append(hoster)
 
         return hosters
 
     def __get_sources(self, html, page_url):
         sources = {}
-        log_utils.log(html)
         for link in dom_parser.parse_dom(html, 'span', {'class': '[^"]*btn-eps[^"]*'}, ret='data-link'):
             ajax_url = AJAX_URL % (link)
             ajax_url = urlparse.urljoin(self.base_url, ajax_url)
             headers = XHR
             headers['Referer'] = page_url
             html = self._http_get(ajax_url, headers=headers, cache_limit=.5)
-            match = re.search('sources\s*:\s*\[(.*?)\]', html, re.DOTALL)
-            if match:
-                for match in re.finditer('''['"]*file['"]*\s*:\s*['"]*([^'"]+)['"][^}]*['"]label['"]:['"]([^'"])''', match.group(1), re.DOTALL):
-                    stream_url, label = match.groups()
-                    if self._get_direct_hostname(stream_url) == 'gvideo':
-                        sources[stream_url] = scraper_utils.gv_get_quality(stream_url)
-                    else:
-                        sources[stream_url] = scraper_utils.height_get_quality(label)
+            sources.update(self._parse_sources_list(html))
         return sources
     
     def get_url(self, video):

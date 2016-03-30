@@ -91,7 +91,7 @@ class ClickPlay_Scraper(scraper.Scraper):
                         hoster = {'multi-part': False, 'url': source, 'class': self, 'quality': quality, 'host': self._get_direct_hostname(source), 'rating': None, 'views': None, 'direct': True}
                         hosters.append(hoster)
                 if 'docs.google' in stream_url.lower():
-                    for source in self._parse_gdocs(stream_url):
+                    for source in self._parse_google(stream_url):
                         quality = scraper_utils.gv_get_quality(source)
                         hoster = {'multi-part': False, 'url': source, 'class': self, 'quality': quality, 'host': self._get_direct_hostname(source), 'rating': None, 'views': None, 'direct': True}
                         hosters.append(hoster)
