@@ -65,7 +65,7 @@ class MovieSub_Scraper(scraper.Scraper):
         if source_url and source_url != FORCE_NO_MATCH:
             url = urlparse.urljoin(self.__get_base_url(video.video_type), source_url)
             html = self._http_get(url, cache_limit=.5)
-            sources = self.__get_gk_links(html, url, video.video_type)
+            sources = self.__get_gk_links(html, url, video.video_type, video.episode)
             sources.update(self.__get_ht_links(html, url, video.video_type))
             
             for source in sources:
@@ -75,9 +75,11 @@ class MovieSub_Scraper(scraper.Scraper):
                 else:
                     host = urlparse.urlparse(source).hostname
                     direct = False
-                stream_url = source + '|User-Agent=%s' % (scraper_utils.get_ua())
-                hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': sources[source], 'views': None, 'rating': None, 'url': stream_url, 'direct': direct}
-                hosters.append(hoster)
+                
+                if host is not None:
+                    stream_url = source + '|User-Agent=%s' % (scraper_utils.get_ua())
+                    hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': sources[source], 'views': None, 'rating': None, 'url': stream_url, 'direct': direct}
+                    hosters.append(hoster)
 
         return hosters
 
@@ -99,8 +101,16 @@ class MovieSub_Scraper(scraper.Scraper):
                     sources[link] = quality
         return sources
         
-    def __get_gk_links(self, html, page_url, video_type):
+    def __get_gk_links(self, html, page_url, video_type, episode):
         sources = {}
+        phimid = dom_parser.parse_dom(html, 'input', {'name': 'phimid'}, ret='value')
+        if phimid and video_type == VIDEO_TYPES.EPISODE:
+            url = urlparse.urljoin(self.tv_base_url, '/ajax.php')
+            data = {'ipos_server': 1, 'phimid': phimid[0], 'keyurl': episode}
+            headers = XHR
+            headers['Referer'] = page_url
+            html = self._http_get(url, data=data, headers=headers, cache_limit=.5)
+            
         for link in dom_parser.parse_dom(html, 'div', {'class': '[^"]*server_line[^"]*'}):
             film_id = dom_parser.parse_dom(link, 'a', ret='data-film')
             name_id = dom_parser.parse_dom(link, 'a', ret='data-name')
