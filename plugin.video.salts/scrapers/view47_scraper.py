@@ -8,7 +8,7 @@
     (at your option) any later version.
 
     This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    but WITHOUT ANY WARRANTY; without even the implied warranty ofl
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
@@ -114,10 +114,8 @@ class View47_Scraper(scraper.Scraper):
     def search(self, video_type, title, year, season=''):
         search_url = urlparse.urljoin(self.base_url, '/search/%s.html' % (urllib.quote_plus(title)))
         html = self._http_get(search_url, cache_limit=.25)
-        log_utils.log(html)
         results = []
         for item in dom_parser.parse_dom(html, 'li', {'class': 'items-\d+-\d+'}):
-            log_utils.log(item)
             match_url = dom_parser.parse_dom(item, 'a', {'class': 'play'}, ret='href')
             match_title = dom_parser.parse_dom(item, 'a', {'class': 'play'}, ret='title')
             year_frag = dom_parser.parse_dom(item, 'span', {'class': 'year'})

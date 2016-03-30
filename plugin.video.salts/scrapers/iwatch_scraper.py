@@ -95,7 +95,6 @@ class IWatchOnline_Scraper(scraper.Scraper):
                 if unit > 0:
                     for hoster in hosters:
                         hoster['rating'] = (hoster['age'] - min_age) / unit
-                        # log_utils.log('%s, %s' % (hoster['rating'], hoster['age']))
         return hosters
 
     def __get_age(self, now, age_str):
