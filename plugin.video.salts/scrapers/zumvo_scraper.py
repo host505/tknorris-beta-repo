@@ -126,9 +126,9 @@ class Zumvo_Scraper(scraper.Scraper):
         return results
 
     def _http_get(self, url, data=None, headers=None, cache_limit=8):
-        html = self._cached_http_get(url, self.base_url, self.timeout, data=data, headers=headers, cache_limit=cache_limit)
+        html = super(self.__class__, self)._http_get(url, data=data, headers=headers, cache_limit=cache_limit)
         cookie = scraper_utils.get_sucuri_cookie(html)
         if cookie:
             log_utils.log('Setting Zumvo cookie: %s' % (cookie), log_utils.LOGDEBUG)
-            html = self._cached_http_get(url, self.base_url, self.timeout, cookies=cookie, data=data, headers=headers, cache_limit=0)
+            html = super(self.__class__, self)._http_get(url, cookies=cookie, data=data, headers=headers, cache_limit=0)
         return html

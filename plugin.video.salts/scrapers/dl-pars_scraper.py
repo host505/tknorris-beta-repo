@@ -68,7 +68,7 @@ class DLPars_Scraper(scraper.Scraper):
         return hosters
 
     def get_url(self, video):
-        return super(DLPars_Scraper, self)._default_get_url(video)
+        return self._default_get_url(video)
 
     def _get_episode_url(self, show_url, video):
         force_title = scraper_utils.force_title(video)
@@ -78,7 +78,7 @@ class DLPars_Scraper(scraper.Scraper):
             match = re.search('href="(S0*%s/)"' % (int(video.season)), html, re.I)
             if match:
                 season_url = urlparse.urljoin(show_url, match.group(1))
-                for item in self.__get_files(season_url, cache_limit=1):
+                for item in self._get_files(season_url, cache_limit=1):
                     if '720p' in item['link']: continue
                     match = re.search('[._ -]S%02d[._ -]?E%02d[^\d]' % (int(video.season), int(video.episode)), item['title'], re.I)
                     if match:
@@ -88,37 +88,8 @@ class DLPars_Scraper(scraper.Scraper):
         results = []
         norm_title = scraper_utils.normalize_title(title)
         html = self._http_get(self.base_url, cache_limit=48)
-        for item in self.__parse_directory(html):
+        for item in self._parse_directory(html):
             if norm_title in scraper_utils.normalize_title(item['title']):
-                    result = {'url': scraper_utils.pathify_url(item['link']), 'title': scraper_utils.cleanse_title(item['title']), 'year': ''}
-                    results.append(result)
+                result = {'url': scraper_utils.pathify_url(item['link']), 'title': scraper_utils.cleanse_title(item['title']), 'year': ''}
+                results.append(result)
         return results
-
-    def __get_files(self, url, cache_limit=.5):
-        sources = []
-        for row in self.__parse_directory(self._http_get(url, cache_limit=cache_limit)):
-            source_url = urlparse.urljoin(url, row['link'])
-            if row['directory']:
-                sources += self.__get_files(source_url)
-            else:
-                row['url'] = source_url
-                sources.append(row)
-        return sources
-    
-    def __parse_directory(self, html):
-        rows = []
-        for match in re.finditer('\s*<a\s+href="([^"]+)">([^<]+)</a>\s+(\d+-[a-zA-Z]+-\d+ \d+:\d+)\s+(-|\d+)', html):
-            link, title, date, size = match.groups()
-            if title.endswith('/'): title = title[:-1]
-            row = {'link': urllib.unquote(link), 'title': title, 'date': date}
-            if link.endswith('/'):
-                row['directory'] = True
-            else:
-                row['directory'] = False
-
-            if size == '-':
-                row['size'] = None
-            else:
-                row['size'] = size
-            rows.append(row)
-        return rows

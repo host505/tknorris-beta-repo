@@ -144,7 +144,7 @@ class SRT_Scraper():
         if not xbmcvfs.exists(os.path.dirname(final_path)):
             try:
                 try: xbmcvfs.mkdirs(os.path.dirname(final_path))
-                except: os.mkdir(os.path.dirname(final_path))
+                except: os.makedirs(os.path.dirname(final_path))
             except:
                 log_utils.log('Failed to create directory %s' % os.path.dirname(final_path), log_utils.LOGERROR)
                 raise

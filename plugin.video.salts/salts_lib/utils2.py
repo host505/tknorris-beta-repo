@@ -154,7 +154,7 @@ def to_slug(username):
 
 def sort_list(sort_key, sort_direction, list_data):
     log_utils.log('Sorting List: %s - %s' % (sort_key, sort_direction), log_utils.LOGDEBUG)
-    # log_utils.log(json.dumps(list_data))
+    # log_utils.log(json.dumps(list_data), log_utils.LOGDEBUG)
     reverse = False if sort_direction == TRAKT_SORT_DIR.ASCENDING else True
     if sort_key == TRAKT_LIST_SORT.RANK:
         return sorted(list_data, key=lambda x: x['rank'], reverse=reverse)
@@ -641,13 +641,15 @@ def download_media(url, path, file_name):
             log_utils.log('Downloading: %s -> %s' % (url, full_path), log_utils.LOGDEBUG)
     
             path = xbmc.makeLegalFilename(path)
-            if not xbmcvfs.exists(path):
-                try:
-                    try: xbmcvfs.mkdirs(path)
-                    except: os.mkdir(path)
-                except Exception as e:
-                    raise Exception(i18n('failed_create_dir'))
+            try:
+                try: xbmcvfs.mkdirs(path)
+                except: os.makedirs(path)
+            except Exception as e:
+                log_utils.log('Dir Create Failed: %s' % (e), log_utils.LOGDEBUG)
     
+            if not xbmcvfs.exists(path):
+                raise Exception(i18n('failed_create_dir'))
+            
             file_desc = xbmcvfs.File(full_path, 'w')
             total_len = 0
             cancel = False

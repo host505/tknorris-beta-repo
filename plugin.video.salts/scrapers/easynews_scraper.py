@@ -169,7 +169,7 @@ class EasyNews_Scraper(scraper.Scraper):
         if not self.username or not self.password:
             return ''
         
-        return self._cached_http_get(url, self.base_url, self.timeout, cookies=self.cookie, cache_limit=cache_limit)
+        return super(self.__class__, self)._http_get(url, cookies=self.cookie, cache_limit=cache_limit)
 
     def __translate_search(self, url):
         query = urllib.quote_plus(urlparse.parse_qs(urlparse.urlparse(url).query)['query'][0])

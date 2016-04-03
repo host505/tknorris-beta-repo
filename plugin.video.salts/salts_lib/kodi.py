@@ -26,12 +26,19 @@ import sys
 import os
 import re
 import strings
-import log_utils
+import json
 
 addon = xbmcaddon.Addon()
 get_setting = addon.getSetting
 show_settings = addon.openSettings
 sleep = xbmc.sleep
+__log = xbmc.log
+
+def execute_jsonrpc(command):
+    if not isinstance(command, basestring):
+        command = json.dumps(command)
+    response = xbmc.executeJSONRPC(command)
+    return json.loads(response)
 
 def get_path():
     return addon.getAddonInfo('path').decode('utf-8')
@@ -132,6 +139,29 @@ def get_current_view():
         for view in views.split(','):
             if xbmc.getInfoLabel('Control.GetLabel(%s)' % (view)): return view
 
+def refresh_container():
+    xbmc.executebuiltin("XBMC.Container.Refresh")
+    
+def update_container(url):
+    xbmc.executebuiltin('Container.Update(%s)' % (url))
+    
+def get_keyboard(heading, default=''):
+    keyboard = xbmc.Keyboard()
+    keyboard.setHeading(heading)
+    if default: keyboard.setDefault(default)
+    keyboard.doModal()
+    if keyboard.isConfirmed():
+        return keyboard.getText()
+    else:
+        return None
+
+def i18n(string_id):
+    try:
+        return addon.getLocalizedString(strings.STRINGS[string_id]).encode('utf-8', 'ignore')
+    except Exception as e:
+        xbmc.log('%s: Failed String Lookup: %s (%s)' % (get_name(), string_id, e), xbmc.LOGWARNING)
+        return string_id
+
 class WorkingDialog(object):
     def __init__(self):
         xbmc.executebuiltin('ActivateWindow(busydialog)')
@@ -141,13 +171,6 @@ class WorkingDialog(object):
     
     def __exit__(self, type, value, traceback):
         xbmc.executebuiltin('Dialog.Close(busydialog)')
-
-def i18n(string_id):
-    try:
-        return addon.getLocalizedString(strings.STRINGS[string_id]).encode('utf-8', 'ignore')
-    except Exception as e:
-        log_utils.log('Failed String Lookup: %s (%s)' % (string_id, e), log_utils.LOGWARNING)
-        return string_id
 
 class ProgressDialog(object):
     def __init__(self, heading, line1='', line2='', line3='', background=False, active=True):
@@ -186,3 +209,4 @@ class ProgressDialog(object):
                 self.pd.update(percent, self.heading, msg)
             else:
                 self.pd.update(percent, line1, line2, line3)
+                

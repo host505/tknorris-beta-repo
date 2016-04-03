@@ -27,10 +27,7 @@ import time
 import urllib
 import urllib2
 import urlparse
-
-import xbmc
 import xbmcgui
-
 from salts_lib import cloudflare
 from salts_lib import kodi
 from salts_lib import log_utils
@@ -355,13 +352,9 @@ class Scraper(object):
         header = 'Type the words in the image'
         if tries and max_tries:
             header += ' (Try: %s/%s)' % (tries, max_tries)
-        kb = xbmc.Keyboard('', header, False)
-        kb.doModal()
-        solution = ''
-        if kb.isConfirmed():
-            solution = kb.getText()
-            if not solution:
-                raise Exception('You must enter text in the image to access video')
+        solution = kodi.get_keyboard(header)
+        if not solution:
+            raise Exception('You must enter text in the image to access video')
         wdlg.close()
         return {'recaptcha_challenge_field': match.group(1), 'recaptcha_response_field': solution}
 
@@ -635,3 +628,32 @@ class Scraper(object):
                 else:
                     sources[stream_url] = {'quality': label, 'direct': True}
         return sources
+
+    def _get_files(self, url, cache_limit=.5):
+        sources = []
+        for row in self._parse_directory(self._http_get(url, cache_limit=cache_limit)):
+            source_url = urlparse.urljoin(url, row['link'])
+            if row['directory']:
+                sources += self._get_files(source_url)
+            else:
+                row['url'] = source_url
+                sources.append(row)
+        return sources
+    
+    def _parse_directory(self, html):
+        rows = []
+        for match in re.finditer('\s*<a\s+href="([^"]+)">([^<]+)</a>\s+(\d+-[a-zA-Z]+-\d+ \d+:\d+)\s+(-|\d+)', html):
+            link, title, date, size = match.groups()
+            if title.endswith('/'): title = title[:-1]
+            row = {'link': urllib.unquote(link), 'title': title, 'date': date}
+            if link.endswith('/'):
+                row['directory'] = True
+            else:
+                row['directory'] = False
+
+            if size == '-':
+                row['size'] = None
+            else:
+                row['size'] = size
+            rows.append(row)
+        return rows

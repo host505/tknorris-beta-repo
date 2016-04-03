@@ -161,7 +161,7 @@ def parallel_get_progress(q, trakt_id, cached, cache_limit):
 def do_startup_task(task):
     run_on_startup = kodi.get_setting('auto-%s' % task) == 'true' and kodi.get_setting('%s-during-startup' % task) == 'true'
     if run_on_startup and not xbmc.abortRequested:
-        log_utils.log('Service: Running startup task [%s]' % (task))
+        log_utils.log('Service: Running startup task [%s]' % (task), log_utils.LOGNOTICE)
         now = datetime.datetime.now()
         xbmc.executebuiltin('RunPlugin(plugin://%s/?mode=%s)' % (kodi.get_id(), task))
         _get_db_connection().set_setting('%s-last_run' % (task), now.strftime("%Y-%m-%d %H:%M:%S.%f"))
@@ -185,7 +185,7 @@ def do_scheduled_task(task, isPlaying):
             if not is_scanning:
                 during_playback = kodi.get_setting('%s-during-playback' % (task)) == 'true'
                 if during_playback or not isPlaying:
-                    log_utils.log('Service: Running Scheduled Task: [%s]' % (task))
+                    log_utils.log('Service: Running Scheduled Task: [%s]' % (task), log_utils.LOGNOTICE)
                     builtin = 'RunPlugin(plugin://%s/?mode=%s)' % (kodi.get_id(), task)
                     xbmc.executebuiltin(builtin)
                     _get_db_connection().set_setting('%s-last_run' % task, now.strftime("%Y-%m-%d %H:%M:%S.%f"))

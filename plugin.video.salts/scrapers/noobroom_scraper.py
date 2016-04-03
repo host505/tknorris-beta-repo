@@ -145,11 +145,11 @@ class NoobRoom_Scraper(scraper.Scraper):
         if not self.username or not self.password:
             return ''
 
-        html = self._cached_http_get(url, self.base_url, self.timeout, data=data, headers=headers, method=method, cache_limit=cache_limit)
+        html = super(self.__class__, self)._http_get(url, data=data, headers=headers, method=method, cache_limit=cache_limit)
         if 'href="logout.php"' not in html:
             log_utils.log('Logging in for url (%s)' % (url), log_utils.LOGDEBUG)
             self.__login(html)
-            html = self._cached_http_get(url, self.base_url, self.timeout, data=data, headers=headers, method=method, cache_limit=0)
+            html = super(self.__class__, self)._http_get(url, data=data, headers=headers, method=method, cache_limit=0)
 
         return html
 
@@ -160,6 +160,6 @@ class NoobRoom_Scraper(scraper.Scraper):
         if match:
             data.update(self._do_recaptcha(match.group(1)))
             
-        html = self._cached_http_get(url, self.base_url, self.timeout, data=data, allow_redirect=False, cache_limit=0)
+        html = super(self.__class__, self)._http_get(url, data=data, allow_redirect=False, cache_limit=0)
         if 'index.php' not in html:
             raise Exception('noobroom login failed')

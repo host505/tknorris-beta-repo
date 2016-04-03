@@ -155,7 +155,7 @@ class DDLValley_Scraper(scraper.Scraper):
 
     def __to_slug(self, title):
         slug = title.lower()
-        slug = re.sub('[^A-Za-z0-9 ]', '', slug)
+        slug = re.sub('[^A-Za-z0-9 -]', ' ', slug)
         slug = re.sub('\s\s+', ' ', slug)
         slug = re.sub(' ', '-', slug)
         return slug

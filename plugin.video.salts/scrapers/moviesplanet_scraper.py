@@ -136,16 +136,16 @@ class MoviesPlanet_Scraper(scraper.Scraper):
         if not self.username or not self.password:
             return ''
 
-        html = self._cached_http_get(url, self.base_url, self.timeout, data=data, headers=headers, allow_redirect=allow_redirect, method=method, cache_limit=cache_limit)
+        html = super(self.__class__, self)._http_get(url, data=data, headers=headers, allow_redirect=allow_redirect, method=method, cache_limit=cache_limit)
         if re.search('Please Register or Login', html, re.I):
             log_utils.log('Logging in for url (%s)' % (url), log_utils.LOGDEBUG)
             self.__login()
-            html = self._cached_http_get(url, self.base_url, self.timeout, data=data, headers=headers, allow_redirect=allow_redirect, method=method, cache_limit=0)
+            html = super(self.__class__, self)._http_get(url, data=data, headers=headers, allow_redirect=allow_redirect, method=method, cache_limit=0)
         return html
 
     def __login(self):
         url = urlparse.urljoin(self.base_url, '/login')
         data = {'username': self.username, 'password': self.password, 'action': 'login'}
-        html = self._cached_http_get(url, self.base_url, self.timeout, data=data, headers=XHR, cache_limit=0)
+        html = super(self.__class__, self)._http_get(url, data=data, headers=XHR, cache_limit=0)
         if 'incorrect login' in html.lower():
             raise Exception('moviesplanet login failed')

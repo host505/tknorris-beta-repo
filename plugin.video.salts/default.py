@@ -25,6 +25,7 @@ import xbmcgui
 import xbmc
 import xbmcvfs
 import json
+import urlresolver
 from Queue import Queue, Empty
 from salts_lib.db_utils import DB_Connection, DatabaseRecoveryError
 from salts_lib.url_dispatcher import URL_Dispatcher
@@ -149,7 +150,7 @@ def view_bookmarks(section):
 def delete_bookmark(bookmark_id):
     trakt_api.delete_bookmark(bookmark_id)
     kodi.notify(msg=i18n('bookmark_deleted'))
-    xbmc.executebuiltin("XBMC.Container.Refresh")
+    kodi.refresh_container()
 
 @url_dispatcher.register(MODES.SHOW_VIEWS)
 def show_views():
@@ -188,11 +189,10 @@ def browse_urls():
 @url_dispatcher.register(MODES.DELETE_URL, ['url'], ['data'])
 def delete_url(url, data=''):
     db_connection.delete_cached_url(url, data)
-    xbmc.executebuiltin("XBMC.Container.Refresh")
+    kodi.refresh_container()
 
 @url_dispatcher.register(MODES.RES_SETTINGS)
 def resolver_settings():
-    import urlresolver
     urlresolver.display_settings()
 
 @url_dispatcher.register(MODES.ADDON_SETTINGS)
@@ -360,7 +360,7 @@ def reset_rel_urls(name):
 @url_dispatcher.register(MODES.RESET_FAILS, ['name'])
 def reset_fails(name):
     kodi.set_setting('%s_last_results' % (name), '0')
-    xbmc.executebuiltin("XBMC.Container.Refresh")
+    kodi.refresh_container()
 
 @url_dispatcher.register(MODES.MOVE_TO, ['name'])
 def move_to(name):
@@ -389,7 +389,7 @@ def move_to(name):
 
         sort_key[name] = new_key
     kodi.set_setting('source_sort_order', utils2.make_source_sort_string(sort_key))
-    xbmc.executebuiltin("XBMC.Container.Refresh")
+    kodi.refresh_container()
 
 @url_dispatcher.register(MODES.MOVE_SCRAPER, ['name', 'direction', 'other'])
 def move_scraper(name, direction, other):
@@ -401,7 +401,7 @@ def move_scraper(name, direction, other):
         sort_key[name] -= 1
         sort_key[other] += 1
     kodi.set_setting('source_sort_order', utils2.make_source_sort_string(sort_key))
-    xbmc.executebuiltin("XBMC.Container.Refresh")
+    kodi.refresh_container()
 
 @url_dispatcher.register(MODES.TOGGLE_ALL)
 def toggle_scrapers():
@@ -412,7 +412,7 @@ def toggle_scrapers():
 
     new_toggle = 'false' if cur_toggle == 'true' else 'true'
     kodi.set_setting('toggle_enable', new_toggle)
-    xbmc.executebuiltin("XBMC.Container.Refresh")
+    kodi.refresh_container()
 
 @url_dispatcher.register(MODES.TOGGLE_SCRAPER, ['name'])
 def toggle_scraper(name):
@@ -421,7 +421,7 @@ def toggle_scraper(name):
     else:
         setting = 'true'
     kodi.set_setting('%s-enable' % (name), setting)
-    xbmc.executebuiltin("XBMC.Container.Refresh")
+    kodi.refresh_container()
 
 @url_dispatcher.register(MODES.TRENDING, ['section'], ['page'])
 def browse_trending(section, page=1):
@@ -635,36 +635,30 @@ def toggle_to_menu(action, section, slug, username=None):
 
     main_str = '|'.join(main_list)
     kodi.set_setting(setting, main_str)
-    xbmc.executebuiltin("XBMC.Container.Refresh")
+    kodi.refresh_container()
 
 @url_dispatcher.register(MODES.REMOVE_LIST, ['section', 'username', 'slug'])
 def remove_list(section, username, slug):
     db_connection.delete_other_list(section, username, slug)
-    xbmc.executebuiltin("XBMC.Container.Refresh")
+    kodi.refresh_container()
 
 @url_dispatcher.register(MODES.RENAME_LIST, ['section', 'slug', 'username', 'name'])
 def rename_list(section, slug, username, name):
-    keyboard = xbmc.Keyboard()
-    keyboard.setHeading(i18n('new_name_heading'))
-    keyboard.setDefault(name)
-    keyboard.doModal()
-    if keyboard.isConfirmed():
-        new_name = keyboard.getText()
+    new_name = kodi.get_keyboard(i18n('new_name_heading'), name)
+    if new_name is not None:
         db_connection.rename_other_list(section, username, slug, new_name)
-    xbmc.executebuiltin("XBMC.Container.Refresh")
+    kodi.refresh_container()
 
 @url_dispatcher.register(MODES.ADD_OTHER_LIST, ['section'], ['username'])
 def add_other_list(section, username=None):
     if username is None:
-        keyboard = xbmc.Keyboard()
-        keyboard.setHeading(i18n('username_list_owner'))
-        keyboard.doModal()
-        if keyboard.isConfirmed():
-            username = keyboard.getText()
-    slug = pick_list(None, section, username)
-    if slug:
-        db_connection.add_other_list(section, username, slug)
-        xbmc.executebuiltin("XBMC.Container.Refresh")
+        username = kodi.get_keyboard(i18n('username_list_owner'))
+        
+    if username is not None:
+        slug = pick_list(None, section, username)
+        if slug:
+            db_connection.add_other_list(section, username, slug)
+            kodi.refresh_container()
 
 @url_dispatcher.register(MODES.SHOW_LIST, ['section', 'slug'], ['username'])
 def show_list(section, slug, username=None):
@@ -676,7 +670,7 @@ def show_list(section, slug, username=None):
         except TraktNotFoundError:
             msg = i18n('list_not_exist') % (slug)
             kodi.notify(msg=msg, duration=5000)
-            log_utils.log(msg, xbmc.LOGWARNING)
+            log_utils.log(msg, log_utils.LOGWARNING)
             return
 
     make_dir_from_list(section, items, slug)
@@ -700,7 +694,7 @@ def show_collection(section):
     if section == SECTIONS.TV:
         for item in items:
             collected_episodes = len([e for s in item['seasons'] if s['number'] != 0 for e in s['episodes']])
-            log_utils.log('%s/%s: Collected: %s - Aired: %s' % (item['ids']['trakt'], item['ids']['slug'], collected_episodes, item['aired_episodes']), xbmc.LOGDEBUG)
+            log_utils.log('%s/%s: Collected: %s - Aired: %s' % (item['ids']['trakt'], item['ids']['slug'], collected_episodes, item['aired_episodes']), log_utils.LOGDEBUG)
             if collected_episodes > item['aired_episodes']:
                 item['aired_episodes'] = collected_episodes
 
@@ -755,7 +749,7 @@ def get_progress(cached=True):
         episodes = []
         while worker_count > 0:
             try:
-                log_utils.log('Calling get with timeout: %s' % (timeout), xbmc.LOGDEBUG)
+                log_utils.log('Calling get with timeout: %s' % (timeout), log_utils.LOGDEBUG)
                 progress = q.get(True, timeout)
                 worker_count -= 1
     
@@ -777,7 +771,7 @@ def get_progress(cached=True):
                     timeout = max_timeout - (time.time() - begin)
                     if timeout < 0: timeout = 0
             except Empty:
-                log_utils.log('Get Progress Process Timeout', xbmc.LOGWARNING)
+                log_utils.log('Get Progress Process Timeout', log_utils.LOGWARNING)
                 break
         else:
             log_utils.log('All progress results received', log_utils.LOGDEBUG)
@@ -786,7 +780,7 @@ def get_progress(cached=True):
         if worker_count > 0:
             timeout_msg = i18n('progress_timeouts') % (worker_count, total)
             kodi.notify(msg=timeout_msg, duration=5000)
-            log_utils.log(timeout_msg, xbmc.LOGWARNING)
+            log_utils.log(timeout_msg, log_utils.LOGWARNING)
         else:
             # only cache the results if all results were successful
             db_connection.cache_function(get_progress.__name__, result=episodes)
@@ -800,7 +794,7 @@ def show_progress():
         folder = kodi.get_setting('source-win') == 'Directory' and kodi.get_setting('auto-play') == 'false'
         workers, progress = get_progress()
         for episode in progress:
-            log_utils.log('Episode: Sort Keys: Tile: |%s| Last Watched: |%s| Percent: |%s%%| Completed: |%s|' % (episode['show']['title'], episode['last_watched_at'], episode['percent_completed'], episode['completed']), xbmc.LOGDEBUG)
+            log_utils.log('Episode: Sort Keys: Tile: |%s| Last Watched: |%s| Percent: |%s%%| Completed: |%s|' % (episode['show']['title'], episode['last_watched_at'], episode['percent_completed'], episode['completed']), log_utils.LOGDEBUG)
             first_aired_utc = utils2.iso_2_utc(episode['episode']['first_aired'])
             if kodi.get_setting('show_unaired_next') == 'true' or first_aired_utc <= time.time():
                 show = episode['show']
@@ -858,7 +852,7 @@ def pick_list(mode, section, username=None):
             set_list(MODES.SET_SUB_LIST, slug, section)
         else:
             return slug
-        xbmc.executebuiltin("XBMC.Container.Refresh")
+        kodi.refresh_container()
 
 @url_dispatcher.register(MODES.SET_SUB_LIST, ['mode', 'slug', 'section'])
 @url_dispatcher.register(MODES.SET_FAV_LIST, ['mode', 'slug', 'section'])
@@ -872,27 +866,15 @@ def set_list(mode, slug, section):
 @url_dispatcher.register(MODES.SEARCH, ['section'])
 def search(section, search_text=None):
     section_params = utils2.get_section_params(section)
-    keyboard = xbmc.Keyboard()
-    keyboard.setHeading('%s %s' % (i18n('search'), section_params['label_plural']))
-    while True:
-        keyboard.doModal()
-        if keyboard.isConfirmed():
-            search_text = keyboard.getText()
-            if not search_text:
-                kodi.notify(msg=i18n('blank_searches'), duration=5000)
-                return
-            else:
-                break
-        else:
-            break
-
-    if keyboard.isConfirmed():
-        search_text = keyboard.getText()
+    heading = '%s %s' % (i18n('search'), section_params['label_plural'])
+    search_text = kodi.get_keyboard(heading)
+    if search_text == '':
+        kodi.notify(msg=i18n('blank_searches'), duration=5000)
+    elif search_text is not None:
         utils.keep_search(section, search_text)
         queries = {'mode': MODES.SEARCH_RESULTS, 'section': section, 'query': search_text}
-        pluginurl = kodi.get_plugin_url(queries)
-        builtin = 'Container.Update(%s)' % (pluginurl)
-        xbmc.executebuiltin(builtin)
+        plugin_url = kodi.get_plugin_url(queries)
+        kodi.update_container(plugin_url)
 
 @url_dispatcher.register(MODES.RECENT_SEARCH, ['section'])
 def recent_searches(section):
@@ -937,7 +919,7 @@ def clear_recent(section):
 def delete_recent(section, index):
     index = int(index)
     head = int(kodi.get_setting('%s_search_head' % (section)))
-    log_utils.log('Head is: %s' % (head), xbmc.LOGDEBUG)
+    log_utils.log('Head is: %s' % (head), log_utils.LOGDEBUG)
     for i in range(SEARCH_HISTORY, 0, -1):
         pos = (i - 1 + index) % SEARCH_HISTORY
         last_pos = (pos + 1) % SEARCH_HISTORY
@@ -945,12 +927,12 @@ def delete_recent(section, index):
             break
         
         search_text = db_connection.get_setting('%s_search_%s' % (section, pos))
-        log_utils.log('Moving %s to position %s' % (search_text, last_pos), xbmc.LOGDEBUG)
+        log_utils.log('Moving %s to position %s' % (search_text, last_pos), log_utils.LOGDEBUG)
         db_connection.set_setting('%s_search_%s' % (section, last_pos), search_text)
 
-    log_utils.log('Blanking position %s' % (last_pos), xbmc.LOGDEBUG)
+    log_utils.log('Blanking position %s' % (last_pos), log_utils.LOGDEBUG)
     db_connection.set_setting('%s_search_%s' % (section, last_pos), '')
-    xbmc.executebuiltin("XBMC.Container.Refresh")
+    kodi.refresh_container()
 
 @url_dispatcher.register(MODES.SAVE_SEARCH, ['section', 'query'])
 def save_search(section, query):
@@ -959,7 +941,7 @@ def save_search(section, query):
 @url_dispatcher.register(MODES.DELETE_SEARCH, ['search_id'])
 def delete_search(search_id):
     db_connection.delete_search(search_id)
-    xbmc.executebuiltin("XBMC.Container.Refresh")
+    kodi.refresh_container()
 
 @url_dispatcher.register(MODES.CLEAR_SAVED, ['section'])
 def clear_saved(section):
@@ -1048,11 +1030,11 @@ def get_sources(mode, video_type, title, year, trakt_id, season='', episode='', 
             hosters = []
             while worker_count > 0:
                 try:
-                    log_utils.log('Calling get with timeout: %s' % (timeout), xbmc.LOGDEBUG)
+                    log_utils.log('Calling get with timeout: %s' % (timeout), log_utils.LOGDEBUG)
                     result = q.get(True, timeout)
                     counts[result['name']] = len(result['hosters'])
                     if pd.is_canceled(): return False
-                    log_utils.log('Got %s Source Results' % (len(result['hosters'])), xbmc.LOGDEBUG)
+                    log_utils.log('Got %s Source Results' % (len(result['hosters'])), log_utils.LOGDEBUG)
                     worker_count -= 1
                     progress = ((total - worker_count) * 50 / total) + 50
                     pd.update(progress, line2=i18n('received_sources_from') % (len(result['hosters']), result['name']))
@@ -1130,13 +1112,7 @@ def apply_urlresolver(hosters):
     if not filter_unusable and not show_debrid:
         return hosters
     
-    try:
-        import urlresolver.plugnplay
-        resolvers = urlresolver.plugnplay.man.implementors(urlresolver.UrlResolver)
-        debrid_resolvers = [resolver for resolver in resolvers if resolver.isUniversal() and resolver.get_setting('enabled') == 'true']
-    except:
-        import urlresolver
-        debrid_resolvers = [resolver() for resolver in urlresolver.relevant_resolvers(order_matters=True) if resolver.isUniversal()]
+    debrid_resolvers = [resolver() for resolver in urlresolver.relevant_resolvers(order_matters=True) if resolver.isUniversal()]
     filtered_hosters = []
     debrid_hosts = {}
     unk_hosts = {}
@@ -1178,7 +1154,7 @@ def apply_urlresolver(hosters):
         else:
             filtered_hosters.append(hoster)
             
-    log_utils.log('Discarded Hosts: %s' % (sorted(unk_hosts.items(), key=lambda x: x[1], reverse=True)), xbmc.LOGDEBUG)
+    log_utils.log('Discarded Hosts: %s' % (sorted(unk_hosts.items(), key=lambda x: x[1], reverse=True)), log_utils.LOGDEBUG)
     return filtered_hosters
 
 @url_dispatcher.register(MODES.RESOLVE_SOURCE, ['mode', 'class_url', 'direct', 'video_type', 'trakt_id', 'class_name'], ['season', 'episode'])
@@ -1229,7 +1205,6 @@ def play_source(mode, hoster_url, direct, video_type, trakt_id, dialog, season='
             log_utils.log('Treating hoster_url as direct: %s' % (hoster_url), log_utils.LOGDEBUG)
             stream_url = hoster_url
         else:
-            import urlresolver
             hmf = urlresolver.HostedMediaFile(url=hoster_url)
             if not hmf:
                 log_utils.log('Indirect hoster_url not supported by urlresolver: %s' % (hoster_url), log_utils.LOGDEBUG)
@@ -1253,7 +1228,7 @@ def play_source(mode, hoster_url, direct, video_type, trakt_id, dialog, season='
         if utils.bookmark_exists(trakt_id, season, episode):
             if utils.get_resume_choice(trakt_id, season, episode):
                 resume_point = utils.get_bookmark(trakt_id, season, episode)
-                log_utils.log('Resume Point: %s' % (resume_point), xbmc.LOGDEBUG)
+                log_utils.log('Resume Point: %s' % (resume_point), log_utils.LOGDEBUG)
     
     with kodi.WorkingDialog():
         try:
@@ -1302,7 +1277,7 @@ def play_source(mode, hoster_url, direct, video_type, trakt_id, dialog, season='
                 path = make_path(path, video_type, movie_meta['title'], movie_meta['year'])
                 file_name = utils2.filename_from_title(movie_meta['title'], video_type, movie_meta['year'])
         except TransientTraktError as e:
-            log_utils.log('During Playback: %s' % (str(e)), xbmc.LOGWARNING)  # just log warning if trakt calls fail and leave meta and art blank
+            log_utils.log('During Playback: %s' % (str(e)), log_utils.LOGWARNING)  # just log warning if trakt calls fail and leave meta and art blank
     
         if mode in [MODES.DOWNLOAD_SOURCE, MODES.DIRECT_DOWNLOAD]:
             utils2.download_media(stream_url, path, file_name)
@@ -1311,7 +1286,7 @@ def play_source(mode, hoster_url, direct, video_type, trakt_id, dialog, season='
         if video_type == VIDEO_TYPES.EPISODE and utils2.srt_download_enabled() and show_meta:
             srt_path = download_subtitles(kodi.get_setting('subtitle-lang'), show_meta['title'], show_meta['year'], season, episode)
             if utils2.srt_show_enabled() and srt_path:
-                log_utils.log('Setting srt path: %s' % (srt_path), xbmc.LOGDEBUG)
+                log_utils.log('Setting srt path: %s' % (srt_path), log_utils.LOGDEBUG)
                 win.setProperty('salts.playing.srt', srt_path)
     
         listitem = xbmcgui.ListItem(path=stream_url, iconImage=art['thumb'], thumbnailImage=art['thumb'])
@@ -1342,14 +1317,14 @@ def auto_play_sources(hosters, video_type, trakt_id, dialog, season, episode):
             pd.update(percent, current, prev)
             if pd.is_canceled(): return False
             hoster_url = item['class'].resolve_link(item['url'])
-            log_utils.log('Auto Playing: %s' % (hoster_url), xbmc.LOGDEBUG)
+            log_utils.log('Auto Playing: %s' % (hoster_url), log_utils.LOGDEBUG)
             if play_source(MODES.GET_SOURCES, hoster_url, item['direct'], video_type, trakt_id, dialog, season, episode):
                 return True
             if pd.is_canceled(): return False
             prev = i18n('failed_source') % (item['quality'], item['host'], item['class'].get_name())
         else:
             msg = i18n('all_sources_failed')
-            log_utils.log(msg, xbmc.LOGERROR)
+            log_utils.log(msg, log_utils.LOGERROR)
             kodi.notify(msg=msg, duration=5000)
 
 def pick_source_dialog(hosters):
@@ -1365,10 +1340,10 @@ def pick_source_dialog(hosters):
             hoster = hosters[index]
             if hoster['url']:
                 hoster_url = hoster['class'].resolve_link(hoster['url'])
-                log_utils.log('Attempting to play url: %s as direct: %s from: %s' % (hoster_url, hoster['direct'], hoster['class'].get_name()))
+                log_utils.log('Attempting to play url: %s as direct: %s from: %s' % (hoster_url, hoster['direct'], hoster['class'].get_name()), log_utils.LOGNOTICE)
                 return hoster_url, hoster['direct']
         except Exception as e:
-            log_utils.log('Error (%s) while trying to resolve %s' % (str(e), hoster['url']), xbmc.LOGERROR)
+            log_utils.log('Error (%s) while trying to resolve %s' % (str(e), hoster['url']), log_utils.LOGERROR)
 
     return None, None
 
@@ -1425,9 +1400,9 @@ def set_related_url(mode, video_type, title, year, trakt_id, season='', episode=
         total = worker_count
         while worker_count > 0:
             try:
-                log_utils.log('Calling get with timeout: %s' % (timeout), xbmc.LOGDEBUG)
+                log_utils.log('Calling get with timeout: %s' % (timeout), log_utils.LOGDEBUG)
                 result = q.get(True, timeout)
-                log_utils.log('Got result: %s' % (result), xbmc.LOGDEBUG)
+                log_utils.log('Got result: %s' % (result), log_utils.LOGDEBUG)
                 # related_list.append(result)
                 for i, item in enumerate(related_list):
                     if item['name'] == result['name']:
@@ -1440,7 +1415,7 @@ def set_related_url(mode, video_type, title, year, trakt_id, season='', episode=
                     timeout = max_timeout - (time.time() - begin)
                     if timeout < 0: timeout = 0
             except Empty:
-                log_utils.log('Get Url Timeout', xbmc.LOGWARNING)
+                log_utils.log('Get Url Timeout', log_utils.LOGWARNING)
                 break
         else:
             log_utils.log('All source results received', log_utils.LOGDEBUG)
@@ -1462,12 +1437,9 @@ def set_related_url(mode, video_type, title, year, trakt_id, season='', episode=
             if index > -1:
                 if mode == MODES.SET_URL_MANUAL:
                     related = related_list[index]
-                    keyboard = xbmc.Keyboard()
-                    keyboard.setHeading(i18n('rel_url_at') % (video_type, related['name']))
-                    keyboard.setDefault(related['url'])
-                    keyboard.doModal()
-                    if keyboard.isConfirmed():
-                        new_url = keyboard.getText()
+                    heading = i18n('rel_url_at') % (video_type, related['name'])
+                    new_url = kodi.get_keyboard(heading, related['url'])
+                    if new_url is not None:
                         utils.update_url(video_type, title, year, related['name'], related['url'], new_url, season, episode)
                         kodi.notify(msg=i18n('rel_url_set') % (related['name']), duration=5000)
                         related['label'] = '[%s] %s' % (related['name'], new_url)
@@ -1479,7 +1451,7 @@ def set_related_url(mode, video_type, title, year, trakt_id, season='', episode=
                         dialog = xbmcgui.Dialog()
                         choices = [i18n('manual_search'), '[COLOR green]%s[/COLOR]' % (i18n('force_no_match'))]
                         try:
-                            log_utils.log('Searching for: |%s|%s|%s' % (temp_title, temp_year, temp_season), xbmc.LOGDEBUG)
+                            log_utils.log('Searching for: |%s|%s|%s' % (temp_title, temp_year, temp_season), log_utils.LOGDEBUG)
                             results = related_list[index]['class'].search(video_type, temp_title, temp_year, temp_season)
                             for result in results:
                                 choice = result['title']
@@ -1487,24 +1459,21 @@ def set_related_url(mode, video_type, title, year, trakt_id, season='', episode=
                                 choices.append(choice)
                             results_index = dialog.select(i18n('select_related'), choices)
                             if results_index == 0:
-                                keyboard = xbmc.Keyboard()
-                                keyboard.setHeading(i18n('enter_search'))
                                 text = temp_title
                                 if temp_year: text = '%s (%s)' % (text, temp_year)
                                 if video_type == VIDEO_TYPES.SEASON and temp_season:
                                     text += ' Season %s' % (temp_season)
-                                keyboard.setDefault(text)
-                                keyboard.doModal()
-                                if keyboard.isConfirmed():
-                                    match = re.match('(.*?)\(?(\d{4})\)?', keyboard.getText())
+                                search_text = kodi.get_keyboard(i18n('enter_search'), text)
+                                if search_text is not None:
+                                    match = re.match('(.*?)\(?(\d{4})\)?', search_text)
                                     if match:
                                         temp_title, temp_year = match.groups()
                                         temp_title = temp_title.strip()
                                     else:
-                                        temp_title = keyboard.getText()
+                                        temp_title = search_text
                                         temp_year = ''
                                     
-                                    match = re.search('Season\s+(\d+)', keyboard.getText())
+                                    match = re.search('Season\s+(\d+)', search_text)
                                     if match:
                                         temp_season = match.group(1)
                                     else:
@@ -1547,12 +1516,9 @@ def rate_media(section, id_type, show_id, season='', episode=''):
         xbmc.executebuiltin(run)
     else:
         item = {id_type: show_id}
-        keyboard = xbmc.Keyboard()
-        keyboard.setHeading(i18n('enter_rating'))
         while True:
-            keyboard.doModal()
-            if keyboard.isConfirmed():
-                rating = keyboard.getText()
+            rating = kodi.get_keyboard(i18n('enter_rating'))
+            if rating is not None:
                 rating = rating.lower()
                 if rating in ['unrate'] + [str(i) for i in range(1, 11)]:
                     break
@@ -1564,21 +1530,16 @@ def rate_media(section, id_type, show_id, season='', episode=''):
 
 @url_dispatcher.register(MODES.EDIT_TVSHOW_ID, ['title'], ['year'])
 def edit_tvshow_id(title, year=''):
-    srt_scraper = SRT_Scraper()
-    tvshow_id = srt_scraper.get_tvshow_id(title, year)
-    keyboard = xbmc.Keyboard()
-    keyboard.setHeading(i18n('input_tvshow_id'))
-    if tvshow_id:
-        keyboard.setDefault(str(tvshow_id))
-    keyboard.doModal()
-    if keyboard.isConfirmed():
-        db_connection.set_related_url(VIDEO_TYPES.TVSHOW, title, year, SRT_SOURCE, keyboard.getText())
+    tvshow_id = SRT_Scraper().get_tvshow_id(title, year)
+    new_id = kodi.get_keyboard(i18n('input_tvshow_id'), tvshow_id)
+    if new_id is not None:
+        db_connection.set_related_url(VIDEO_TYPES.TVSHOW, title, year, SRT_SOURCE, new_id)
 
 @url_dispatcher.register(MODES.REM_FROM_LIST, ['slug', 'section', 'id_type', 'show_id'])
 def remove_from_list(slug, section, id_type, show_id):
     item = {'type': TRAKT_SECTIONS[section][:-1], id_type: show_id}
     remove_many_from_list(section, item, slug)
-    xbmc.executebuiltin("XBMC.Container.Refresh")
+    kodi.refresh_container()
 
 def remove_many_from_list(section, items, slug):
     if slug == utils.WATCHLIST_SLUG:
@@ -1598,7 +1559,7 @@ def manage_collection(mode, section, id_type, show_id):
         trakt_api.remove_from_collection(section, item)
         msg = i18n('item_from_collection')
     kodi.notify(msg=msg)
-    xbmc.executebuiltin("XBMC.Container.Refresh")
+    kodi.refresh_container()
 
 @url_dispatcher.register(MODES.ADD_TO_LIST, ['section', 'id_type', 'show_id'], ['slug'])
 def add_to_list(section, id_type, show_id, slug=None):
@@ -1644,7 +1605,7 @@ def toggle_title(trakt_id):
         filter_list.append(trakt_id)
     filter_str = '|'.join(filter_list)
     kodi.set_setting('force_title_match', filter_str)
-    xbmc.executebuiltin("XBMC.Container.Refresh")
+    kodi.refresh_container()
 
 @url_dispatcher.register(MODES.MANAGE_PROGRESS, ['action', 'trakt_id'])
 def manage_progress_cache(action, trakt_id):
@@ -1665,16 +1626,16 @@ def manage_progress_cache(action, trakt_id):
     force_str = '|'.join(force_list)
     kodi.set_setting('force_include_progress', force_str)
     if action == ACTIONS.REMOVE:
-        xbmc.executebuiltin("XBMC.Container.Refresh")
+        kodi.refresh_container()
 
 @url_dispatcher.register(MODES.TOGGLE_WATCHED, ['section', 'id_type', 'show_id'], ['watched', 'season', 'episode'])
 def toggle_watched(section, id_type, show_id, watched=True, season='', episode=''):
-    log_utils.log('In Watched: |%s|%s|%s|%s|%s|%s|' % (section, id_type, show_id, season, episode, watched), xbmc.LOGDEBUG)
+    log_utils.log('In Watched: |%s|%s|%s|%s|%s|%s|' % (section, id_type, show_id, season, episode, watched), log_utils.LOGDEBUG)
     item = {id_type: show_id}
     trakt_api.set_watched(section, item, season, episode, watched)
     w_str = i18n('watched') if watched else i18n('unwatched')
     kodi.notify(msg=i18n('marked_as') % (w_str), duration=5000)
-    xbmc.executebuiltin("XBMC.Container.Refresh")
+    kodi.refresh_container()
 
 @url_dispatcher.register(MODES.URL_EXISTS, ['trakt_id'])
 def toggle_url_exists(trakt_id):
@@ -1692,11 +1653,11 @@ def toggle_url_exists(trakt_id):
 
     show_str = '|'.join(show_list)
     kodi.set_setting('exists_list', show_str)
-    xbmc.executebuiltin("XBMC.Container.Refresh")
+    kodi.refresh_container()
 
 @url_dispatcher.register(MODES.UPDATE_SUBS)
 def update_subscriptions():
-    log_utils.log('Updating Subscriptions', xbmc.LOGDEBUG)
+    log_utils.log('Updating Subscriptions', log_utils.LOGDEBUG)
     active = kodi.get_setting(MODES.UPDATE_SUBS + '-notify') == 'true'
     with kodi.ProgressDialog('Stream All The Sources', line1=i18n('updating_subscriptions'), background=True, active=active) as pd:
         update_strms(SECTIONS.TV, pd)
@@ -1712,7 +1673,7 @@ def update_subscriptions():
     
         if active and kodi.get_setting('auto-' + MODES.UPDATE_SUBS) == 'true':
             kodi.notify(msg=i18n('next_update') % (float(kodi.get_setting(MODES.UPDATE_SUBS + '-interval'))), duration=5000)
-    xbmc.executebuiltin("XBMC.Container.Refresh")
+    kodi.refresh_container()
 
 def update_strms(section, dialog=None):
     section_params = utils2.get_section_params(section)
@@ -1733,7 +1694,7 @@ def update_strms(section, dialog=None):
         try:
             add_to_library(section_params['video_type'], item['title'], item['year'], item['ids']['trakt'])
         except Exception as e:
-            log_utils.log('Subscription Update Exception: |%s|%s|%s|%s| - %s' % (section_params['video_type'], item['title'], item['year'], item['ids']['trakt'], e), xbmc.LOGDEBUG)
+            log_utils.log('Subscription Update Exception: |%s|%s|%s|%s| - %s' % (section_params['video_type'], item['title'], item['year'], item['ids']['trakt'], e), log_utils.LOGDEBUG)
 
 @url_dispatcher.register(MODES.CLEAN_SUBS)
 def clean_subs():
@@ -1784,15 +1745,13 @@ def export_db():
         export_path = dialog.browse(0, i18n('select_export_dir'), 'files').encode('utf-8')
         if export_path:
             export_path = kodi.translate_path(export_path)
-            keyboard = xbmc.Keyboard('export.csv', i18n('enter_export_name'))
-            keyboard.doModal()
-            if keyboard.isConfirmed():
-                export_filename = keyboard.getText()
+            export_filename = kodi.get_keyboard(i18n('enter_export_name'), 'export.csv')
+            if export_filename is not None:
                 export_file = export_path + export_filename
                 db_connection.export_from_db(export_file)
                 kodi.notify(header=i18n('export_successful'), msg=i18n('exported_to') % (export_file), duration=5000)
     except Exception as e:
-        log_utils.log('Export Failed: %s' % (e), xbmc.LOGERROR)
+        log_utils.log('Export Failed: %s' % (e), log_utils.LOGERROR)
         kodi.notify(header=i18n('export'), msg=i18n('export_failed'))
 
 @url_dispatcher.register(MODES.IMPORT_DB)
@@ -1805,7 +1764,7 @@ def import_db():
             db_connection.import_into_db(import_file)
             kodi.notify(header=i18n('import_success'), msg=i18n('imported_from') % (import_file))
     except Exception as e:
-        log_utils.log('Import Failed: %s' % (e), xbmc.LOGERROR)
+        log_utils.log('Import Failed: %s' % (e), log_utils.LOGERROR)
         kodi.notify(header=i18n('import'), msg=i18n('import_failed'))
 
 @url_dispatcher.register(MODES.ADD_TO_LIBRARY, ['video_type', 'title', 'year', 'trakt_id'])
@@ -1823,7 +1782,7 @@ def man_add_to_library(video_type, title, year, trakt_id):
     kodi.notify(msg=i18n('added_to_lib') % (msg), duration=5000)
 
 def add_to_library(video_type, title, year, trakt_id):
-    log_utils.log('Creating .strm for |%s|%s|%s|%s|' % (video_type, title, year, trakt_id), xbmc.LOGDEBUG)
+    log_utils.log('Creating .strm for |%s|%s|%s|%s|' % (video_type, title, year, trakt_id), log_utils.LOGDEBUG)
     scraper = local_scraper.Local_Scraper()
     exclude_local = kodi.get_setting('exclude_local') == 'true'
     create_nfo = int(kodi.get_setting('create_nfo'))  # 0 = None | 1 = Won't scrape | 2 = All
@@ -1837,7 +1796,7 @@ def add_to_library(video_type, title, year, trakt_id):
         include_unknown = kodi.get_setting('include_unknown') == 'true'
 
         if not seasons:
-            log_utils.log('No Seasons found for %s (%s)' % (show['title'], show['year']), xbmc.LOGERROR)
+            log_utils.log('No Seasons found for %s (%s)' % (show['title'], show['year']), log_utils.LOGERROR)
         else:
             if create_nfo > 0:
                 show_path = make_path(save_path, video_type, show['title'], show['year'])
@@ -1924,9 +1883,9 @@ def write_nfo(path, video_type, meta_ids):
         if not xbmcvfs.exists(os.path.dirname(path)):
             try:
                 try: xbmcvfs.mkdirs(os.path.dirname(path))
-                except: os.mkdir(os.path.dirname(path))
+                except: os.makedirs(os.path.dirname(path))
             except Exception as e:
-                log_utils.log('Failed to create directory %s: %s' % (path, str(e)), xbmc.LOGERROR)
+                log_utils.log('Failed to create directory %s: %s' % (path, str(e)), log_utils.LOGERROR)
 
             old_nfo_string = ''
             try:
@@ -1937,21 +1896,21 @@ def write_nfo(path, video_type, meta_ids):
 
             if nfo_string != old_nfo_string:
                 try:
-                    log_utils.log('Writing nfo: %s' % nfo_string, xbmc.LOGDEBUG)
+                    log_utils.log('Writing nfo: %s' % nfo_string, log_utils.LOGDEBUG)
                     file_desc = xbmcvfs.File(path, 'w')
                     file_desc.write(nfo_string)
                     file_desc.close()
                 except Exception as e:
-                    log_utils.log('Failed to create .nfo file (%s): %s' % (path, e), xbmc.LOGERROR)
+                    log_utils.log('Failed to create .nfo file (%s): %s' % (path, e), log_utils.LOGERROR)
 
 def write_strm(stream, path, video_type, title, year, trakt_id, season='', episode='', require_source=False):
     path = xbmc.makeLegalFilename(path)
     if not xbmcvfs.exists(os.path.dirname(path)):
         try:
             try: xbmcvfs.mkdirs(os.path.dirname(path))
-            except: os.mkdir(os.path.dirname(path))
+            except: os.makedirs(os.path.dirname(path))
         except Exception as e:
-            log_utils.log('Failed to create directory %s: %s' % (path, str(e)), xbmc.LOGERROR)
+            log_utils.log('Failed to create directory %s: %s' % (path, str(e)), log_utils.LOGERROR)
 
     old_strm_string = ''
     try:
@@ -1965,14 +1924,14 @@ def write_strm(stream, path, video_type, title, year, trakt_id, season='', episo
     if stream != old_strm_string:
         try:
             if not require_source or utils.url_exists(ScraperVideo(video_type, title, year, trakt_id, season, episode)):
-                log_utils.log('Writing strm: %s' % stream, xbmc.LOGDEBUG)
+                log_utils.log('Writing strm: %s' % stream, log_utils.LOGDEBUG)
                 file_desc = xbmcvfs.File(path, 'w')
                 file_desc.write(stream)
                 file_desc.close()
             else:
-                log_utils.log('No strm written for |%s|%s|%s|%s|%s|' % (video_type, title, year, season, episode), xbmc.LOGWARNING)
+                log_utils.log('No strm written for |%s|%s|%s|%s|%s|' % (video_type, title, year, season, episode), log_utils.LOGWARNING)
         except Exception as e:
-            log_utils.log('Failed to create .strm file (%s): %s' % (path, e), xbmc.LOGERROR)
+            log_utils.log('Failed to create .strm file (%s): %s' % (path, e), log_utils.LOGERROR)
 
 def show_pickable_list(slug, pick_label, pick_mode, section):
     if not slug:
@@ -2024,7 +1983,7 @@ def make_dir_from_list(section, list_data, slug=None, query=None, page=None):
             show['watched'] = watched.get(show['ids']['trakt'], False)
         else:
             try:
-                log_utils.log('%s/%s: Watched: %s - Aired: %s' % (show['ids']['trakt'], show['ids']['slug'], watched.get(show['ids']['trakt'], 'NaN'), show['aired_episodes']), xbmc.LOGDEBUG)
+                log_utils.log('%s/%s: Watched: %s - Aired: %s' % (show['ids']['trakt'], show['ids']['slug'], watched.get(show['ids']['trakt'], 'NaN'), show['aired_episodes']), log_utils.LOGDEBUG)
                 show['watched'] = watched[show['ids']['trakt']] >= show['aired_episodes']
                 show['watched_count'] = watched[show['ids']['trakt']]
             except: show['watched'] = False
@@ -2077,10 +2036,10 @@ def make_dir_from_cal(mode, start_date, days):
         except: episode['watched'] = False
 
         if show_date < start_date.date():
-            log_utils.log('Skipping show date |%s| before start: |%s|' % (show_date, start_date.date()), xbmc.LOGDEBUG)
+            log_utils.log('Skipping show date |%s| before start: |%s|' % (show_date, start_date.date()), log_utils.LOGDEBUG)
             continue
         elif show_date >= next_week.date():
-            log_utils.log('Stopping because show date |%s| >= end: |%s|' % (show_date, next_week.date()), xbmc.LOGDEBUG)
+            log_utils.log('Stopping because show date |%s| >= end: |%s|' % (show_date, next_week.date()), log_utils.LOGDEBUG)
             break
 
         date = utils2.make_day(datetime.date.fromtimestamp(utc_secs).isoformat())
@@ -2111,7 +2070,7 @@ def make_season_item(season, info, trakt_id, fanart, title, year):
     season['images']['fanart'] = {}
     season['images']['fanart']['full'] = fanart
     liz = utils2.make_list_item(label, season)
-    log_utils.log('Season Info: %s' % (info), xbmc.LOGDEBUG)
+    log_utils.log('Season Info: %s' % (info), log_utils.LOGDEBUG)
     liz.setInfo('video', info)
     menu_items = []
 
@@ -2139,8 +2098,8 @@ def make_season_item(season, info, trakt_id, fanart, title, year):
     return liz
 
 def make_episode_item(show, episode, show_subs=True, menu_items=None):
-    # log_utils.log('Make Episode: Show: %s, Episode: %s, Show Subs: %s' % (show, episode, show_subs), xbmc.LOGDEBUG)
-    # log_utils.log('Make Episode: Episode: %s' % (episode), xbmc.LOGDEBUG)
+    # log_utils.log('Make Episode: Show: %s, Episode: %s, Show Subs: %s' % (show, episode, show_subs), log_utils.LOGDEBUG)
+    # log_utils.log('Make Episode: Episode: %s' % (episode), log_utils.LOGDEBUG)
     if menu_items is None: menu_items = []
     show['title'] = re.sub(' \(\d{4}\)$', '', show['title'])
     if episode['title'] is None:
@@ -2153,7 +2112,7 @@ def make_episode_item(show, episode, show_subs=True, menu_items=None):
     except: time_str = i18n('unavailable')
 
     log_utils.log('First Aired: Title: %s S/E: %s/%s fa: %s, utc: %s, local: %s' %
-                  (show['title'], episode['season'], episode['number'], episode['first_aired'], utc_air_time, time_str), xbmc.LOGDEBUG)
+                  (show['title'], episode['season'], episode['number'], episode['first_aired'], utc_air_time, time_str), log_utils.LOGDEBUG)
 
     if kodi.get_setting('unaired_indicator') == 'true' and (not episode['first_aired'] or utc_air_time > time.time()):
         label = '[I][COLOR chocolate]%s[/COLOR][/I]' % (label)
@@ -2374,8 +2333,8 @@ def make_item(section_params, show, menu_items=None):
 def main(argv=None):
     if sys.argv: argv = sys.argv
     queries = kodi.parse_query(sys.argv[2])
-    log_utils.log('Version: |%s| Queries: |%s|' % (kodi.get_version(), queries))
-    log_utils.log('Args: |%s|' % (argv))
+    log_utils.log('Version: |%s| Queries: |%s|' % (kodi.get_version(), queries), log_utils.LOGNOTICE)
+    log_utils.log('Args: |%s|' % (argv), log_utils.LOGNOTICE)
 
     # don't process params that don't match our url exactly. (e.g. plugin://plugin.video.1channel/extrafanart)
     plugin_url = 'plugin://%s/' % (kodi.get_id())
@@ -2388,7 +2347,7 @@ def main(argv=None):
         mode = queries.get('mode', None)
         url_dispatcher.dispatch(mode, queries)
     except (TransientTraktError, TraktError, TraktAuthError) as e:
-        log_utils.log(str(e), xbmc.LOGERROR)
+        log_utils.log(str(e), log_utils.LOGERROR)
         kodi.notify(msg=str(e), duration=5000)
     except DatabaseRecoveryError as e:
         log_utils.log('Attempting DB recovery due to Database Error: %s' % (e), log_utils.LOGWARNING)

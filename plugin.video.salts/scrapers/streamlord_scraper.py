@@ -27,10 +27,12 @@ from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
 from salts_lib.constants import VIDEO_TYPES
+from salts_lib.kodi import i18n
 import scraper
 
 
 BASE_URL = 'http://www.streamlord.com'
+LOGIN_URL = '/login.html'
 
 class StreamLord_Scraper(scraper.Scraper):
     base_url = BASE_URL
@@ -38,6 +40,8 @@ class StreamLord_Scraper(scraper.Scraper):
     def __init__(self, timeout=scraper.DEFAULT_TIMEOUT):
         self.timeout = timeout
         self.base_url = kodi.get_setting('%s-base_url' % (self.get_name()))
+        self.username = kodi.get_setting('%s-username' % (self.get_name()))
+        self.password = kodi.get_setting('%s-password' % (self.get_name()))
 
     @classmethod
     def provides(cls):
@@ -112,6 +116,14 @@ class StreamLord_Scraper(scraper.Scraper):
         title_pattern = 'class="head".*?</span>(?P<title>.*?)</a>.*?href="(?P<url>[^"]+)'
         return self._default_get_episode_url(show_url, video, episode_pattern, title_pattern)
         
+    @classmethod
+    def get_settings(cls):
+        settings = super(cls, cls).get_settings()
+        name = cls.get_name()
+        settings.append('         <setting id="%s-username" type="text" label="     %s" default="" visible="eq(-4,true)"/>' % (name, i18n('username')))
+        settings.append('         <setting id="%s-password" type="text" label="     %s" option="hidden" default="" visible="eq(-5,true)"/>' % (name, i18n('password')))
+        return settings
+
     def search(self, video_type, title, year, season=''):
         results = []
         url = urlparse.urljoin(self.base_url, '/search.html')
@@ -120,13 +132,11 @@ class StreamLord_Scraper(scraper.Scraper):
         html = self._http_get(url, data=data, headers=headers, cache_limit=2)
         if video_type == VIDEO_TYPES.MOVIE:
             query_type = 'watch-movie-'
-            class_type = 'add-to-watchlist'
         else:
             query_type = 'watch-tvshow-'
-            class_type = 'add-show-to-watchlist'
 
         norm_title = scraper_utils.normalize_title(title)
-        for item in dom_parser.parse_dom(html, 'a', {'class': class_type}):
+        for item in dom_parser.parse_dom(html, 'a', {'href': '#'}):
             match = re.search('href="(%s[^"]+)' % (query_type), item)
             if match:
                 link = match.group(1)
@@ -144,3 +154,23 @@ class StreamLord_Scraper(scraper.Scraper):
         link = link.replace('-', ' ')
         link = capwords(link)
         return link
+
+    def _http_get(self, url, auth=True, data=None, headers=None, allow_redirect=True, method=None, cache_limit=8):
+        # return all uncached blank pages if no user or pass
+        if not self.username or not self.password:
+            return ''
+
+        html = super(self.__class__, self)._http_get(url, data=data, headers=headers, allow_redirect=allow_redirect, method=method, cache_limit=cache_limit)
+        if auth and LOGIN_URL in html:
+            log_utils.log('Logging in for url (%s)' % (url), log_utils.LOGDEBUG)
+            self.__login()
+            html = super(self.__class__, self)._http_get(url, data=data, headers=headers, method=method, cache_limit=0)
+
+        return html
+
+    def __login(self):
+        data = {'username': self.username, 'password': self.password, 'submit': 'Login'}
+        url = urlparse.urljoin(self.base_url, LOGIN_URL)
+        html = self._http_get(url, auth=False, data=data, allow_redirect=False, cache_limit=0)
+        if html != 'index.html':
+            raise Exception('StreamLord login failed: %s' % (html))

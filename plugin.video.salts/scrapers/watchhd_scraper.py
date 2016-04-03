@@ -35,7 +35,7 @@ import scraper
 
 BASE_URL = base64.decodestring('aHR0cDovL3dhdGNoMTA4MHAuY29t')
 SEARCH_URL = 'aHR0cHM6Ly93d3cuZ29vZ2xlYXBpcy5jb20vY3VzdG9tc2VhcmNoL3YxZWxlbWVudD9rZXk9QUl6YVN5Q1ZBWGlVelJZc01MMVB2NlJ3U0cxZ3VubU1pa1R6UXFZJnJzej1maWx0ZXJlZF9jc2UmbnVtPTEwJmhsPWVuJmN4PTAxMjg0NjI0MTAwMTc0NDgzNzMwNzpia210NWhrb3ZsZyZnb29nbGVob3N0PXd3dy5nb29nbGUuY29tJnE9JXM='
-INDIRECT_NAMES = {'ORIGINAL CDN 1': 'openload.co', 'FLASH CDN 1': 'vid.ag'}
+INDIRECT_NAMES = {'ORIGINAL CDN 1': 'openload.co', 'FLASH CDN 1': 'vid.ag', 'BACKUP 2': 'openload.co', 'BACKUP 3': 'vid.ag'}
 
 class WatchHD_Scraper(scraper.Scraper):
     base_url = BASE_URL

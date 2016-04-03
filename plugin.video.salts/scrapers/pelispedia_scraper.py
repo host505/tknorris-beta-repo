@@ -68,6 +68,7 @@ class PelisPedia_Scraper(scraper.Scraper):
                     fragment = dom_parser.parse_dom(html, 'div', {'id': 'botones'})
                     if fragment:
                         for media_url in dom_parser.parse_dom(fragment[0], 'a', ret='href'):
+                            media_url = media_url.replace(' ', '')
                             if self.base_url in media_url or 'pelispedia.biz' in media_url:
                                 headers = {'Referer': iframe_url[0]}
                                 html = self._http_get(media_url, headers=headers, cache_limit=.5)

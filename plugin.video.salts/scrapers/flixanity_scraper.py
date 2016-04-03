@@ -148,11 +148,11 @@ class Flixanity_Scraper(scraper.Scraper):
         if not self.username or not self.password:
             return ''
 
-        html = self._cached_http_get(url, self.base_url, self.timeout, data=data, headers=headers, method=method, cache_limit=cache_limit)
+        html = super(self.__class__, self)._http_get(url, data=data, headers=headers, method=method, cache_limit=cache_limit)
         if '<span>Log In</span>' in html:
             log_utils.log('Logging in for url (%s)' % (url), log_utils.LOGDEBUG)
             self.__login()
-            html = self._cached_http_get(url, self.base_url, self.timeout, data=data, headers=headers, method=method, cache_limit=0)
+            html = super(self.__class__, self)._http_get(url, data=data, headers=headers, method=method, cache_limit=0)
 
         self.__get_token(html)
         return html
@@ -160,7 +160,7 @@ class Flixanity_Scraper(scraper.Scraper):
     def __get_token(self, html=''):
         if self.__token is None:
             if not html:
-                html = self._cached_http_get(self.base_url, self.base_url, self.timeout, cache_limit=8)
+                html = super(self.__class__, self)._http_get(self.base_url, cache_limit=8)
                 
             match = re.search("var\s+tok\s*=\s*'([^']+)", html)
             if match:
@@ -171,7 +171,7 @@ class Flixanity_Scraper(scraper.Scraper):
     def __get_t(self, html=''):
         if not self.__t:
             if not html:
-                html = self._cached_http_get(self.base_url, self.base_url, self.timeout, cache_limit=0)
+                html = super(self.__class__, self)._http_get(self.base_url, cache_limit=0)
                 
             match = re.search('<input type="hidden" name="t" value="([^"]+)', html)
             if match:
@@ -185,7 +185,7 @@ class Flixanity_Scraper(scraper.Scraper):
         self.__get_token()
         self.__get_t()
         data = {'username': self.username, 'password': self.password, 'action': 'login', 'token': self.__token, 't': self.__t}
-        html = self._cached_http_get(url, self.base_url, self.timeout, data=data, headers=XHR, cache_limit=0)
+        html = super(self.__class__, self)._http_get(url, data=data, headers=XHR, cache_limit=0)
         if html != '0': raise Exception('flixanity login failed')
 
     def __get_bearer(self):
@@ -196,11 +196,11 @@ class Flixanity_Scraper(scraper.Scraper):
     
     def __get_search_url(self):
         search_url = SEARCH_URL
-        html = self._cached_http_get(self.base_url, self.base_url, self.timeout, cache_limit=24)
+        html = super(self.__class__, self)._http_get(self.base_url, cache_limit=24)
         for match in re.finditer('<script[^>]+src="([^"]+)', html):
             script = match.group(1)
             if 'flixanity' in script:
-                html = self._cached_http_get(script, self.base_url, self.timeout, cache_limit=24)
+                html = super(self.__class__, self)._http_get(script, cache_limit=24)
                 match = re.search('autocomplete\([^"]*"([^"]+)', html)
                 if match:
                     search_url = match.group(1)

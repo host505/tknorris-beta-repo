@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SALTS\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"PO-Revision-Date: 2016-02-20 09:51+0000\n"
+"PO-Revision-Date: 2016-03-23 08:14+0000\n"
 "Last-Translator: tknorris\n"
 "Language-Team: English (United States) (http://www.transifex.com/tv-addons/salts/language/en_US/)\n"
 "MIME-Version: 1.0\n"
@@ -984,6 +984,74 @@ msgctxt "#30252"
 msgid "DB Reset Failed: %s"
 msgstr "DB Reset Failed: %s"
 
+msgctxt "#30253"
+msgid "No Streamable Url Found"
+msgstr "No Streamable Url Found"
+
+msgctxt "#30254"
+msgid "Discovering Next Episodes"
+msgstr "Discovering Next Episodes"
+
+msgctxt "#30255"
+msgid "Retrieving Watched History"
+msgstr "Retrieving Watched History"
+
+msgctxt "#30256"
+msgid "Retrieving Watchlist"
+msgstr "Retrieving Watchlist"
+
+msgctxt "#30257"
+msgid "Retrieving Hidden Progress List"
+msgstr "Retrieving Hidden Progress List"
+
+msgctxt "#30258"
+msgid "Requesting Progress for: %s"
+msgstr "Requesting Progress for: %s"
+
+msgctxt "#30259"
+msgid "Received Progress for: %s"
+msgstr "Received Progress for: %s"
+
+msgctxt "#30260"
+msgid "Reset Related Urls"
+msgstr "Reset Related Urls"
+
+msgctxt "#30261"
+msgid "Related Urls Cleared: %s"
+msgstr "Related Urls Cleared: %s"
+
+msgctxt "#30262"
+msgid "Anticipated %s"
+msgstr "Anticipated %s"
+
+msgctxt "#30263"
+msgid "Set as Sources View"
+msgstr "Set as Sources View"
+
+msgctxt "#30264"
+msgid "Set Related Season Url (Search)"
+msgstr "Set Related Season Url (Search)"
+
+msgctxt "#30265"
+msgid "Trakt API Offline Mode Enabled"
+msgstr "Trakt API Offline Mode Enabled"
+
+msgctxt "#30266"
+msgid "On ANY device, visit: %s"
+msgstr "On ANY device, visit: %s"
+
+msgctxt "#30267"
+msgid "When prompted, enter code: %s"
+msgstr "When prompted, enter code: %s"
+
+msgctxt "#30268"
+msgid "Code expires in: %s seconds"
+msgstr "Code expires in: %s seconds"
+
+msgctxt "#30269"
+msgid "Authorization was Rejected"
+msgstr "Authorization was Rejected"
+
 msgctxt "#30500"
 msgid "Addon Theme"
 msgstr "Addon Theme"
@@ -1647,4 +1715,28 @@ msgstr "Continue"
 msgctxt "#30668"
 msgid "Cancel"
 msgstr "Cancel"
+
+msgctxt "#30669"
+msgid "Select this item to Install the SALTS Themepak"
+msgstr "Select this item to Install the SALTS Themepak"
+
+msgctxt "#30670"
+msgid "Show Settings"
+msgstr "Show Settings"
+
+msgctxt "#30671"
+msgid "Show Anticipated"
+msgstr "Show Anticipated"
+
+msgctxt "#30672"
+msgid "Default Sources View (0 = None)"
+msgstr "Default Sources View (0 = None)"
+
+msgctxt "#30673"
+msgid "Scraper Last Update"
+msgstr "Scraper Last Update"
+
+msgctxt "#30674"
+msgid "Trakt API Offline Mode"
+msgstr "Trakt API Offline Mode"
 

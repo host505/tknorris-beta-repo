@@ -124,12 +124,12 @@ class OroroTV_Scraper(scraper.Scraper):
         if not self.username or not self.password:
             return ''
 
-        html = self._cached_http_get(url, self.base_url, self.timeout, cookies=cookies, data=data, headers=headers, allow_redirect=allow_redirect, method=method, cache_limit=cache_limit)
+        html = super(self.__class__, self)._http_get(url, cookies=cookies, data=data, headers=headers, allow_redirect=allow_redirect, method=method, cache_limit=cache_limit)
         if auth and (not html or LOGIN_URL in html):
             log_utils.log('Logging in for url (%s)' % (url), log_utils.LOGDEBUG)
             self.__login()
             xbmc.sleep(ORORO_WAIT)
-            html = self._cached_http_get(url, self.base_url, self.timeout, data=data, headers=headers, method=method, cache_limit=0)
+            html = super(self.__class__, self)._http_get(url, data=data, headers=headers, method=method, cache_limit=0)
 
         return html
 

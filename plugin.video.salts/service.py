@@ -28,7 +28,7 @@ from salts_lib.db_utils import DB_Connection
 
 MAX_ERRORS = 10
 
-log_utils.log('Service: Installed Version: %s' % (kodi.get_version()))
+log_utils.log('Service: Installed Version: %s' % (kodi.get_version()), log_utils.LOGNOTICE)
 db_connection = DB_Connection()
 if kodi.get_setting('use_remote_db') == 'false' or kodi.get_setting('enable_upgrade') == 'true':
     if TRIG_DB_UPG:
@@ -39,7 +39,7 @@ if kodi.get_setting('use_remote_db') == 'false' or kodi.get_setting('enable_upgr
 
 class Service(xbmc.Player):
     def __init__(self, *args, **kwargs):
-        log_utils.log('Service: starting...')
+        log_utils.log('Service: starting...', log_utils.LOGNOTICE)
         xbmc.Player.__init__(self, *args, **kwargs)
         self.win = xbmcgui.Window(10000)
         self.reset()
@@ -61,7 +61,7 @@ class Service(xbmc.Player):
         self._lastPos = 0
 
     def onPlayBackStarted(self):
-        log_utils.log('Service: Playback started')
+        log_utils.log('Service: Playback started', log_utils.LOGNOTICE)
         playing = self.win.getProperty('salts.playing') == 'True'
         self.trakt_id = self.win.getProperty('salts.playing.trakt_id')
         self.season = self.win.getProperty('salts.playing.season')
@@ -70,7 +70,7 @@ class Service(xbmc.Player):
         trakt_resume = self.win.getProperty('salts.playing.trakt_resume')
         salts_resume = self.win.getProperty('salts.playing.salts_resume')
         if playing:   # Playback is ours
-            log_utils.log('Service: tracking progress...')
+            log_utils.log('Service: tracking progress...', log_utils.LOGNOTICE)
             self.tracked = True
             if srt_path:
                 log_utils.log('Service: Enabling subtitles: %s' % (srt_path), log_utils.LOGDEBUG)
@@ -96,7 +96,7 @@ class Service(xbmc.Player):
             self.seekTime(resume_time)
 
     def onPlayBackStopped(self):
-        log_utils.log('Service: Playback Stopped')
+        log_utils.log('Service: Playback Stopped', log_utils.LOGNOTICE)
         if self.tracked:
             # clear the playlist if SALTS was playing and only one item in playlist to
             # use playlist to determine playback method in get_sources
@@ -126,7 +126,7 @@ class Service(xbmc.Player):
             self.reset()
 
     def onPlayBackEnded(self):
-        log_utils.log('Service: Playback completed')
+        log_utils.log('Service: Playback completed', log_utils.LOGNOTICE)
         self.onPlayBackStopped()
 
 monitor = Service()
@@ -168,4 +168,4 @@ while not xbmc.abortRequested:
     xbmc.sleep(1000)
     disable_global_cx()
     
-log_utils.log('Service: shutting down...')
+log_utils.log('Service: shutting down...', log_utils.LOGNOTICE)

@@ -1,3 +1,16 @@
+[B]Version 2.0.29[/B]
+- Add SeriesWatch scraper
+- Fix StreamLord
+- Fix 9Movies
+- Fix PubFilm
+- Improve DDLValley
+- Improve PelisPedia
+- Improve WatchHD scraper
+- Depend on SMU 3.0
+- Update Translations
+- Add semaphore on DB writes
+- Code cleanup
+
 [B]Version 2.0.28[/B]
 - Add NaCl Theme (from Jokster)
 - Fix m4ufree scraper

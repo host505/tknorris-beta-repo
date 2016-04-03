@@ -124,14 +124,6 @@ class NineMovies_Scraper(scraper.Scraper):
                 
         return sources
     
-    def __get_token(self, data):
-        n = 0
-        for key in data:
-            if not key.startswith('_'):
-                for i, c in enumerate(data[key]):
-                    n += ord(c) * (i + 1990)
-        return {'_token': hex(n)[2:]}
-                
     def get_url(self, video):
         return self._default_get_url(video)
 
@@ -150,7 +142,10 @@ class NineMovies_Scraper(scraper.Scraper):
         return link == int(episode)
         
     def search(self, video_type, title, year, season=''):
-        search_url = urlparse.urljoin(self.base_url, '/search?keyword=%s' % (urllib.quote_plus(title)))
+        query = {'keyword': title}
+        query.update(self.__get_token(query))
+        search_url = urlparse.urljoin(self.base_url, '/search')
+        search_url = search_url + '?' + urllib.urlencode(query)
         html = self._http_get(search_url, cache_limit=1)
         results = []
         match_year = ''
@@ -170,3 +165,11 @@ class NineMovies_Scraper(scraper.Scraper):
                             results.append(result)
 
         return results
+
+    def __get_token(self, data):
+        n = 0
+        for key in data:
+            if not key.startswith('_'):
+                for i, c in enumerate(data[key]):
+                    n += ord(c) * (i + 2016 + len(data[key]))
+        return {'_token': hex(n)[2:]}
