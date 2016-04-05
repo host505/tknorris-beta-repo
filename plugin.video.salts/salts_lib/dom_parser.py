@@ -48,64 +48,33 @@ def _getDOMContent(html, name, match, ret):  # Cleanup
     return result
 
 def _getDOMAttributes(match, name, ret):
-    lst = re.compile('<' + name + '.*?' + ret + '=([\'"].[^>]*?[\'"])>', re.M | re.S).findall(match)
-    if len(lst) == 0:
-        lst = re.compile('<' + name + '.*?' + ret + '=(.[^>]*?)>', re.M | re.S).findall(match)
-    ret = []
-    for tmp in lst:
-        cont_char = tmp[0]
-        if cont_char in "'\"":
-            # Limit down to next variable.
-            if tmp.find('=' + cont_char, tmp.find(cont_char, 1)) > -1:
-                tmp = tmp[:tmp.find('=' + cont_char, tmp.find(cont_char, 1))]
-
-            # Limit to the last quotation mark
-            if tmp.rfind(cont_char, 1) > -1:
-                tmp = tmp[1:tmp.rfind(cont_char)]
-        else:
-            if tmp.find(" ") > 0:
-                tmp = tmp[:tmp.find(" ")]
-            elif tmp.find("/") > 0:
-                tmp = tmp[:tmp.find("/")]
-            elif tmp.find(">") > 0:
-                tmp = tmp[:tmp.find(">")]
-
-        ret.append(tmp.strip())
-    return ret
+    pattern = '''<%s[^>]+%s\s*=\s*('[^']*|"[^"]*|[^>]*)''' % (name, ret)
+    results = re.findall(pattern, match, re.I | re.M | re.S)
+    return [result[1:] if re.search('''^['"]''', result) else result for result in results]
 
 def _getDOMElements(item, name, attrs):
-    lst = []
-    for key in attrs:
-        lst2 = re.compile('(<' + name + '[^>]*?(?:' + key + '=[\'"]' + attrs[key] + '[\'"].*?>))', re.M | re.S).findall(item)
-        if len(lst2) == 0 and attrs[key].find(" ") == -1:  # Try matching without quotation marks
-            lst2 = re.compile('(<' + name + '[^>]*?(?:' + key + '=' + attrs[key] + '.*?>))', re.M | re.S).findall(item)
-
-        if len(lst) == 0:
-            lst = lst2
-            lst2 = []
-        else:
-            test = range(len(lst))
-            test.reverse()
-            for i in test:  # Delete anything missing from the next list.
-                if not lst[i] in lst2:
-                    del(lst[i])
-
-    if len(lst) == 0 and attrs == {}:
-        lst = re.compile('(<' + name + '>)', re.M | re.S).findall(item)
-        if len(lst) == 0:
-            lst = re.compile('(<' + name + ' .*?>)', re.M | re.S).findall(item)
-
-    return lst
+    if not attrs:
+        pattern = '(<%s[^>]*>)' % (name)
+        this_list = re.findall(pattern, item, re.M | re.S | re.I)
+    else:
+        last_list = None
+        for key in attrs:
+            pattern = '''(<%s[^>]+%s=['"]%s['"][^>]*>)''' % (name, key, attrs[key])
+            this_list = re.findall(pattern, item, re.M | re. S | re.I)
+            if not this_list and ' ' not in attrs[key]:
+                pattern = '''(<%s[^>]+%s=%s[^>]*>)''' % (name, key, attrs[key])
+                this_list = re.findall(pattern, item, re.M | re. S | re.I)
+    
+            if last_list is None:
+                last_list = this_list
+            else:
+                last_list = [item for item in this_list if item in last_list]
+        this_list = last_list
+    
+    return this_list
 
 def parse_dom(html, name=u"", attrs={}, ret=False):
-    log_utils.log("parse_dom: " + repr(name) + " - Attrs:" + repr(attrs) + " - Ret: " + repr(ret) + " - HTML: " + str(type(html)), log_utils.LOGDEBUG)
-
-    if isinstance(name, str):  # Should be handled
-        try:
-            name = name   # .decode("utf-8")
-        except:
-            log_utils.log("Couldn't decode name binary string: " + repr(name), log_utils.LOGWARNING)
-
+    log_utils.log('parse_dom: Name: |%s| Attrs: |%s| Ret: |%s| - HTML: %s' % (name, attrs, ret, type(html)), log_utils.LOGDEBUG)
     if isinstance(html, str):
         try:
             html = [html.decode("utf-8")]  # Replace with chardet thingy
@@ -120,11 +89,11 @@ def parse_dom(html, name=u"", attrs={}, ret=False):
         html = [html]
     elif not isinstance(html, list):
         log_utils.log("Input isn't list or string/unicode.", log_utils.LOGWARNING)
-        return u""
+        return ''
 
     if not name.strip():
         log_utils.log("Missing tag name", log_utils.LOGWARNING)
-        return u""
+        return ''
 
     ret_lst = []
     for item in html:

@@ -26,12 +26,12 @@ from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import VIDEO_TYPES
 from salts_lib.constants import QUALITIES
+from salts_lib.constants import USER_AGENT
 import scraper
 
 BASE_URL = 'http://pubfilm.com'
 GK_URL = 'http://player.pubfilm.com/smplayer/plugins/gkphp/plugins/gkpluginsphp.php'
 XHR = {'X-Requested-With': 'XMLHttpRequest'}
-PB_UA = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36'
 
 class PubFilm_Scraper(scraper.Scraper):
     base_url = BASE_URL
@@ -103,8 +103,9 @@ class PubFilm_Scraper(scraper.Scraper):
     def __get_gk_links(self, link, iframe_url):
         sources = {}
         data = {'link': link}
-        headers = {'Referer': iframe_url, 'User-Agent': PB_UA}
-        html = self._http_get(GK_URL, data=data, headers=headers, cache_limit=0)
+        headers = XHR
+        headers.update({'Referer': iframe_url, 'User-Agent': USER_AGENT})
+        html = self._http_get(GK_URL, data=data, headers=headers, cache_limit=.25)
         js_data = scraper_utils.parse_json(html, GK_URL)
         if 'link' in js_data:
             if isinstance(js_data['link'], basestring):

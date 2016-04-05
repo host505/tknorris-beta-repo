@@ -163,7 +163,7 @@ class TuneMovie_Scraper(scraper.Scraper):
     def search(self, video_type, title, year, season=''):
         search_url = urlparse.urljoin(self.base_url, '/search-movies/%s.html')
         search_url = search_url % (urllib.quote_plus(title))
-        html = self._http_get(search_url, cache_limit=0)
+        html = self._http_get(search_url, cache_limit=8)
         results = []
         for thumb in dom_parser.parse_dom(html, 'div', {'class': 'thumb'}):
             match_title = dom_parser.parse_dom(thumb, 'a', {'class': 'clip-link'}, ret='title')

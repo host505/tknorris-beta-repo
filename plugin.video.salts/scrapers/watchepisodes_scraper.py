@@ -79,7 +79,7 @@ class WatchEpisodes_Scraper(scraper.Scraper):
                     rating = score * 10 if score else None
                 
                 if stream_url:
-                    stream_url = stream_url[0]
+                    stream_url = stream_url[0].strip()
                     host = urlparse.urlparse(stream_url).hostname
                     quality = scraper_utils.get_quality(video, host, QUALITIES.HIGH)
                     hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': quality, 'views': views, 'rating': rating, 'url': stream_url, 'direct': False}

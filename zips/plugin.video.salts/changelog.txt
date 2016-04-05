@@ -1,3 +1,10 @@
+[B]Version 2.0.30[/B]
+- Add Stage66 Scraper
+- Remove Zumvo Scraper
+- Fix download dir check & header parsing
+- Improve caching in several scrapers
+- Optimize dom_parser
+
 [B]Version 2.0.29[/B]
 - Add SeriesWatch scraper
 - Fix StreamLord

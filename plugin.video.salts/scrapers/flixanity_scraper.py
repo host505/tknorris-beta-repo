@@ -168,23 +168,10 @@ class Flixanity_Scraper(scraper.Scraper):
             else:
                 log_utils.log('Unable to locate Flixanity token', log_utils.LOGWARNING)
     
-    def __get_t(self, html=''):
-        if not self.__t:
-            if not html:
-                html = super(self.__class__, self)._http_get(self.base_url, cache_limit=0)
-                
-            match = re.search('<input type="hidden" name="t" value="([^"]+)', html)
-            if match:
-                self.__t = match.group(1)
-            else:
-                log_utils.log('Unable to locate Flixanity t value', log_utils.LOGWARNING)
-                self.__t = ''
-
     def __login(self):
         url = urlparse.urljoin(self.base_url, '/ajax/login.php')
         self.__get_token()
-        self.__get_t()
-        data = {'username': self.username, 'password': self.password, 'action': 'login', 'token': self.__token, 't': self.__t}
+        data = {'username': self.username, 'password': self.password, 'action': 'login', 'token': self.__token, 't': ''}
         html = super(self.__class__, self)._http_get(url, data=data, headers=XHR, cache_limit=0)
         if html != '0': raise Exception('flixanity login failed')
 

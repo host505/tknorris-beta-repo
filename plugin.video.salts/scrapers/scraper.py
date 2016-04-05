@@ -244,6 +244,7 @@ class Scraper(object):
         if cookies is None: cookies = {}
         if timeout == 0: timeout = None
         if headers is None: headers = {}
+        if url.startswith('//'): url = 'http:' + url
         referer = headers['Referer'] if 'Referer' in headers else url
         log_utils.log('Getting Url: %s cookie=|%s| data=|%s| extra headers=|%s|' % (url, cookies, data, headers), log_utils.LOGDEBUG)
         if data is not None:

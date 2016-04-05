@@ -627,14 +627,19 @@ def download_media(url, path, file_name):
         progress = int(kodi.get_setting('down_progress'))
         active = not progress == PROGRESS.OFF
         background = progress == PROGRESS.BACKGROUND
-        with kodi.ProgressDialog('Premiumize Cloud', i18n('downloading') % (file_name), background=background, active=active) as pd:
-            request = urllib2.Request(url)
-            request.add_header('User-Agent', USER_AGENT)
-            request.add_unredirected_header('Host', request.get_host())
+        with kodi.ProgressDialog(kodi.get_name(), i18n('downloading') % (file_name), background=background, active=active) as pd:
+            try:
+                headers = dict([item.split('=') for item in (url.split('|')[1]).split('&')])
+                for key in headers: headers[key] = urllib.unquote(headers[key])
+            except:
+                headers = {}
+            if 'User-Agent' not in headers: headers['User-Agent'] = USER_AGENT
+            request = urllib2.Request(url.split('|')[0], headers=headers)
             response = urllib2.urlopen(request)
-            content_length = 0
             if 'Content-Length' in response.info():
                 content_length = int(response.info()['Content-Length'])
+            else:
+                content_length = 0
     
             file_name = file_name.replace('.strm', get_extension(url, response))
             full_path = os.path.join(path, file_name)
@@ -645,8 +650,9 @@ def download_media(url, path, file_name):
                 try: xbmcvfs.mkdirs(path)
                 except: os.makedirs(path)
             except Exception as e:
-                log_utils.log('Dir Create Failed: %s' % (e), log_utils.LOGDEBUG)
+                log_utils.log('Path Create Failed: %s (%s)' % (e, path), log_utils.LOGDEBUG)
     
+            if not path.endswith(os.sep): path += os.sep
             if not xbmcvfs.exists(path):
                 raise Exception(i18n('failed_create_dir'))
             

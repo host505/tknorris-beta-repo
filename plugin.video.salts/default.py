@@ -1659,7 +1659,7 @@ def toggle_url_exists(trakt_id):
 def update_subscriptions():
     log_utils.log('Updating Subscriptions', log_utils.LOGDEBUG)
     active = kodi.get_setting(MODES.UPDATE_SUBS + '-notify') == 'true'
-    with kodi.ProgressDialog('Stream All The Sources', line1=i18n('updating_subscriptions'), background=True, active=active) as pd:
+    with kodi.ProgressDialog(kodi.get_name(), line1=i18n('updating_subscriptions'), background=True, active=active) as pd:
         update_strms(SECTIONS.TV, pd)
         if kodi.get_setting('include_movies') == 'true':
             update_strms(SECTIONS.MOVIES, pd)

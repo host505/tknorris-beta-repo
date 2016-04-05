@@ -78,7 +78,7 @@ class MoviesPlanet_Scraper(scraper.Scraper):
                             for stream_url in self._parse_google(picasa_url):
                                 sources[stream_url] = {'quality': scraper_utils.gv_get_quality(stream_url), 'direct': True}
                     else:
-                        html = self._http_get(iframe_url, cache_limit=0)
+                        html = self._http_get(iframe_url, cache_limit=.25)
                         temp_sources = self._parse_sources_list(html)
                         for source in temp_sources:
                             if 'download.php' in source:
@@ -91,7 +91,10 @@ class MoviesPlanet_Scraper(scraper.Scraper):
         for source in sources:
             host = self._get_direct_hostname(source)
             stream_url = source + '|User-Agent=%s' % (scraper_utils.get_ua())
-            quality = QUALITY_MAP.get(sources[source]['quality'], QUALITIES.HIGH)
+            if host == 'gvideo':
+                quality = scraper_utils.gv_get_quality(source)
+            else:
+                quality = QUALITY_MAP.get(sources[source]['quality'], QUALITIES.HIGH)
             hoster = {'multi-part': False, 'url': stream_url, 'host': host, 'class': self, 'quality': quality, 'views': None, 'rating': None, 'direct': True}
             hosters.append(hoster)
 

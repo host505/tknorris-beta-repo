@@ -117,7 +117,7 @@ class TorbaSe_Scraper(scraper.Scraper):
         hosters = []
         if source_url and source_url != FORCE_NO_MATCH:
             url = urlparse.urljoin(self.base_url, source_url)
-            html = self._http_get(url, cache_limit=0)
+            html = self._http_get(url, cache_limit=.5)
             vid_link = dom_parser.parse_dom(html, 'a', {'class': 'video-play'}, 'href')
             if vid_link:
                 i = vid_link[0].rfind('/')
@@ -126,7 +126,7 @@ class TorbaSe_Scraper(scraper.Scraper):
                     stream_id = self.__get_stream_id(vid_id)
                     if stream_id:
                         pl_url = PL_URL % (vid_id, stream_id)
-                        playlist = self._http_get(pl_url, cache_limit=0)
+                        playlist = self._http_get(pl_url, cache_limit=.25)
                         sources = self.__get_streams_from_m3u8(playlist.split('\n'), BASE_URL2, vid_id, stream_id)
                         for source in sources:
                             hoster = {'multi-part': False, 'host': self._get_direct_hostname(source), 'class': self, 'quality': sources[source], 'views': None, 'rating': None, 'url': source, 'direct': True}

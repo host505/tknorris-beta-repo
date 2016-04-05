@@ -71,7 +71,7 @@ class MoxieHDMax_Scraper(scraper.Scraper):
     def __get_episode_sources(self, source_url):
         sources = {}
         url = urlparse.urljoin(self.base_url, source_url)
-        html = self._http_get(url, headers=XHR, method='POST', cache_limit=0)
+        html = self._http_get(url, headers=XHR, method='POST', cache_limit=.25)
         js_data = scraper_utils.parse_json(html, url)
         if 'sources' in js_data:
             for source in js_data['sources']:
