@@ -101,13 +101,13 @@ def perform_auto_conf(responses):
     if responses[10]:
         tiers = ['Local', 'Premiumize.V2', 'Premiumize.me', 'Furk.net', 'EasyNews', 'DD.tv', 'NoobRoom',
                  ['WatchHD', 'IFlix', 'MoviesPlanet', 'TVWTVS', 'MWM', '9Movies', '123Movies', 'niter.tv', 'HDMovie14', 'ororo.tv', 'm4ufree'],
-                 ['torba.se', 'StreamLord', 'CyberReel', 'tunemovie', 'MovieMax', 'MovieLocker', 'afdah.org', 'xmovies8', 'xmovies8.v2', 'MovieXK'],
+                 ['torba.se', 'StreamLord', 'CyberReel', 'tunemovie', 'MovieLocker', 'afdah.org', 'xmovies8', 'xmovies8.v2', 'MovieXK'],
                  ['Stage66', 'PelisPedia', 'DayT.se', 'FardaDownload', 'PutMV', 'vivo.to', 'MiraDeTodo', 'FireMoviesHD', 'SeriesWatch'],
                  ['SezonLukDizi', 'Dizimag', 'Dizilab', 'Dizigold', 'Dizibox', 'Diziay', 'Dizipas', 'OneClickTVShows', 'OnlineDizi'],
-                 ['DiziFilmHD', 'DL-Pars', 'DDLValley', '2DDL', 'ReleaseBB', 'MyVideoLinks.eu', 'OCW', 'TVRelease.Net', 'alluc.com'],
+                 ['DL-Pars', 'DDLValley', '2DDL', 'ReleaseBB', 'MyVideoLinks.eu', 'OCW', 'TVRelease.Net', 'alluc.com'],
                  ['IceFilms', 'Flixanity', 'Rainierland', 'WatchEpisodes', 'PrimeWire', 'tvonline', 'SantaSeries', 'WatchSeries', 'Putlocker'],
                  ['Ganool', 'MovieWatcher', 'VKFlix', 'WatchFree.to', 'pftv', 'streamallthis.is', 'Movie4K', 'afdah', 'SolarMovie'],
-                 ['UFlix.org', 'wso.ch', 'MovieSub', 'MovieHut', 'CouchTunerV1', 'Watch8Now', 'yshows', 'iWatchOnline', 'MerDB'],
+                 ['Filmovizija', 'UFlix.org', 'wso.ch', 'MovieSub', 'MovieHut', 'CouchTunerV1', 'Watch8Now', 'yshows', 'iWatchOnline'],
                  ['vidics.ch', 'pubfilm', 'eMovies.Pro', 'OnlineMoviesPro', 'movie25', 'viooz.ac', 'view47', 'MoviesHD', 'LosMovies'],
                  ['wmo.ch', 'stream-tv.co', 'clickplay.to', 'MintMovies', 'MovieNight', 'cmz', 'ch131', 'filmikz.ch', 'moviestorm.eu'],
                  ['TheExtopia', 'MovieTube', 'FilmStreaming.in', 'RLSSource.net']]

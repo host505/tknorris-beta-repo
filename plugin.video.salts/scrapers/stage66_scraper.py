@@ -74,22 +74,24 @@ class Stage66_Scraper(scraper.Scraper):
                         multipart = False
                         
                     for stream_url in self.__get_links(iframe_url):
-                        host = self._get_direct_hostname(stream_url)
-                        if host == 'gvideo':
-                            quality = scraper_utils.gv_get_quality(stream_url)
-                            direct = True
-                        else:
-                            direct = False
-                            host = urlparse.urlparse(stream_url).hostname
-                            match = re.search('\((\d+)p\)', label)
-                            if match:
-                                quality = scraper_utils.height_get_quality(match.group(1))
+                        if stream_url:
+                            host = self._get_direct_hostname(stream_url)
+                            if host == 'gvideo':
+                                quality = scraper_utils.gv_get_quality(stream_url)
+                                direct = True
                             else:
-                                quality = QUALITIES.HIGH
-                            
-                        stream_url += '|User-Agent=%s' % (scraper_utils.get_ua())
-                        source = {'multi-part': multipart, 'url': stream_url, 'host': host, 'class': self, 'quality': quality, 'views': None, 'rating': None, 'direct': direct}
-                        sources.append(source)
+                                direct = False
+                                host = urlparse.urlparse(stream_url).hostname
+                                match = re.search('\((\d+)p\)', label)
+                                if match:
+                                    quality = scraper_utils.height_get_quality(match.group(1))
+                                else:
+                                    quality = QUALITIES.HIGH
+                                
+                            stream_url += '|User-Agent=%s' % (scraper_utils.get_ua())
+                            source = {'multi-part': multipart, 'url': stream_url, 'host': host, 'class': self, 'quality': quality, 'views': None, 'rating': None, 'direct': direct}
+                            if source['host'] is None: log_utils.log(source)
+                            sources.append(source)
 
         return sources
 
@@ -104,7 +106,8 @@ class Stage66_Scraper(scraper.Scraper):
             elif 'fmt_stream_map' in html:
                 sources += self._parse_google(iframe_url2[0])
             else:
-                sources += dom_parser.parse_dom(html, 'source', {'type': 'video[^"]*'}, ret='src')
+                sources += [source for source in dom_parser.parse_dom(html, 'source', {'type': 'video[^"]*'}, ret='src') if source]
+                    
         return sources
         
     def get_url(self, video):

@@ -166,6 +166,11 @@ class WatchHD_Scraper(scraper.Scraper):
         return hosters
 
     def __get_watch_now(self, html):
+        fragment = dom_parser.parse_dom(html, 'div', {'class': 'mif'})
+        if fragment:
+            if '/genre/film-coming-soon/' in fragment[0]:
+                return ''
+            
         button = dom_parser.parse_dom(html, 'a', {'class': '[^"]*btn_watch_detail[^"]*'}, ret='href')
         if button:
             return self._http_get(button[0], cache_limit=.5)

@@ -127,9 +127,9 @@ class DDLValley_Scraper(scraper.Scraper):
                     result = {'url': scraper_utils.pathify_url(show_url), 'title': scraper_utils.cleanse_title(match_title), 'year': ''}
                     results.append(result)
         elif video_type == VIDEO_TYPES.MOVIE:
-            search_url = urlparse.urljoin(self.base_url, '/search/')
+            search_url = urlparse.urljoin(self.base_url, '/search/%s/')
             search_title = re.sub('[^A-Za-z0-9 ]', '', title.lower())
-            search_url += urllib.quote_plus(search_title)
+            search_url = search_url % (urllib.quote_plus(search_title))
             html = self._http_get(search_url, cache_limit=1)
             headings = re.findall('<h2>\s*<a\s+href="([^"]+).*?">(.*?)</a>', html)
             posts = dom_parser.parse_dom(html, 'div', {'id': 'post-\d+'})

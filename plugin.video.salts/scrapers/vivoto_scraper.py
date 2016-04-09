@@ -29,7 +29,9 @@ import scraper
 
 BASE_URL = 'http://vivo.to'
 LINK_URL = '/ip.temp/swf/plugins/ipplugins.php'
+PLAYER_URL = '/ip.temp/swf/ipplayer/ipplayer.php?u=%s&w=100%%&h=420'
 XHR = {'X-Requested-With': 'XMLHttpRequest'}
+QUALITY_MAP = {'HD': QUALITIES.HD720, 'SD': QUALITIES.HIGH}
 
 class VivoTo_Scraper(scraper.Scraper):
     base_url = BASE_URL
@@ -65,22 +67,31 @@ class VivoTo_Scraper(scraper.Scraper):
         if source_url and source_url != FORCE_NO_MATCH:
             url = urlparse.urljoin(self.base_url, source_url)
             html = self._http_get(url, cache_limit=.5)
-            sources = self.__get_gk_links(html, url)
+            page_quality = dom_parser.parse_dom(html, 'dd', {'class': 'status'})
+            if page_quality:
+                page_quality = QUALITY_MAP.get(page_quality[0], QUALITIES.HIGH)
+            else:
+                page_quality = QUALITIES.HIGH
             
+            sources = self.__get_gk_links(html, url, page_quality)
             for source in sources:
                 host = self._get_direct_hostname(source)
                 if host == 'gvideo':
                     direct = True
+                    quality = sources[source]
                 else:
                     host = urlparse.urlparse(source).hostname
+                    quality = scraper_utils.get_quality(video, host, sources[source])
                     direct = False
-                stream_url = source + '|User-Agent=%s' % (scraper_utils.get_ua())
-                hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': sources[source], 'views': None, 'rating': None, 'url': stream_url, 'direct': direct}
-                hosters.append(hoster)
+
+                if host is not None:
+                    stream_url = source + '|User-Agent=%s' % (scraper_utils.get_ua())
+                    hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': quality, 'views': None, 'rating': None, 'url': stream_url, 'direct': direct}
+                    hosters.append(hoster)
 
         return hosters
 
-    def __get_gk_links(self, html, page_url):
+    def __get_gk_links(self, html, page_url, page_quality):
         sources = {}
         fragment = dom_parser.parse_dom(html, 'div', {'id': 'load_server'})
         if fragment:
@@ -97,18 +108,36 @@ class VivoTo_Scraper(scraper.Scraper):
                     js_data = scraper_utils.parse_json(html, url)
                     if 's' in js_data:
                         if isinstance(js_data['s'], basestring):
-                            sources[js_data['s']] = QUALITIES.HIGH
+                            stream_url = self.__get_real_url(js_data['s'])
+                            if stream_url is not None:
+                                sources[stream_url] = page_quality
                         else:
                             for link in js_data['s']:
-                                stream_url = link['file']
-                                if self._get_direct_hostname(stream_url) == 'gvideo':
-                                    quality = scraper_utils.gv_get_quality(stream_url)
-                                elif 'label' in link:
-                                    quality = scraper_utils.height_get_quality(link['label'])
-                                else:
-                                    quality = QUALITIES.HIGH
-                                sources[stream_url] = quality
+                                stream_url = self.__get_real_url(link['file'])
+                                if stream_url is not None:
+                                    if self._get_direct_hostname(stream_url) == 'gvideo':
+                                        quality = scraper_utils.gv_get_quality(stream_url)
+                                    elif 'label' in link:
+                                        quality = scraper_utils.height_get_quality(link['label'])
+                                    else:
+                                        quality = page_quality
+                                    sources[stream_url] = quality
         return sources
+    
+    def __get_real_url(self, stream_url):
+        if not stream_url.startswith('http'):
+            url = PLAYER_URL % (stream_url)
+            url = urlparse.urljoin(self.base_url, url)
+            html = self._http_get(url, headers=XHR, cache_limit=.25)
+            js_data = scraper_utils.parse_json(html, url)
+            if 'data' in js_data:
+                log_utils.log(js_data['data'])
+                if 'files' in js_data['data'] and js_data['data']['files']:
+                    return js_data['data']['files']
+                elif js_data['data']:
+                    return js_data['data']
+
+        return None
     
     def get_url(self, video):
         return self._default_get_url(video)

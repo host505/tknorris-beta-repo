@@ -619,7 +619,7 @@ class Scraper(object):
         sources = {}
         match = re.search('sources\s*:\s*\[(.*?)\]', html, re.DOTALL)
         if match:
-            for match in re.finditer('''['"]?file['"]?\s*:\s*['"]([^'"]+)['"][^}]*['"]?label['"]?\s*:\s*['"]([^'"]+)''', match.group(1), re.DOTALL):
+            for match in re.finditer('''['"]?file['"]?\s*:\s*['"]([^'"]+)['"][^}]*['"]?label['"]?\s*:\s*['"]([^'"]*)''', match.group(1), re.DOTALL):
                 stream_url, label = match.groups()
                 stream_url = stream_url.replace('\/', '/')
                 if self._get_direct_hostname(stream_url) == 'gvideo':

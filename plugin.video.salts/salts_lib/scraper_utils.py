@@ -24,9 +24,11 @@ import urllib
 import urlparse
 import json
 import htmlentitydefs
+import os.path
 from salts_lib import kodi
 from salts_lib import pyaes
 from salts_lib import log_utils
+from salts_lib import utils2
 from salts_lib.constants import *
 
 def disable_sub_check(settings):
@@ -324,3 +326,20 @@ def cleanse_title(text):
                 pass
         return text
     return re.sub("&#?\w+;", fixup, text.strip())
+
+def update_scraper(file_name, scraper_url, scraper_key):
+    py_path = os.path.join(kodi.get_path(), 'scrapers', file_name)
+    exists = os.path.exists(py_path)
+    if not exists or (time.time() - os.path.getmtime(py_path)) > (8 * 60 * 60):
+        new_py = utils2.get_and_decrypt(scraper_url, scraper_key)
+        if new_py:
+            if exists:
+                with open(py_path, 'r') as f:
+                    old_py = f.read()
+            else:
+                old_py = ''
+            
+            log_utils.log('%s path: %s, new_py: %s, match: %s' % (__file__, py_path, bool(new_py), new_py == old_py), log_utils.LOGDEBUG)
+            if old_py != new_py:
+                with open(py_path, 'w') as f:
+                    f.write(new_py)

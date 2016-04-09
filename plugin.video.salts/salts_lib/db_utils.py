@@ -41,12 +41,18 @@ MYSQL_DATA_SIZE = 512
 MYSQL_URL_SIZE = 255
 MYSQL_MAX_BLOB_SIZE = 16777215
 
+INCREASED = False
 UP_THRESHOLD = 0
 DOWN_THRESHOLD = 4
 CHECK_THRESHOLD = 50
-INCREASED = False
-try: MAX_WRITERS = int(kodi.get_setting('sema_value')) or 1
-except: MAX_WRITERS = 1
+WRITERS = [0, 1, 5, 25, 50, 100]
+try: SPEED = int(kodi.get_setting('machine_speed'))
+except: SPEED = 0
+if SPEED:
+    MAX_WRITERS = WRITERS[SPEED]
+else:
+    try: MAX_WRITERS = int(kodi.get_setting('sema_value')) or 1
+    except: MAX_WRITERS = 1
 SQL_SEMA = Semaphore(MAX_WRITERS)
 
 class DB_Connection():
@@ -516,7 +522,8 @@ class DB_Connection():
                         rows = cur.fetchall()
                     cur.close()
                     self.db.commit()
-                    self.__update_writers()
+                    if SPEED == 0:
+                        self.__update_writers()
                     return rows
                 except OperationalError as e:
                     if tries < MAX_TRIES:

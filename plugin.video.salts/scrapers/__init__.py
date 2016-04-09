@@ -9,7 +9,7 @@ from salts_lib import utils2
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import VIDEO_TYPES
 
-__all__ = ['scraper', 'proxy', 'local_scraper', 'pw_scraper', 'uflix_scraper', 'watchseries_scraper', 'movie25_scraper', 'merdb_scraper', 'nitertv_scraper',
+__all__ = ['scraper', 'proxy', 'local_scraper', 'pw_scraper', 'uflix_scraper', 'watchseries_scraper', 'movie25_scraper', 'nitertv_scraper', 'filmovizjia_scraper',
            'icefilms_scraper', 'movieshd_scraper', 'viooz_scraper', 'filmstreaming_scraper', 'myvideolinks_scraper', 'filmikz_scraper', 'clickplay_scraper',
            'iwatch_scraper', 'ororotv_scraper', 'view47_scraper', 'vidics_scraper', 'ocw_proxy', 'losmovies_scraper', 'movie4k_scraper', 'easynews_scraper',
            'noobroom_scraper', 'solar_scraper', 'directdl_scraper', 'streamallthis_scraper', 'afdah_scraper', 'dizibox_scraper', 'theextopia_proxy', 'torba_scraper',
@@ -18,10 +18,10 @@ __all__ = ['scraper', 'proxy', 'local_scraper', 'pw_scraper', 'uflix_scraper', '
            'mintmovies_scraper', 'pubfilm_scraper', 'rlssource_scraper', 'couchtunerv1_scraper', 'ddlvalley_scraper', 'tvrelease_scraper', 'pelispedia_scraper',
            'tunemovie_scraper', 'watch8now_scraper', 'dizilab_scraper', 'dizimag_scraper', 'oneclicktvshows_scraper', 'moviehut_scraper', 'serieswatch_scraper',
            'dizigold_scraper', 'onlinemoviespro_scraper', 'emoviespro_scraper', '123movies_scraper', 'rainierland_scraper', 'rlsbb_scraper', 'sezonlukdizi_scraper',
-           'movietube_scraper', 'putlocker_scraper', 'yshows_scraper', 'diziay_scraper', 'ganool_scraper', 'furk_scraper', 'dizifilmhd_scraper', 'dl-pars_scraper',
+           'movietube_scraper', 'putlocker_scraper', 'yshows_scraper', 'diziay_scraper', 'ganool_scraper', 'furk_scraper', 'dl-pars_scraper',
            'miradetodo_scraper', 'dizipas_scraper', 'xmovies8v2_scraper', 'moviesplanet_scraper', 'premiumize_scraper', 'putmv_scraper', 'tvonline_scraper',
-           '9movies_scraper', 'watchhd_scraper', 'iflix_proxy', 'firemovies_scraper', 'farda_scraper', 'hdmovie14_scraper', 'dayt_scraper', 'tvwtvs_scraper',
-           'moviesub_scraper', 'cyberreel_proxy', 'santaseries_scraper', 'watchepisodes_scraper', 'moviehdmax_scraper', 'vkflix_scraper', 'm4ufree_scraper',
+           'ninemovies_proxy', 'watchhd_scraper', 'iflix_proxy', 'firemovies_scraper', 'farda_scraper', 'hdmovie14_scraper', 'dayt_scraper', 'tvwtvs_scraper',
+           'moviesub_scraper', 'cyberreel_proxy', 'santaseries_scraper', 'watchepisodes_scraper', 'vkflix_scraper', 'm4ufree_scraper',
            'moviewatcher_scraper', 'vivoto_scraper', '2ddl_scraper', 'onlinedizi_scraper', 'premiumizev2_scraper', 'mwm_proxy', 'movielocker_proxy']
 
 from . import *

@@ -1,3 +1,15 @@
+[B]Version 2.0.31[/B]
+- Add filmovizjia
+- Improve WatchHD
+- Fix vivo.to
+- Fix 9Movies
+- Fix DDLValley
+- Fix Uflix
+- Remove MerDB
+- Remove MovieHDMax
+- Remove DiziFilm
+- Add manual semaphore value setting
+
 [B]Version 2.0.30[/B]
 - Add Stage66 Scraper
 - Remove Zumvo Scraper

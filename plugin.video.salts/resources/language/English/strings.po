@@ -1772,3 +1772,32 @@ msgstr ""
 msgctxt "#30675"
 msgid "Torba IP Authorization"
 msgstr ""
+
+msgctxt "#30676"
+msgid "Machine Speed"
+msgstr ""
+
+msgctxt "#30677"
+msgid "Automatic"
+msgstr ""
+
+msgctxt "#30678"
+msgid "Very Slow"
+msgstr ""
+
+msgctxt "#30679"
+msgid "Slow"
+msgstr ""
+
+msgctxt "#30680"
+msgid "Medium"
+msgstr ""
+
+msgctxt "#30681"
+msgid "Fast"
+msgstr ""
+
+msgctxt "#30682"
+msgid "Very Fast"
+msgstr ""
+

@@ -149,7 +149,8 @@ def _released_key(item):
 def to_slug(username):
     username = username.strip()
     username = username.lower()
-    username = re.sub('[^a-z0-9]', '-', username)
+    username = re.sub('[^a-z0-9_]', '-', username)
+    username = re.sub('--+', '-', username)
     return username
 
 def sort_list(sort_key, sort_direction, list_data):

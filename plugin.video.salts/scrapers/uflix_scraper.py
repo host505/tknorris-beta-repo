@@ -32,7 +32,7 @@ import scraper
 
 QUALITY_MAP = {'HD': QUALITIES.HIGH, 'LOW': QUALITIES.LOW}
 QUALITY_ICONS = {'fullhdbr.png': QUALITIES.HIGH, 'Blu-Ray.gif': QUALITIES.HIGH}
-BASE_URL = 'http://uflix.org'
+BASE_URL = 'http://uflix.ws'
 
 class UFlix_Scraper(scraper.Scraper):
     base_url = BASE_URL

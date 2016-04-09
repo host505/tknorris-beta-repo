@@ -17,7 +17,7 @@
 """
 import re
 import urlparse
-
+from salts_lib import log_utils
 from salts_lib import dom_parser
 from salts_lib import kodi
 from salts_lib import scraper_utils
@@ -98,12 +98,11 @@ class CouchTunerV1_Scraper(scraper.Scraper):
         html = self._http_get(show_list_url, cache_limit=8)
         results = []
         norm_title = scraper_utils.normalize_title(title)
-        items = dom_parser.parse_dom(html, 'li')
-        for item in items:
+        for item in dom_parser.parse_dom(html, 'li'):
             match = re.search('href="([^"]+)">(.*?)</a>', item)
             if match:
                 url, match_title = match.groups()
-                match_title = match_title.replace('<strong>', '').replace('</strong>', '')
+                match_title = re.sub('</?strong[^>]*>', '', match_title)
                 if norm_title in scraper_utils.normalize_title(match_title):
                     result = {'url': scraper_utils.pathify_url(url), 'title': scraper_utils.cleanse_title(match_title), 'year': ''}
                     results.append(result)
