@@ -97,6 +97,10 @@ def parse_dom(html, name='', attrs=None, ret=False):
     if not name.strip():
         log_utils.log("Missing tag name", log_utils.LOGWARNING)
         return ''
+    
+    if not isinstance(attrs, dict):
+        log_utils.log("Attrs must be dictionary", log_utils.LOGWARNING)
+        return ''
 
     ret_lst = []
     for item in html:

@@ -1058,6 +1058,26 @@ msgctxt "#30271"
 msgid "[/COLOR] from any device on the same network as this device."
 msgstr ""
 
+msgctxt "#30272"
+msgid "Watch It Again"
+msgstr ""
+
+msgctxt "#30273"
+msgid "Pick a list to use for Watch It Again"
+msgstr ""
+
+msgctxt "#30274"
+msgid "Use Least Watched Method"
+msgstr ""
+
+msgctxt "#30275"
+msgid "Use Most Watched Method"
+msgstr ""
+
+msgctxt "#30276"
+msgid "Use Last Watched Method"
+msgstr ""
+
 msgctxt "#30500"
 msgid "Addon Theme"
 msgstr ""
@@ -1799,5 +1819,9 @@ msgstr ""
 
 msgctxt "#30682"
 msgid "Very Fast"
+msgstr ""
+
+msgctxt "#30683"
+msgid "Show Watch It Again"
 msgstr ""
 

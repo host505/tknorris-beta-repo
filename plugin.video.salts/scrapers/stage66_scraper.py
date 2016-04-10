@@ -90,7 +90,6 @@ class Stage66_Scraper(scraper.Scraper):
                                 
                             stream_url += '|User-Agent=%s' % (scraper_utils.get_ua())
                             source = {'multi-part': multipart, 'url': stream_url, 'host': host, 'class': self, 'quality': quality, 'views': None, 'rating': None, 'direct': direct}
-                            if source['host'] is None: log_utils.log(source)
                             sources.append(source)
 
         return sources

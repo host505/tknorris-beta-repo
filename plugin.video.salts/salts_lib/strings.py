@@ -278,5 +278,10 @@ STRINGS = {
     'user_reject_auth': 30269,
     'use_https': 30548,
     'ip_auth_line1': 30270,
-    'ip_auth_line2': 30271
+    'ip_auth_line2': 30271,
+    'my_rewatches': 30272,
+    'pick_rewatch_list': 30273,
+    'least_watched_method': 30274,
+    'most_watched_method': 30275,
+    'last_watched_method': 30276
 }

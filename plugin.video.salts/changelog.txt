@@ -1,3 +1,10 @@
+[B]Version 2.0.32[/B]
+- Add HEVCBluRay
+- Add CloudMovie
+- Add Watch It Again
+- Improve Flixanity
+- Improve IceFilms
+
 [B]Version 2.0.31[/B]
 - Add filmovizjia
 - Improve WatchHD

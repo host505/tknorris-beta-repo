@@ -127,13 +127,16 @@ class IceFilms_Scraper(scraper.Scraper):
             url = urlparse.urljoin(self.base_url, '/tv/a-z/')
 
         if title.upper().startswith('THE '):
-            first_letter = title[4:5]
+            search_title = title[4:5]
         elif title.upper().startswith('A '):
-            first_letter = title[2:3]
-        elif title[:1] in string.digits:
+            search_title = title[2:3]
+        else:
+            search_title = title
+            
+        if title[:1] in string.digits:
             first_letter = '1'
         else:
-            first_letter = title[:1]
+            first_letter = search_title[:1]
         url = url + first_letter.upper()
         
         html = self._http_get(url, cache_limit=.25)

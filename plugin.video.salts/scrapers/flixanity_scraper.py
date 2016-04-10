@@ -109,23 +109,24 @@ class Flixanity_Scraper(scraper.Scraper):
 
     def search(self, video_type, title, year, season=''):
         self.__get_token()
-        results = []
-        search_url = urlparse.urljoin(self.base_url, self.__get_search_url())
-        timestamp = int(time.time() * 1000)
-        s = self.__get_s()
-        query = {'q': title, 'limit': '100', 'timestamp': timestamp, 'verifiedCheck': self.__token, 'set': s, 'rt': self.__get_rt(self.__token + s)}
-        html = self._http_get(search_url, data=query, headers=XHR, cache_limit=1)
-        if video_type in [VIDEO_TYPES.TVSHOW, VIDEO_TYPES.EPISODE]:
-            media_type = 'TV SHOW'
-        else:
-            media_type = 'MOVIE'
-
-        for item in scraper_utils.parse_json(html, search_url):
-            if item['meta'].upper().startswith(media_type):
-                match_year = str(item['year']) if 'year' in item and item['year'] else ''
-                if not year or not match_year or year == match_year:
-                    result = {'title': scraper_utils.cleanse_title(item['title']), 'url': scraper_utils.pathify_url(item['permalink']), 'year': match_year}
-                    results.append(result)
+        if self.__token is not None:
+            results = []
+            search_url = urlparse.urljoin(self.base_url, self.__get_search_url())
+            timestamp = int(time.time() * 1000)
+            s = self.__get_s()
+            query = {'q': title, 'limit': '100', 'timestamp': timestamp, 'verifiedCheck': self.__token, 'set': s, 'rt': self.__get_rt(self.__token + s)}
+            html = self._http_get(search_url, data=query, headers=XHR, cache_limit=1)
+            if video_type in [VIDEO_TYPES.TVSHOW, VIDEO_TYPES.EPISODE]:
+                media_type = 'TV SHOW'
+            else:
+                media_type = 'MOVIE'
+    
+            for item in scraper_utils.parse_json(html, search_url):
+                if item['meta'].upper().startswith(media_type):
+                    match_year = str(item['year']) if 'year' in item and item['year'] else ''
+                    if not year or not match_year or year == match_year:
+                        result = {'title': scraper_utils.cleanse_title(item['title']), 'url': scraper_utils.pathify_url(item['permalink']), 'year': match_year}
+                        results.append(result)
 
         return results
 

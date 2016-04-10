@@ -35,7 +35,7 @@ MODES = __enum(
     AUTO_CONF='auto_config', CLEAR_SAVED='clear_saved', RESET_BASE_URL='reset_base_url', TOGGLE_TO_MENU='toggle_to_menu', LIKED_LISTS='liked_lists', MOSTS='mosts',
     PLAYED='played', WATCHED='watched', COLLECTED='collected', SHOW_BOOKMARKS='show_bookmarks', DELETE_BOOKMARK='delete_bookmark', SHOW_HISTORY='show_history',
     RESET_FAILS='reset_failures', MANAGE_PROGRESS='toggle_progress', AUTOPLAY='autoplay', INSTALL_THEMES='install_themes', RESET_REL_URLS='reset_rel_urls',
-    ANTICIPATED='anticipated')
+    ANTICIPATED='anticipated', SHOW_REWATCH='show_rewatch', PICK_REWATCH_LIST='pick_rewatch_list', SET_REWATCH_LIST='set_rewatch_list', MANAGE_REWATCH='manage_rewatch')
 SECTIONS = __enum(TV='TV', MOVIES='Movies')
 VIDEO_TYPES = __enum(TVSHOW='TV Show', MOVIE='Movie', EPISODE='Episode', SEASON='Season')
 CONTENT_TYPES = __enum(TVSHOWS='tvshows', MOVIES='movies', SEASONS='seasons', EPISODES='episodes', SOURCES='sources')
@@ -49,6 +49,7 @@ SORT_MAP = [TRAKT_SORT.ACTIVITY, TRAKT_SORT.TITLE, TRAKT_SORT.MOST_COMPLETED, TR
             TRAKT_SORT.PREVIOUSLY_AIRED]
 QUALITIES = __enum(LOW='Low', MEDIUM='Medium', HIGH='High', HD720='HD720', HD1080='HD1080')
 DIRS = __enum(UP='up', DOWN='down')
+REWATCH_METHODS = __enum(LAST_WATCHED='last_watched', LEAST_WATCHED='min_watched', MOST_WATCHED='max_watched')
 WATCHLIST_SLUG = 'watchlist_slug'
 COLLECTION_SLUG = 'collection_slug'
 SEARCH_HISTORY = 10
