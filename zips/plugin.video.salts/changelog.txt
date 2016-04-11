@@ -1,3 +1,7 @@
+[B]Version 2.0.33[/B]
+- Require debrid accounts for some scrapers
+- Add more Rewatch function
+
 [B]Version 2.0.32[/B]
 - Add HEVCBluRay
 - Add CloudMovie

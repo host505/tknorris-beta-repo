@@ -283,5 +283,6 @@ STRINGS = {
     'pick_rewatch_list': 30273,
     'least_watched_method': 30274,
     'most_watched_method': 30275,
-    'last_watched_method': 30276
+    'last_watched_method': 30276,
+    'set_rewatch_list': 30277
 }

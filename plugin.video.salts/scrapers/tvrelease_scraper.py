@@ -63,7 +63,7 @@ class TVReleaseNet_Scraper(scraper.Scraper):
         host_count = {}
         if source_url and source_url != FORCE_NO_MATCH:
             url = urlparse.urljoin(self.base_url, source_url)
-            html = self._http_get(url, cache_limit=.5)
+            html = self._http_get(url, require_debrid=True, cache_limit=.5)
 
             q_str = ''
             match = re.search('>Release.*?td_col">([^<]+)', html)
@@ -119,7 +119,7 @@ class TVReleaseNet_Scraper(scraper.Scraper):
             search_url += '&cat=TV-XviD,TV-Mp4,TV-720p,TV-480p,'
         else:
             search_url += '&cat=Movies-XviD,Movies-720p,Movies-480p'
-        html = self._http_get(search_url, cache_limit=.25)
+        html = self._http_get(search_url, require_debrid=True, cache_limit=.25)
         tables = dom_parser.parse_dom(html, 'table', {'class': 'posts_table'})
         if tables:
             html = ''.join(tables)

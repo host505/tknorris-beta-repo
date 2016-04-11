@@ -59,7 +59,7 @@ class TwoDDL_Scraper(scraper.Scraper):
         hosters = []
         if source_url and source_url != FORCE_NO_MATCH:
             url = urlparse.urljoin(self.base_url, source_url)
-            html = self._http_get(url, cache_limit=.5)
+            html = self._http_get(url, require_debrid=True, cache_limit=.5)
             if video.video_type == VIDEO_TYPES.MOVIE:
                 pattern = '<singlelink>(.*?)(?=<hr\s*/>|download>|thanks_button_div)'
             else:
@@ -108,7 +108,7 @@ class TwoDDL_Scraper(scraper.Scraper):
         too_old = False
         while page_url and not too_old:
             url = urlparse.urljoin(self.base_url, page_url[0])
-            html = self._http_get(url, cache_limit=1)
+            html = self._http_get(url, require_debrid=True, cache_limit=1)
             headings = re.findall('<h2>\s*<a\s+href="([^"]+)[^>]+>(.*?)</a>', html)
             posts = dom_parser.parse_dom(html, 'div', {'id': 'post-\d+'})
             for heading, post in zip(headings, posts):
@@ -132,7 +132,7 @@ class TwoDDL_Scraper(scraper.Scraper):
         results = []
         search_url = urlparse.urljoin(self.base_url, '/search/')
         search_url += urllib.quote_plus(title)
-        html = self._http_get(search_url, cache_limit=1)
+        html = self._http_get(search_url, require_debrid=True, cache_limit=1)
         if video_type == VIDEO_TYPES.TVSHOW:
             seen_urls = {}
             for post in dom_parser.parse_dom(html, 'div', {'id': 'post-\d+'}):

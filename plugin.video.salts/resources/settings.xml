@@ -495,7 +495,7 @@
          <setting id="ReleaseBB-select" type="enum" label="     Automatically Select" lvalues="30636|30637" default="0" visible="eq(-5,true)"/>
          <setting id="ReleaseBB-include_comments" type="bool" label="     Include Links from Comments" default="false" visible="eq(-6,true)"/>
          <setting id="RLSSource.net-enable" type="bool" label="RLSSource.net Enabled" default="true" visible="true"/>
-         <setting id="RLSSource.net-base_url" type="text" label="    Base Url" default="http://rlsblog.net" visible="eq(-1,true)"/>
+         <setting id="RLSSource.net-base_url" type="text" label="    Base Url" default="http://allrls.net" visible="eq(-1,true)"/>
          <setting id="RLSSource.net-sub_check" type="bool" label="    Include in Page Existence checks?" default="false" visible="eq(-2,true)"/>
          <setting id="RLSSource.net_last_results" type="number" default="0" visible="false"/>
          <setting id="RLSSource.net-filter" type="slider" range="0,180" option="int" label="     Filter results older than (0=No Filter) (days)" default="30" visible="eq(-4,true)"/>

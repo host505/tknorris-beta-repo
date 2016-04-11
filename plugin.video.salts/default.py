@@ -522,6 +522,8 @@ def add_list_item(section, user_list, total_items=0):
     menu_items.append((i18n('set_fav_list'), 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))),)
     queries = {'mode': MODES.SET_SUB_LIST, 'slug': ids['slug'], 'section': section}
     menu_items.append((i18n('set_sub_list'), 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))),)
+    queries = {'mode': MODES.SET_REWATCH_LIST, 'slug': ids['slug'], 'section': SECTIONS.TV}
+    menu_items.append((i18n('set_rewatch_list'), 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))),)
     queries = {'mode': MODES.COPY_LIST, 'slug': COLLECTION_SLUG, 'section': section, 'target_slug': ids['slug']}
     menu_items.append((i18n('import_collection'), 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))),)
     if ids['slug'] != utils.WATCHLIST_SLUG:
@@ -661,20 +663,66 @@ def add_other_list(section, username=None):
             db_connection.add_other_list(section, username, slug)
             kodi.refresh_container()
 
+@url_dispatcher.register(MODES.SHOW_REWATCH)
+def show_rewatch():
+    slug = kodi.get_setting('rewatch_slug')
+    if not slug:
+        kodi.create_item({'mode': MODES.PICK_REWATCH_LIST, 'section': SECTIONS.TV}, i18n('pick_rewatch_list'), is_folder=False, is_playable=False)
+        kodi.end_of_directory()
+    else:
+        list_data = get_list(SECTIONS.TV, slug)
+        if list_data is not None:
+            history = dict((item['show']['ids']['trakt'], item) for item in trakt_api.get_watched(SECTIONS.TV))
+            folder = kodi.get_setting('source-win') == 'Directory' and kodi.get_setting('auto-play') == 'false'
+            totalItems = len(list_data)
+            for show in list_data:
+                trakt_id = show['ids']['trakt']
+                plays = utils2.make_plays(history.get(trakt_id, {}))
+                progress = trakt_api.get_show_progress(trakt_id)
+                next_episode = utils2.get_next_rewatch(trakt_id, plays, progress)
+                log_utils.log('Next Rewatch: %s (%s) - %s - %s' % (show['title'], show['year'], trakt_id, next_episode), log_utils.LOGDEBUG)
+                if next_episode:
+                    episode = trakt_api.get_episode_details(trakt_id, next_episode['season'], next_episode['episode'])
+                    episode['watched'] = plays.get(next_episode['season'], {}).get(next_episode['episode'], 0) > 0
+                    fanart = show['images']['fanart']['full']
+                    
+                    menu_items = []
+                    queries = {'mode': MODES.SEASONS, 'trakt_id': trakt_id, 'fanart': fanart, 'title': show['title'], 'year': show['year']}
+                    menu_items.append((i18n('browse_seasons'), 'Container.Update(%s)' % (kodi.get_plugin_url(queries))),)
+                    label, new_method = utils2.get_next_rewatch_method(trakt_id)
+                    queries = {'mode': MODES.MANAGE_REWATCH, 'trakt_id': trakt_id, 'new_method': new_method}
+                    menu_items.append((label, 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))),)
+                    
+                    liz, liz_url = make_episode_item(show, episode, show_subs=False, menu_items=menu_items)
+                    label = liz.getLabel()
+                    label = '%s - %s' % (show['title'], label)
+                    liz.setLabel(label)
+                    xbmcplugin.addDirectoryItem(int(sys.argv[1]), liz_url, liz, isFolder=folder, totalItems=totalItems)
+            kodi.set_content(CONTENT_TYPES.EPISODES)
+            kodi.end_of_directory(cache_to_disc=False)
+            
+@url_dispatcher.register(MODES.MANAGE_REWATCH, ['trakt_id', 'new_method'])
+def manage_rewatch(trakt_id, new_method):
+    min_list = utils2.get_min_rewatch_list()
+    max_list = utils2.get_max_rewatch_list()
+    if new_method == REWATCH_METHODS.LEAST_WATCHED:
+        if trakt_id not in min_list: min_list.append(trakt_id)
+        if trakt_id in max_list: max_list.remove(trakt_id)
+    elif new_method == REWATCH_METHODS.MOST_WATCHED:
+        if trakt_id in min_list: min_list.remove(trakt_id)
+        if trakt_id not in max_list: max_list.append(trakt_id)
+    else:
+        if trakt_id in min_list: min_list.remove(trakt_id)
+        if trakt_id in max_list: max_list.remove(trakt_id)
+    kodi.set_setting('rewatch_min_list', '|'.join(min_list))
+    kodi.set_setting('rewatch_max_list', '|'.join(max_list))
+    kodi.refresh_container()
+    
 @url_dispatcher.register(MODES.SHOW_LIST, ['section', 'slug'], ['username'])
 def show_list(section, slug, username=None):
-    if slug == utils.WATCHLIST_SLUG:
-        items = trakt_api.show_watchlist(section)
-    else:
-        try:
-            items = trakt_api.show_list(slug, section, username, auth=bool(TOKEN))
-        except TraktNotFoundError:
-            msg = i18n('list_not_exist') % (slug)
-            kodi.notify(msg=msg, duration=5000)
-            log_utils.log(msg, log_utils.LOGWARNING)
-            return
-
-    make_dir_from_list(section, items, slug)
+    items = get_list(section, slug, username)
+    if items is not None:
+        make_dir_from_list(section, items, slug)
 
 @url_dispatcher.register(MODES.SHOW_WATCHLIST, ['section'])
 def show_watchlist(section):
@@ -842,60 +890,6 @@ def show_favorites(section):
     slug = kodi.get_setting('%s_fav_slug' % (section))
     show_pickable_list(slug, i18n('pick_fav_list'), MODES.PICK_FAV_LIST, section)
 
-@url_dispatcher.register(MODES.SHOW_REWATCH)
-def show_rewatch():
-    slug = kodi.get_setting('rewatch_slug')
-    if not slug:
-        kodi.create_item({'mode': MODES.PICK_REWATCH_LIST, 'section': SECTIONS.TV}, i18n('pick_rewatch_list'), is_folder=False, is_playable=False)
-        kodi.end_of_directory()
-    else:
-        list_data = trakt_api.show_list(slug, SECTIONS.TV)
-        history = dict((item['show']['ids']['trakt'], item) for item in trakt_api.get_watched(SECTIONS.TV))
-        folder = kodi.get_setting('source-win') == 'Directory' and kodi.get_setting('auto-play') == 'false'
-        totalItems = len(list_data)
-        for show in list_data:
-            trakt_id = show['ids']['trakt']
-            plays = utils2.make_plays(history.get(trakt_id, {}))
-            progress = trakt_api.get_show_progress(trakt_id)
-            next_episode = utils2.get_next_rewatch(trakt_id, plays, progress)
-            log_utils.log('Next Rewatch: %s (%s) - %s - %s' % (show['title'], show['year'], trakt_id, next_episode), log_utils.LOGDEBUG)
-            if next_episode:
-                episode = trakt_api.get_episode_details(trakt_id, next_episode['season'], next_episode['episode'])
-                episode['watched'] = plays.get(next_episode['season'], {}).get(next_episode['episode'], 0) > 0
-                fanart = show['images']['fanart']['full']
-                
-                menu_items = []
-                queries = {'mode': MODES.SEASONS, 'trakt_id': trakt_id, 'fanart': fanart, 'title': show['title'], 'year': show['year']}
-                menu_items.append((i18n('browse_seasons'), 'Container.Update(%s)' % (kodi.get_plugin_url(queries))),)
-                label, new_method = utils2.get_next_rewatch_method(trakt_id)
-                queries = {'mode': MODES.MANAGE_REWATCH, 'trakt_id': trakt_id, 'new_method': new_method}
-                menu_items.append((label, 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))),)
-                
-                liz, liz_url = make_episode_item(show, episode, show_subs=False, menu_items=menu_items)
-                label = liz.getLabel()
-                label = '%s - %s' % (show['title'], label)
-                liz.setLabel(label)
-                xbmcplugin.addDirectoryItem(int(sys.argv[1]), liz_url, liz, isFolder=folder, totalItems=totalItems)
-        kodi.set_content(CONTENT_TYPES.EPISODES)
-        kodi.end_of_directory()
-            
-@url_dispatcher.register(MODES.MANAGE_REWATCH, ['trakt_id', 'new_method'])
-def manage_rewatch(trakt_id, new_method):
-    min_list = utils2.get_min_rewatch_list()
-    max_list = utils2.get_max_rewatch_list()
-    if new_method == REWATCH_METHODS.LEAST_WATCHED:
-        if trakt_id not in min_list: min_list.append(trakt_id)
-        if trakt_id in max_list: max_list.remove(trakt_id)
-    elif new_method == REWATCH_METHODS.MOST_WATCHED:
-        if trakt_id in min_list: min_list.remove(trakt_id)
-        if trakt_id not in max_list: max_list.append(trakt_id)
-    else:
-        if trakt_id in min_list: min_list.remove(trakt_id)
-        if trakt_id in max_list: max_list.remove(trakt_id)
-    kodi.set_setting('rewatch_min_list', '|'.join(min_list))
-    kodi.set_setting('rewatch_max_list', '|'.join(max_list))
-    kodi.refresh_container()
-    
 @url_dispatcher.register(MODES.PICK_SUB_LIST, ['mode', 'section'])
 @url_dispatcher.register(MODES.PICK_FAV_LIST, ['mode', 'section'])
 @url_dispatcher.register(MODES.PICK_REWATCH_LIST, ['mode', 'section'])
@@ -2391,6 +2385,20 @@ def make_item(section_params, show, menu_items=None):
     liz.setProperty('totaltime', str(1))
     return liz, liz_url
 
+def get_list(section, slug, username=None):
+    if slug == utils.WATCHLIST_SLUG:
+        items = trakt_api.show_watchlist(section)
+    else:
+        try:
+            items = trakt_api.show_list(slug, section, username, auth=bool(TOKEN))
+        except TraktNotFoundError:
+            msg = i18n('list_not_exist') % (slug)
+            kodi.notify(msg=msg, duration=5000)
+            log_utils.log(msg, log_utils.LOGWARNING)
+            return
+    
+    return items
+    
 def main(argv=None):
     if sys.argv: argv = sys.argv
     queries = kodi.parse_query(sys.argv[2])

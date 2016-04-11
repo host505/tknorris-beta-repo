@@ -32,6 +32,7 @@ import scraper
 
 BASE_URL = 'http://www.ddlvalley.cool'
 CATEGORIES = {VIDEO_TYPES.MOVIE: '/category/movies/', VIDEO_TYPES.TVSHOW: '/category/tv-shows/'}
+LOCAL_UA = 'SALTS for Kodi/%s' % (kodi.get_version())
 
 class DDLValley_Scraper(scraper.Scraper):
     base_url = BASE_URL
@@ -59,7 +60,8 @@ class DDLValley_Scraper(scraper.Scraper):
         hosters = []
         if source_url and source_url != FORCE_NO_MATCH:
             url = urlparse.urljoin(self.base_url, source_url)
-            html = self._http_get(url, cache_limit=.5)
+            headers = {'User-Agent': LOCAL_UA}
+            html = self._http_get(url, require_debrid=True, headers=headers, cache_limit=.5)
             for match in re.finditer("<span\s+class='info2'(.*?)(<span\s+class='info|<hr\s*/>)", html, re.DOTALL):
                 for match2 in re.finditer('href="([^"]+)', match.group(1)):
                     stream_url = match2.group(1)
@@ -93,7 +95,7 @@ class DDLValley_Scraper(scraper.Scraper):
         too_old = False
         while page_url and not too_old:
             url = urlparse.urljoin(self.base_url, page_url[0])
-            html = self._http_get(url, cache_limit=1)
+            html = self._http_get(url, require_debrid=True, cache_limit=1)
             headings = re.findall('<h2>\s*<a\s+href="([^"]+)[^>]+>(.*?)</a>', html)
             posts = dom_parser.parse_dom(html, 'div', {'id': 'post-\d+'})
             for heading, post in zip(headings, posts):
@@ -118,7 +120,7 @@ class DDLValley_Scraper(scraper.Scraper):
         if video_type == VIDEO_TYPES.TVSHOW and title:
             test_url = '/show/%s' % (self.__to_slug(title))
             test_url = urlparse.urljoin(self.base_url, test_url)
-            html = self._http_get(test_url, cache_limit=24)
+            html = self._http_get(test_url, require_debrid=True, cache_limit=24)
             posts = dom_parser.parse_dom(html, 'div', {'id': 'post-\d+'})
             if posts and CATEGORIES[video_type] in posts[0]:
                 match = re.search('<div[^>]*>\s*show\s+name:.*?<a\s+href="([^"]+)[^>]+>(?!Season\s+\d+)([^<]+)', posts[0], re.I)
@@ -130,7 +132,8 @@ class DDLValley_Scraper(scraper.Scraper):
             search_url = urlparse.urljoin(self.base_url, '/search/%s/')
             search_title = re.sub('[^A-Za-z0-9 ]', '', title.lower())
             search_url = search_url % (urllib.quote_plus(search_title))
-            html = self._http_get(search_url, cache_limit=1)
+            headers = {'User-Agent': LOCAL_UA}
+            html = self._http_get(search_url, headers=headers, require_debrid=True, cache_limit=1)
             headings = re.findall('<h2>\s*<a\s+href="([^"]+).*?">(.*?)</a>', html)
             posts = dom_parser.parse_dom(html, 'div', {'id': 'post-\d+'})
             norm_title = scraper_utils.normalize_title(title)

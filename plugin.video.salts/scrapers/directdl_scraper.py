@@ -150,7 +150,7 @@ class DirectDownload_Scraper(scraper.Scraper):
             log_utils.log('Translating Search Url: %s' % (url), log_utils.LOGDEBUG)
             url = self.__translate_search(url)
 
-        return super(self.__class__, self)._http_get(url, data=data, cache_limit=cache_limit)
+        return super(self.__class__, self)._http_get(url, data=data, require_debrid=True, cache_limit=cache_limit)
 
     def __translate_search(self, url):
         query = urlparse.parse_qs(urlparse.urlparse(url).query)

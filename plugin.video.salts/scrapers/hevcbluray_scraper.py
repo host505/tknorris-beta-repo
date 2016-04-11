@@ -28,6 +28,7 @@ from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
 
 BASE_URL = 'https://hevcbluray.com'
+QUALITY_MAP = {'HD 720P': QUALITIES.HD720, 'HD 1080P': QUALITIES.HD1080}
 
 class HEVCBluRay_Scraper(scraper.Scraper):
     base_url = BASE_URL
@@ -62,19 +63,19 @@ class HEVCBluRay_Scraper(scraper.Scraper):
         if source_url and source_url != FORCE_NO_MATCH:
             url = urlparse.urljoin(self.base_url, source_url)
             html = self._http_get(url, cache_limit=.5)
+            is_3d = False
+            page_quality = QUALITIES.HD720
+            title = dom_parser.parse_dom(html, 'title')
+            if title:
+                title = title[0]
+                match = re.search('(\d{3,})p', title)
+                if match:
+                    page_quality = scraper_utils.height_get_quality(match.group(1))
+                
+                is_3d = True if re.search('\s+3D\s+', title) else False
+            
             fragment = dom_parser.parse_dom(html, 'div', {'class': 'txt-block'})
             if fragment:
-                is_3d = False
-                page_quality = QUALITIES.HD720
-                title = dom_parser.parse_dom(html, 'title')
-                if title:
-                    title = title[0]
-                    match = re.search('(\d{3,})p', title)
-                    if match:
-                        page_quality = scraper_utils.height_get_quality(match.group(1))
-                    
-                    is_3d = True if re.search('\s+3D\s+', title) else False
-                    
                 for match in re.finditer('href="([^"]+)', fragment[0]):
                     stream_url = match.group(1)
                     host = urlparse.urlparse(stream_url).hostname
@@ -82,6 +83,18 @@ class HEVCBluRay_Scraper(scraper.Scraper):
                     source = {'multi-part': False, 'url': stream_url, 'host': host, 'class': self, 'quality': quality, 'views': None, 'rating': None, 'direct': False}
                     source['format'] = 'x265'
                     source['3D'] = is_3d
+                    sources.append(source)
+            
+            for item in dom_parser.parse_dom(html, 'li', {'class': 'elemento'}):
+                match = re.search('href="([^"]+)', item)
+                if match:
+                    stream_url = match.group(1)
+                    q_str = dom_parser.parse_dom(item, 'span', {'class': 'd'})
+                    q_str = q_str[0].upper() if q_str else ''
+                    base_quality = QUALITY_MAP.get(q_str, page_quality)
+                    host = urlparse.urlparse(stream_url).hostname
+                    quality = scraper_utils.get_quality(video, host, base_quality)
+                    source = {'multi-part': False, 'url': stream_url, 'host': host, 'class': self, 'quality': quality, 'views': None, 'rating': None, 'direct': False}
                     sources.append(source)
 
         return sources

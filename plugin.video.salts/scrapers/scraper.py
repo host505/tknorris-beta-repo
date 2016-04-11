@@ -28,6 +28,7 @@ import urllib
 import urllib2
 import urlparse
 import xbmcgui
+import urlresolver
 from salts_lib import cloudflare
 from salts_lib import kodi
 from salts_lib import log_utils
@@ -70,6 +71,7 @@ class Scraper(object):
     base_url = BASE_URL
     db_connection = None
     worker_id = None
+    debrid_resolvers = None
 
     def __init__(self, timeout=DEFAULT_TIMEOUT):
         pass
@@ -236,11 +238,20 @@ class Scraper(object):
 
         return url
 
-    def _http_get(self, url, cookies=None, data=None, multipart_data=None, headers=None, allow_redirect=True, method=None, cache_limit=8):
+    def _http_get(self, url, cookies=None, data=None, multipart_data=None, headers=None, allow_redirect=True, method=None, require_debrid=False, cache_limit=8):
         return self._cached_http_get(url, self.base_url, self.timeout, cookies=cookies, data=data, multipart_data=multipart_data,
-                                     headers=headers, allow_redirect=allow_redirect, method=method, cache_limit=cache_limit)
+                                     headers=headers, allow_redirect=allow_redirect, method=method, require_debrid=require_debrid,
+                                     cache_limit=cache_limit)
     
-    def _cached_http_get(self, url, base_url, timeout, cookies=None, data=None, multipart_data=None, headers=None, allow_redirect=True, method=None, cache_limit=8):
+    def _cached_http_get(self, url, base_url, timeout, cookies=None, data=None, multipart_data=None, headers=None, allow_redirect=True, method=None,
+                         require_debrid=False, cache_limit=8):
+        if require_debrid:
+            if Scraper.debrid_resolvers is None:
+                Scraper.debrid_resolvers = [resolver for resolver in urlresolver.relevant_resolvers() if resolver.isUniversal()]
+            if not Scraper.debrid_resolvers:
+                log_utils.log('%s requires debrid: %s' % (self.__class__.__name__, Scraper.debrid_resolvers), log_utils.LOGDEBUG)
+                return ''
+                
         if cookies is None: cookies = {}
         if timeout == 0: timeout = None
         if headers is None: headers = {}

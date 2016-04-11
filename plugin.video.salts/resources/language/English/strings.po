@@ -1078,6 +1078,10 @@ msgctxt "#30276"
 msgid "Use Last Watched Method"
 msgstr ""
 
+msgctxt "#30277"
+msgid "Set as Watch It Again List"
+msgstr ""
+
 msgctxt "#30500"
 msgid "Addon Theme"
 msgstr ""
