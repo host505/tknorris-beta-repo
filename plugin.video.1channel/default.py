@@ -24,6 +24,7 @@ import sys
 import json
 import string
 import urllib
+import urlparse
 import datetime
 import xbmc
 import xbmcgui
@@ -33,6 +34,7 @@ import xbmcplugin
 from addon.common.addon import Addon
 import utils
 from utils import i18n
+import urlresolver
 try: from metahandler import metahandlers
 except: utils.notify(i18n('import_failed'), 'metahandler')
 from urllib2 import HTTPError
@@ -43,10 +45,7 @@ from utils import MODES
 from utils import SUB_TYPES
 import gui_utils
 
-global urlresolver
-
 _1CH = Addon('plugin.video.1channel', sys.argv)
-
 META_ON = _1CH.get_setting('use-meta') == 'true'
 FANART_ON = _1CH.get_setting('enable-fanart') == 'true'
 USE_POSTERS = _1CH.get_setting('use-posters') == 'true'
@@ -150,6 +149,8 @@ def get_sources(url, title, year='', img='', imdbnum='', dialog=None, respect_au
 
     dbid = get_dbid(video_type, title, season, episode, year)
 
+    hosters = apply_urlresolver(hosters)
+    
     # auto play is on
     if respect_auto and _1CH.get_setting('auto-play') == 'true':
         auto_try_sources(hosters, title, img, year, imdbnum, video_type, season, episode, primewire_url, resume, dbid)
@@ -171,6 +172,19 @@ def get_sources(url, title, year='', img='', imdbnum='', dialog=None, respect_au
             else:
                 play_unfiltered_dir(hosters, title, img, year, imdbnum, video_type, season, episode, primewire_url, resume)
 
+def apply_urlresolver(hosters):
+    debrid_resolvers = [resolver() for resolver in urlresolver.relevant_resolvers(order_matters=True) if resolver.isUniversal()]
+    if debrid_resolvers:
+        debrid_hosts = {}
+        for hoster in hosters:
+            host = urlparse.urlparse(hoster['url']).hostname
+            if host in debrid_hosts:
+                hoster['debrid'] = debrid_hosts[host]
+            else:
+                temp_resolvers = [resolver.name[:3].upper() for resolver in debrid_resolvers if resolver.valid_url('', host)]
+                hoster['debrid'] = debrid_hosts[host] = temp_resolvers
+    return hosters
+                
 def get_dbid(video_type, title, season='', episode='', year=''):
     dbid = 0
     filter = ''
@@ -339,11 +353,17 @@ def auto_try_sources(hosters, title, img, year, imdbnum, video_type, season, epi
 @pw_dispatcher.register(MODES.PLAY_SOURCE, ['url', ' title', 'video_type', 'primewire_url', 'resume'], ['imdbnum', 'year', 'season', 'episode'])
 def PlaySource(url, title, video_type, primewire_url, resume, imdbnum='', year='', season='', episode='', dbid=None):
     utils.log('Attempting to play url: %s' % url)
-    stream_url = urlresolver.HostedMediaFile(url=url).resolve()
-
-    # If urlresolver returns false then the video url was not resolved.
-    if not stream_url or not isinstance(stream_url, basestring):
-        try: msg = stream_url.msg
+    
+    try:
+        stream_url = urlresolver.HostedMediaFile(url=url).resolve()
+        # If urlresolver returns false then the video url was not resolved.
+        if not stream_url or not isinstance(stream_url, basestring):
+            try: msg = stream_url.msg
+            except: msg = url
+            utils.notify(msg=i18n('link_resolve_failed') % (msg), duration=7500)
+            return False
+    except Exception as e:
+        try: msg = str(e)
         except: msg = url
         utils.notify(msg=i18n('link_resolve_failed') % (msg), duration=7500)
         return False
@@ -1929,10 +1949,6 @@ def main(argv=None):
         return
 
     mode = _1CH.queries.get('mode', None)
-    if mode in [MODES.GET_SOURCES, MODES.PLAY_SOURCE, MODES.PLAY_TRAILER, MODES.RES_SETTINGS, MODES.SELECT_SOURCES]:
-        global urlresolver
-        import urlresolver
-
     pw_dispatcher.dispatch(mode, _1CH.queries)
 
 if __name__ == '__main__':
