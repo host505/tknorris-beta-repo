@@ -222,6 +222,7 @@ class Scraper(object):
                 url = results[0]['url']
                 self.db_connection.set_related_url(temp_video_type, video.title, video.year, self.get_name(), url, season)
 
+        if isinstance(url, unicode): url = url.encode('utf-8')
         if video.video_type == VIDEO_TYPES.EPISODE:
             if url == FORCE_NO_MATCH:
                 url = None
@@ -239,9 +240,20 @@ class Scraper(object):
         return url
 
     def _http_get(self, url, cookies=None, data=None, multipart_data=None, headers=None, allow_redirect=True, method=None, require_debrid=False, cache_limit=8):
-        return self._cached_http_get(url, self.base_url, self.timeout, cookies=cookies, data=data, multipart_data=multipart_data,
+        html = self._cached_http_get(url, self.base_url, self.timeout, cookies=cookies, data=data, multipart_data=multipart_data,
                                      headers=headers, allow_redirect=allow_redirect, method=method, require_debrid=require_debrid,
                                      cache_limit=cache_limit)
+        sucuri_cookie = scraper_utils.get_sucuri_cookie(html)
+        if sucuri_cookie:
+            log_utils.log('Setting sucuri cookie: %s' % (sucuri_cookie), log_utils.LOGDEBUG)
+            if cookies is not None:
+                cookies = cookies.update(sucuri_cookie)
+            else:
+                cookies = sucuri_cookie
+            html = self._cached_http_get(url, self.base_url, self.timeout, cookies=cookies, data=data, multipart_data=multipart_data,
+                                         headers=headers, allow_redirect=allow_redirect, method=method, require_debrid=require_debrid,
+                                         cache_limit=0)
+        return html
     
     def _cached_http_get(self, url, base_url, timeout, cookies=None, data=None, multipart_data=None, headers=None, allow_redirect=True, method=None,
                          require_debrid=False, cache_limit=8):
@@ -335,6 +347,7 @@ class Scraper(object):
         return html
 
     def _set_cookies(self, base_url, cookies):
+        log_utils.log(cookies)
         cookie_file = os.path.join(COOKIEPATH, '%s_cookies.lwp' % (self.get_name()))
         cj = cookielib.LWPCookieJar(cookie_file)
         try: cj.load(ignore_discard=True)
@@ -645,8 +658,8 @@ class Scraper(object):
         sources = []
         for row in self._parse_directory(self._http_get(url, cache_limit=cache_limit)):
             source_url = urlparse.urljoin(url, row['link'])
-            if row['directory']:
-                sources += self._get_files(source_url)
+            if row['directory'] and not row['link'].startswith('..'):
+                sources += self._get_files(source_url, cache_limit=cache_limit)
             else:
                 row['url'] = source_url
                 sources.append(row)
@@ -654,18 +667,12 @@ class Scraper(object):
     
     def _parse_directory(self, html):
         rows = []
-        for match in re.finditer('\s*<a\s+href="([^"]+)">([^<]+)</a>\s+(\d+-[a-zA-Z]+-\d+ \d+:\d+)\s+(-|\d+)', html):
-            link, title, date, size = match.groups()
-            if title.endswith('/'): title = title[:-1]
-            row = {'link': urllib.unquote(link), 'title': title, 'date': date}
-            if link.endswith('/'):
-                row['directory'] = True
-            else:
-                row['directory'] = False
-
-            if size == '-':
-                row['size'] = None
-            else:
-                row['size'] = size
+        row_pattern = '\s*<a\s+href="(?P<link>[^"]+)">(?P<title>[^<]+)</a>\s+(?P<date>\d+-[a-zA-Z]+-\d+ \d+:\d+)\s+(?P<size>-|\d+)'
+        for match in re.finditer(row_pattern, html):
+            row = match.groupdict()
+            row['link'] = urllib.unquote(row['link'])
+            if row['title'].endswith('/'): row['title'] = row['title'][:-1]
+            row['directory'] = True if row['link'].endswith('/') else False
+            if row['size'] == '-': row['size'] = None
             rows.append(row)
         return rows

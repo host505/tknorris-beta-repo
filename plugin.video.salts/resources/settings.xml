@@ -217,6 +217,10 @@
          <setting id="DD.tv-base_url" type="text" label="    Base Url" default="https://directdownload.tv" visible="eq(-1,true)"/>
          <setting id="DD.tv-sub_check" type="bool" label="    Include in Page Existence checks?" default="false" visible="eq(-2,true)"/>
          <setting id="DD.tv_last_results" type="number" default="0" visible="false"/>
+         <setting id="DDLSeries-enable" type="bool" label="DDLSeries Enabled" default="true" visible="true"/>
+         <setting id="DDLSeries-base_url" type="text" label="    Base Url" default="http://www.ddlseries.net" visible="eq(-1,true)"/>
+         <setting id="DDLSeries-sub_check" type="bool" label="    Include in Page Existence checks?" default="false" visible="eq(-2,true)"/>
+         <setting id="DDLSeries_last_results" type="number" default="0" visible="false"/>
          <setting id="DDLValley-enable" type="bool" label="DDLValley Enabled" default="true" visible="true"/>
          <setting id="DDLValley-base_url" type="text" label="    Base Url" default="http://www.ddlvalley.cool" visible="eq(-1,true)"/>
          <setting id="DDLValley-sub_check" type="bool" label="    Include in Page Existence checks?" default="false" visible="eq(-2,true)"/>
@@ -246,13 +250,13 @@
          <setting id="Dizipas-base_url" type="text" label="    Base Url" default="http://dizipas.com" visible="eq(-1,true)"/>
          <setting id="Dizipas-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="Dizipas_last_results" type="number" default="0" visible="false"/>
+    </category>
+
+    <category label="Scrapers 2">
          <setting id="DL-Pars-enable" type="bool" label="DL-Pars Enabled" default="true" visible="true"/>
          <setting id="DL-Pars-base_url" type="text" label="    Base Url" default="http://tv.dl-pars.in" visible="eq(-1,true)"/>
          <setting id="DL-Pars-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="DL-Pars_last_results" type="number" default="0" visible="false"/>
-    </category>
-
-    <category label="Scrapers 2">
          <setting id="EasyNews-enable" type="bool" label="EasyNews Enabled" default="true" visible="true"/>
          <setting id="EasyNews-base_url" type="text" label="    Base Url" default="http://members.easynews.com" visible="eq(-1,true)"/>
          <setting id="EasyNews-sub_check" type="bool" label="    Include in Page Existence checks?" default="false" visible="eq(-2,true)"/>
@@ -342,13 +346,13 @@
          <setting id="MiraDeTodo-base_url" type="text" label="    Base Url" default="http://miradetodo.net" visible="eq(-1,true)"/>
          <setting id="MiraDeTodo-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="MiraDeTodo_last_results" type="number" default="0" visible="false"/>
+    </category>
+
+    <category label="Scrapers 3">
          <setting id="movie25-enable" type="bool" label="movie25 Enabled" default="true" visible="true"/>
          <setting id="movie25-base_url" type="text" label="    Base Url" default="http://movie25.hk" visible="eq(-1,true)"/>
          <setting id="movie25-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="movie25_last_results" type="number" default="0" visible="false"/>
-    </category>
-
-    <category label="Scrapers 3">
          <setting id="Movie4K-enable" type="bool" label="Movie4K Enabled" default="true" visible="true"/>
          <setting id="Movie4K-base_url" type="text" label="    Base Url" default="http://movie4k.to" visible="eq(-1,true)"/>
          <setting id="Movie4K-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
@@ -437,6 +441,9 @@
          <setting id="OnlineMoviesPro-base_url" type="text" label="    Base Url" default="http://www.onlinemovies-pro.com" visible="eq(-1,true)"/>
          <setting id="OnlineMoviesPro-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="OnlineMoviesPro_last_results" type="number" default="0" visible="false"/>
+    </category>
+    
+    <category label="Scrapers 4">
          <setting id="ororo.tv-enable" type="bool" label="ororo.tv Enabled" default="true" visible="true"/>
          <setting id="ororo.tv-base_url" type="text" label="    Base Url" default="https://ororo.tv" visible="eq(-1,true)"/>
          <setting id="ororo.tv-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
@@ -444,9 +451,6 @@
          <setting id="ororo.tv-username" type="text" label="     Username" default="" visible="eq(-4,true)"/>
          <setting id="ororo.tv-password" type="text" label="     Password" option="hidden" default="" visible="eq(-5,true)"/>
          <setting id="ororo.tv-include_premium" type="bool" label="     Include Premium" default="false" visible="eq(-6,true)"/>
-    </category>
-    
-    <category label="Scrapers 4">
          <setting id="PelisPedia-enable" type="bool" label="PelisPedia Enabled" default="true" visible="true"/>
          <setting id="PelisPedia-base_url" type="text" label="    Base Url" default="http://www.pelispedia.tv" visible="eq(-1,true)"/>
          <setting id="PelisPedia-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
@@ -534,14 +538,14 @@
          <setting id="StreamLord_last_results" type="number" default="0" visible="false"/>
          <setting id="StreamLord-username" type="text" label="     Username" default="" visible="eq(-4,true)"/>
          <setting id="StreamLord-password" type="text" label="     Password" option="hidden" default="" visible="eq(-5,true)"/>
+    </category>
+
+    <category label="Scrapers 5">
          <setting id="TheExtopia-enable" type="bool" label="TheExtopia Enabled" default="true" visible="true"/>
          <setting id="TheExtopia-base_url" type="text" label="    Base Url" default="http://www.theextopia.com" visible="eq(-1,true)"/>
          <setting id="TheExtopia-sub_check" type="bool" label="    Include in Page Existence checks?" default="false" visible="eq(-2,true)"/>
          <setting id="TheExtopia_last_results" type="number" default="0" visible="false"/>
          <setting id="TheExtopia-select" type="enum" label="     Automatically Select" lvalues="30636|30637" default="0" visible="eq(-4,true)"/>
-    </category>
-
-    <category label="Scrapers 5">
          <setting id="torba.se-enable" type="bool" label="torba.se Enabled" default="true" visible="true"/>
          <setting id="torba.se-base_url" type="text" label="    Base Url" default="http://torba.se" visible="eq(-1,true)"/>
          <setting id="torba.se-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>

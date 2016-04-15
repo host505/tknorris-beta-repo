@@ -343,3 +343,10 @@ def update_scraper(file_name, scraper_url, scraper_key):
             if old_py != new_py:
                 with open(py_path, 'w') as f:
                     f.write(new_py)
+
+def urljoin(base_url, url):
+    if not base_url.endswith('/'):
+        base_url += '/'
+    if url.startswith('/'):
+        url = url[1:]
+    return urlparse.urljoin(base_url, url)

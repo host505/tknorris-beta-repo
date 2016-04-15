@@ -108,9 +108,9 @@ class Flixanity_Scraper(scraper.Scraper):
         return self._default_get_url(video)
 
     def search(self, video_type, title, year, season=''):
+        results = []
         self.__get_token()
         if self.__token is not None:
-            results = []
             search_url = urlparse.urljoin(self.base_url, self.__get_search_url())
             timestamp = int(time.time() * 1000)
             s = self.__get_s()
@@ -158,17 +158,6 @@ class Flixanity_Scraper(scraper.Scraper):
         self.__get_token(html)
         return html
 
-    def __get_token(self, html=''):
-        if self.__token is None:
-            if not html:
-                html = super(self.__class__, self)._http_get(self.base_url, cache_limit=8)
-                
-            match = re.search("var\s+tok\s*=\s*'([^']+)", html)
-            if match:
-                self.__token = match.group(1)
-            else:
-                log_utils.log('Unable to locate Flixanity token', log_utils.LOGWARNING)
-    
     def __login(self):
         url = urlparse.urljoin(self.base_url, '/ajax/login.php')
         self.__get_token()
@@ -189,12 +178,23 @@ class Flixanity_Scraper(scraper.Scraper):
             script = match.group(1)
             if 'flixanity' in script:
                 html = super(self.__class__, self)._http_get(script, cache_limit=24)
-                match = re.search('autocomplete\([^"]*"([^"]+)', html)
+                match = re.search('acroute\s*=\s*"([^"]+)', html)
                 if match:
                     search_url = match.group(1)
                     search_url = search_url.replace('\\', '')
                     break
         return search_url
+    
+    def __get_token(self, html=''):
+        if self.__token is None:
+            if not html:
+                html = super(self.__class__, self)._http_get(self.base_url, cache_limit=8)
+                
+            match = re.search("var\s+tok\s*=\s*'([^']+)", html)
+            if match:
+                self.__token = match.group(1)
+            else:
+                log_utils.log('Unable to locate Flixanity token', log_utils.LOGWARNING)
     
     def __get_s(self):
         return ''.join([random.choice(string.ascii_letters) for _ in xrange(25)])

@@ -1,3 +1,11 @@
+[B]Version 2.0.34[/B]
+- Add DDLSeries
+- Improve flixanity
+- Improve vivo.to
+- Fix TVWTS
+- Fix MWM
+- Minor Code Fixes
+
 [B]Version 2.0.33[/B]
 - Require debrid accounts for some scrapers
 - Add more Rewatch function

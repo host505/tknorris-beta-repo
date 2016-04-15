@@ -108,9 +108,20 @@ class VivoTo_Scraper(scraper.Scraper):
                     js_data = scraper_utils.parse_json(html, url)
                     if 's' in js_data:
                         if isinstance(js_data['s'], basestring):
-                            stream_url = self.__get_real_url(js_data['s'])
-                            if stream_url is not None:
-                                sources[stream_url] = page_quality
+                            stream_urls = self.__get_real_url(js_data['s'])
+                            if stream_urls is not None:
+                                if isinstance(stream_urls, basestring):
+                                    sources[stream_urls] = page_quality
+                                else:
+                                    for item in stream_urls:
+                                        stream_url = item['files']
+                                        if self._get_direct_hostname(stream_url) == 'gvideo':
+                                            quality = scraper_utils.gv_get_quality(stream_url)
+                                        elif 'quality' in item:
+                                            quality = scraper_utils.height_get_quality(item['quality'])
+                                        else:
+                                            quality = page_quality
+                                        sources[stream_url] = quality
                         else:
                             for link in js_data['s']:
                                 stream_url = self.__get_real_url(link['file'])
@@ -131,7 +142,6 @@ class VivoTo_Scraper(scraper.Scraper):
             html = self._http_get(url, headers=XHR, cache_limit=.25)
             js_data = scraper_utils.parse_json(html, url)
             if 'data' in js_data:
-                log_utils.log(js_data['data'])
                 if 'files' in js_data['data'] and js_data['data']['files']:
                     return js_data['data']['files']
                 elif js_data['data']:
