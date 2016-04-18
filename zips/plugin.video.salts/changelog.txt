@@ -1,3 +1,12 @@
+[B]Version 2.0.35[/B]
+- Add Fmovie
+- Fix Flixanity
+- Fix TVWTS
+- Fix PelisPedia
+- Fix MVL
+- Add fix to stop plugin:// error in log
+- Reduce load in some scrapers if not configured
+
 [B]Version 2.0.34[/B]
 - Add DDLSeries
 - Improve flixanity
