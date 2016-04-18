@@ -1,3 +1,15 @@
 /.project
 /.pydevproject
 /.settings
+/plugin.video.1channel
+/plugin.video.premiumize
+/plugin.video.salts
+/plugin.video.trakt_list_manager
+/repository.tknorris.beta
+/script.1channel.themepak
+/script.module.arrow
+/script.module.dateutil
+/script.module.trakt
+/script.module.urlresolver
+/script.salts.themepak
+/script.trakt
