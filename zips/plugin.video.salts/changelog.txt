@@ -1,3 +1,10 @@
+[B]Version 2.0.36[/B]
+- Improve MovieWatcher
+- Fix DDLValley
+- Fix 2DDL
+- Fix Flixanity
+- Remove TVWTVS
+
 [B]Version 2.0.35[/B]
 - Add Fmovie
 - Fix Flixanity
