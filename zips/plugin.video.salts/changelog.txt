@@ -1,3 +1,9 @@
+[B]Version 2.0.37[/B]
+- Fix torba
+- Fix Mira
+- Improve MoviesPlanet
+- Fix dizilab
+
 [B]Version 2.0.36[/B]
 - Improve MovieWatcher
 - Fix DDLValley
