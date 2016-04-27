@@ -1,3 +1,14 @@
+[B]Version 2.0.38[/B]
+- Add kiwihd
+- Add PirateJunkies
+- Add Watch5s
+- Improve 123Movies
+- Fix PelisPedia
+- Fix M4uFree
+- Fix WatchFree
+- Fix MovieSub
+- Remove tv-release.net
+
 [B]Version 2.0.37[/B]
 - Fix torba
 - Fix Mira
