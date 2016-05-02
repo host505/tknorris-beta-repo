@@ -1,3 +1,12 @@
+[B]Version 2.0.39[/B]
+- Add vu45 scraper
+- Improve Watch5s
+- Fix torba
+- Fix MovieWatcher
+- Remove dl-pars scraper
+- Improve user agent algorithm
+- Improve title cleanse
+
 [B]Version 2.0.38[/B]
 - Add kiwihd
 - Add PirateJunkies
