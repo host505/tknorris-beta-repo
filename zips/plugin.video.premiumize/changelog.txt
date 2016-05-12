@@ -1,6 +1,7 @@
-[B]Version 0.0.7[/B]
+[B]Version 0.0.8[/B]
 - Set content types for Krypton
 - Add unique UA
+- Skip transcodes that don't exist
 
 [B]Version 0.0.6[/B]
 - Change Download label

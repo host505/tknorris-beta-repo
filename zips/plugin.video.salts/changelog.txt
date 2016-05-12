@@ -1,7 +1,9 @@
-[B]Version 2.0.40[/B]
+[B]Version 2.0.41[/B]
 - Add RLSeries scraper
 - Fix xmovies8.v2
 - Fix Watch5s Episode detection
+- Fix KiwiHD Episode detection
+- Improve 123Movies scraper
 - Improve vidics scraper
 - Add optional size limit for furk
 - Only force silent trakt sync when playing from library
