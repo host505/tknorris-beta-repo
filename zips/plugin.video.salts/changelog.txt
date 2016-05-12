@@ -1,3 +1,18 @@
+[B]Version 2.0.40[/B]
+- Add RLSeries scraper
+- Fix xmovies8.v2
+- Fix Watch5s Episode detection
+- Improve vidics scraper
+- Add optional size limit for furk
+- Only force silent trakt sync when playing from library
+- Only allow playback from library or SALTS
+- Changes to prep for Krypton
+    - Change content types on some directories to force desirable views (WideList/IconWall)
+    - Fix skin issues with Torba auth window and Auto-Conf window for Estuary
+    - Set mediatype for tvshows, movies, seasons and episodes
+    - Remove "Show Information" Context menu item (Duplicate of core menu item)
+    - Completely disable custom progress dialogs from library (always crashes krypton) 
+
 [B]Version 2.0.39[/B]
 - Add vu45 scraper
 - Improve Watch5s

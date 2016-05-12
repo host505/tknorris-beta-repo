@@ -24,7 +24,7 @@
 </addon>
 
 <!--suppress ALL -->
-<addon id="plugin.video.salts" version="2.0.39" name="Stream All The Sources" provider-name="tknorris">
+<addon id="plugin.video.salts" version="2.0.40" name="Stream All The Sources" provider-name="tknorris">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
         <import addon="script.module.urlresolver" version="3.0.0"/>
@@ -44,7 +44,7 @@
 </addon>
 
 <!--suppress ALL -->
-<addon id="plugin.video.premiumize" version="0.0.5" name="Premiumize Cloud" provider-name="tknorris">
+<addon id="plugin.video.premiumize" version="0.0.7" name="Premiumize Cloud" provider-name="tknorris">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
@@ -277,7 +277,7 @@ Addons Included
 </addon>
 
 <!--suppress ALL -->
-<addon id="context.salts.tools" version="1.0.2" name="SALTS Context Tools" provider-name="tknorris">
+<addon id="context.salts.tools" version="1.0.3" name="SALTS Context Tools" provider-name="tknorris">
     <requires>
         <import addon="xbmc.python" version="2.2.0"/>
         <import addon="plugin.video.salts" version="1.0.65"/>
@@ -285,7 +285,7 @@ Addons Included
     <extension point="kodi.context.item" library="default.py">
       <item>
         <label>SALTS Tools...</label>
-        <visible>StringCompare(ListItem.dbtype,movie) | StringCompare(ListItem.dbtype,tvshow) | StringCompare(ListItem.dbtype,season) | StringCompare(ListItem.dbtype,episode)</visible>
+        <visible>!StringCompare(ListItem.dbid,)+[StringCompare(ListItem.dbtype,movie)|StringCompare(ListItem.dbtype,tvshow)|StringCompare(ListItem.dbtype,season)|StringCompare(ListItem.dbtype,episode)]</visible>
       </item>
     </extension>
     <extension point="xbmc.addon.metadata">

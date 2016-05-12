@@ -1,3 +1,11 @@
+[B]Version 0.0.7[/B]
+- Set content types for Krypton
+- Add unique UA
+
+[B]Version 0.0.6[/B]
+- Change Download label
+- Update Translations
+
 [B]Version 0.0.5[/B]
 - Make addon self updating
 
