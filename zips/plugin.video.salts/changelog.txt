@@ -1,3 +1,8 @@
+[B]Version 2.0.42[/B]
+- Fix MovieWatched TV search
+- Fix Torba.se for embedded audio streams
+- Only set content for files views (Krypton fix)
+
 [B]Version 2.0.41[/B]
 - Add RLSeries scraper
 - Fix xmovies8.v2
