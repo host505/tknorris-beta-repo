@@ -1,3 +1,15 @@
+[B]Version 2.0.43[/B]
+- Fix Dizipas scraper
+- Fix MovieXK scraper
+- Fix StreamLord scraper
+- Fix PelisPedia movie search
+- Fix Afdah scraper
+- Fix Movie25 Scraper
+- Fix MovieNight scraper
+- Fix Icefilms resolve
+- Fix stream-tv.co scraper
+- Remove WatchHD scraper
+
 [B]Version 2.0.42[/B]
 - Fix MovieWatched TV search
 - Fix Torba.se for embedded audio streams
