@@ -1,3 +1,7 @@
+[B]Version 2.0.45[/B]
+- Fix typo in PremiumizeV2
+- Add option in Premiumize scraper to exclude transcodes
+
 [B]Version 2.0.44[/B]
 - Add option to show Air Time on MNE
 - Fix Diziay scraper
