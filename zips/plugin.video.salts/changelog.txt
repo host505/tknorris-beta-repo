@@ -1,3 +1,13 @@
+[B]Version 2.0.46[/B]
+- Add vidnow scraper
+- Add showbox scraper
+- Fix m4ufree
+- Fix tvonline
+- Fix OnlineDizi scraper
+- Fix SantaSeries
+- Fix Torba
+- Test IsFolder=True for Krypton workaround
+
 [B]Version 2.0.45[/B]
 - Fix typo in PremiumizeV2
 - Add option in Premiumize scraper to exclude transcodes
