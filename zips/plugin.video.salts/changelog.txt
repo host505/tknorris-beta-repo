@@ -1,4 +1,4 @@
-[B]Version 2.0.46[/B]
+[B]Version 2.0.49[/B]
 - Add vidnow scraper
 - Add showbox scraper
 - Fix m4ufree
