@@ -1,4 +1,4 @@
-[B]Version 2.0.54[/B]
+[B]Version 2.0.55[/B]
 - Add CinemaMKV
 - Improve yesmovies
 - Add support for CF Captcha (Enable in settings)
