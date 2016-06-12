@@ -1,3 +1,8 @@
+[B]Version 2.0.56[/B]
+- Fix Movie25
+- Fix Fardadownload
+- Fix iWatchOnline
+
 [B]Version 2.0.55[/B]
 - Add CinemaMKV
 - Improve yesmovies
