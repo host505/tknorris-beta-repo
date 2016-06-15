@@ -65,6 +65,24 @@
 	</extension>
 </addon>
 
+<addon id="script.tvaddons.debug.log" name="TVAddons Log Uploader" version="1.0.0~beta1" provider-name="TVAddons.ag">
+    <requires>
+        <import addon="xbmc.python" version="2.20.0"/>
+    </requires>
+    <extension point="xbmc.python.script" library="default.py">
+        <provides>executable</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <summary lang="en">Uploads your logs to a shareable location</summary>
+        <description lang="en">This Addon uploads your logs to a shareable location and emails you the link when possible</description>
+        <language></language>
+        <platform>all</platform>
+        <website>https://www.tvaddons.ag/</website>
+        <source>https://github.com/tknorris/script.tvaddons.debug.log</source>
+        <forum>https://forums.tvaddons.ag/maintenance-tool/</forum>
+    </extension>
+</addon>
+
 <addon id="plugin.video.trakt_list_manager" name="Trakt.tv List Manager" version="0.1.5~alpha" provider-name="Tristan Fischer (sphere@dersphere.de)">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
