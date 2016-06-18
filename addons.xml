@@ -65,7 +65,7 @@
 	</extension>
 </addon>
 
-<addon id="script.tvaddons.debug.log" name="TVAddons Log Uploader" version="1.0.0~beta2" provider-name="tvaddons.ag">
+<addon id="script.tvaddons.debug.log" name="TVAddons Log Uploader" version="1.0.0" provider-name="tvaddons.ag">
     <requires>
         <import addon="xbmc.python" version="2.20.0"/>
     </requires>
