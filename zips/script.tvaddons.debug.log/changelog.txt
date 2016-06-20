@@ -1,3 +1,6 @@
+[B]Version 1.0.1[/B]
+- Fix TVA expiration
+
 [B]Version 1.0.0[/B]
 - First public release
 
