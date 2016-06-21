@@ -1,3 +1,6 @@
+[B]Version 0.0.12[/B]
+- Make an image resource
+
 [B]Version 0.0.11[/B]
 - Update iconic & IGDB Redux
 - Make themepak module

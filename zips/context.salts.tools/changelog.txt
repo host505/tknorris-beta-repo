@@ -1,3 +1,6 @@
+[B]Version 1.0.4[/B]
+- Add support for custom widgets
+
 [B]Version 1.0.3[/B]
 - Add support for krypton's custom context menu
 - Only show menu from library items

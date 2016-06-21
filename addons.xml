@@ -24,7 +24,7 @@
 </addon>
 
 <!--suppress ALL -->
-<addon id="plugin.video.salts" version="2.0.59" name="Stream All The Sources" provider-name="tknorris">
+<addon id="plugin.video.salts" version="2.0.60" name="Stream All The Sources" provider-name="tknorris">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
         <import addon="script.module.urlresolver" version="3.0.0"/>
@@ -280,11 +280,11 @@ Addons Included
     </extension>
 </addon>
 
-<addon id="script.1channel.themepak" version="0.0.7" name="1Channel Themepak" provider-name="tknorris">
+<addon id="script.1channel.themepak" version="0.0.8" name="1Channel Themepak" provider-name="tknorris">
     <requires>
-        <import addon="xbmc.python" version="2.1.0"/>
+        <import addon="kodi.resource" version="1.0.0"/>
     </requires>
-    <extension point="xbmc.python.module"/>
+    <extension point="kodi.resource.images" compile="false" type="themepak" />
     <extension point="xbmc.addon.metadata">
         <summary>Themes for the 1Channel/PrimeWire Addon</summary>
         <description>Themes for 1Channel are maintained separately to make distribution of the the addon itself easier/faster.</description>
@@ -293,7 +293,7 @@ Addons Included
 </addon>
 
 <!--suppress ALL -->
-<addon id="context.salts.tools" version="1.0.3" name="SALTS Context Tools" provider-name="tknorris">
+<addon id="context.salts.tools" version="1.0.4" name="SALTS Context Tools" provider-name="tknorris">
     <requires>
         <import addon="xbmc.python" version="2.2.0"/>
         <import addon="plugin.video.salts" version="1.0.65"/>
@@ -313,11 +313,11 @@ Addons Included
 	</extension>
 </addon>
 
-<addon id="script.salts.themepak" version="0.0.11" name="SALTS Themepak" provider-name="tknorris">
+<addon id="script.salts.themepak" version="0.0.12" name="SALTS Themepak" provider-name="tknorris">
     <requires>
-        <import addon="xbmc.python" version="2.1.0"/>
+        <import addon="kodi.resource" version="1.0.0"/>
     </requires>
-    <extension point="xbmc.python.module"/>
+    <extension point="kodi.resource.images" compile="false" type="themepak" />
     <extension point="xbmc.addon.metadata">
         <summary>Themes for the SALTS Addon</summary>
         <description>Themes for SALTS are maintained separately to make distribution of the the addon itself easier/faster.</description>
