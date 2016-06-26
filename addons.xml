@@ -223,7 +223,7 @@
 </addon>
 
 <!--suppress ALL -->
-<addon id="plugin.video.apple_trailers" version="0.0.2" name="Apple Trailers" provider-name="tknorris">
+<addon id="plugin.video.apple_trailers" version="0.0.3" name="Apple Trailers" provider-name="tknorris">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
