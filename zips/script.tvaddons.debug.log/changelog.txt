@@ -1,3 +1,7 @@
+[B]Version 1.0.2[/B]
+- Improve replace regexes
+- Add spmc log support
+
 [B]Version 1.0.1[/B]
 - Fix TVA expiration
 

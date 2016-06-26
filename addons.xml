@@ -24,7 +24,7 @@
 </addon>
 
 <!--suppress ALL -->
-<addon id="plugin.video.salts" version="2.0.60" name="Stream All The Sources" provider-name="tknorris">
+<addon id="plugin.video.salts" version="2.0.61" name="Stream All The Sources" provider-name="tknorris">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
         <import addon="script.module.urlresolver" version="3.0.0"/>
@@ -65,7 +65,7 @@
 	</extension>
 </addon>
 
-<addon id="script.tvaddons.debug.log" name="TVA Log Uploader" version="1.0.1" provider-name="tvaddons.ag">
+<addon id="script.tvaddons.debug.log" name="TVA Log Uploader" version="1.0.2" provider-name="tvaddons.ag">
     <requires>
         <import addon="xbmc.python" version="2.20.0"/>
     </requires>
@@ -223,7 +223,7 @@
 </addon>
 
 <!--suppress ALL -->
-<addon id="plugin.video.apple_trailers" version="0.0.1" name="Apple Trailers" provider-name="tknorris">
+<addon id="plugin.video.apple_trailers" version="0.0.2" name="Apple Trailers" provider-name="tknorris">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
