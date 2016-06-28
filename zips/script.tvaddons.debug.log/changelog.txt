@@ -1,3 +1,6 @@
+[B]Version 1.0.3[/B]
+- Add support for freetelly
+
 [B]Version 1.0.2[/B]
 - Improve replace regexes
 - Add spmc log support
