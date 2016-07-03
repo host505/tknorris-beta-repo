@@ -1,3 +1,14 @@
+[B]Version 2.0.66[/B]
+- Add MovieGo Scraper
+- Fix HDFlix Scraper
+- Fix TuneMovie
+- Fix Filmikz
+- Fix Mira
+- Fix CloudMovie
+- Improve Putlocker
+- Remove ClickPlay
+- Remove Ganool
+
 [B]Version 2.0.65[/B]
 - Improve service Trakt API handling
 - Add Genre menu item
