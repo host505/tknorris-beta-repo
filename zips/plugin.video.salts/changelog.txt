@@ -1,3 +1,11 @@
+[B]Version 2.0.68[/B]
+- Fix pftv scraper
+- Fix yshow scraper
+- Fix MovieZone
+- Fix Sezon
+- Fix YesMovies
+- Fix MovieWatcher
+
 [B]Version 2.0.67[/B]
 - Improve xmovies8
 - Fix vivo.to scraper
