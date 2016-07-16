@@ -1,3 +1,8 @@
+[B]Version 2.0.72[/B]
+- Fix WIA ordering
+- Only show MOW on WIA if already watched
+- Fix Bobby scraper 
+
 [B]Version 2.0.71[/B]
 - Fix YesMovies scraper
 - Fix bugs in bobby scraper
