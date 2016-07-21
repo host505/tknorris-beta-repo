@@ -15,4 +15,5 @@
 /script.salts.themepak
 /script.trakt
 /script.tvaddons.debug.log
-/plugin.video.apple_trailers/
+/plugin.video.apple_trailers
+/script.module.tknorris.shared

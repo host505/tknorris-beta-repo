@@ -24,11 +24,12 @@
 </addon>
 
 <!--suppress ALL -->
-<addon id="plugin.video.salts" version="2.0.72" name="Stream All The Sources" provider-name="tknorris">
+<addon id="plugin.video.salts" version="2.0.73" name="Stream All The Sources" provider-name="tknorris">
     <requires>
         <import addon="xbmc.python" version="2.19.0"/>
         <import addon="script.module.urlresolver" version="3.0.0"/>
         <import addon="script.module.myconnpy" version="1.1.6" />
+        <import addon="script.module.tknorris.shared" version="0.0.1"/>
     </requires>
     <extension point="xbmc.python.pluginsource" library="default.py">
         <provides>video</provides>
@@ -81,6 +82,17 @@
         <source>https://github.com/tknorris/script.tvaddons.debug.log</source>
         <forum>https://forums.tvaddons.ag/maintenance-tool/</forum>
     </extension>
+</addon>
+
+<addon id="script.module.tknorris.shared" name="TKNorris Common Libraries" version="0.0.1" provider-name="tknorris">
+	<requires>
+		<import addon="xbmc.python" version="2.1.0" />
+	</requires>
+	<extension point="xbmc.python.module" library="lib" />
+	<extension point="xbmc.addon.metadata">
+		<platform>all</platform>
+		<summary lang="en">Reusable Modules used by several of tknorris's addons</summary>
+	</extension>
 </addon>
 
 <addon id="plugin.video.trakt_list_manager" name="Trakt.tv List Manager" version="0.1.5~alpha" provider-name="Tristan Fischer (sphere@dersphere.de)">
@@ -223,9 +235,10 @@
 </addon>
 
 <!--suppress ALL -->
-<addon id="plugin.video.apple_trailers" version="0.0.7" name="Apple Trailers" provider-name="tknorris">
+<addon id="plugin.video.apple_trailers" version="0.0.8" name="Apple Trailers" provider-name="tknorris">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
+        <import addon="script.module.tknorris.shared" version="0.0.1"/>
     </requires>
     <extension point="xbmc.python.pluginsource" library="default.py">
         <provides>video</provides>
@@ -310,10 +323,11 @@ Addons Included
 </addon>
 
 <!--suppress ALL -->
-<addon id="context.salts.tools" version="1.0.4" name="SALTS Context Tools" provider-name="tknorris">
+<addon id="context.salts.tools" version="1.0.5" name="SALTS Context Tools" provider-name="tknorris">
     <requires>
         <import addon="xbmc.python" version="2.2.0"/>
         <import addon="plugin.video.salts" version="1.0.65"/>
+        <import addon="script.module.tknorris.shared" version="0.0.1"/>
     </requires>
     <extension point="kodi.context.item" library="default.py">
       <item>

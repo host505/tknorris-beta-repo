@@ -1,3 +1,12 @@
+[B]Version 2.0.73[/B]
+- Fix yesmovies
+- Fix Furk.net
+- Fix yshows
+- Improve HDFlix
+- Remove HDMovie14
+- Increase caching where possibe
+- Move common methods to shared module
+
 [B]Version 2.0.72[/B]
 - Fix WIA ordering
 - Only show MOW on WIA if already watched
