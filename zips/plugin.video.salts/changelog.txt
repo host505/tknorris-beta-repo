@@ -1,3 +1,9 @@
+[B]Version 2.0.74[/B]
+- Fix set_view not working
+- Add function to prune url cache older than 30 days
+- Fix rlsbb
+- Temporary hack to fix occasionally thread create error
+
 [B]Version 2.0.73[/B]
 - Fix yesmovies
 - Fix Furk.net
