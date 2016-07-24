@@ -1,3 +1,11 @@
+[B]Version 2.0.75[/B]
+- fix sezon scraper
+- Add prune cache to scheduled tasks
+- Improve User Agent generation code
+- Fix add to list
+- Start on Worker Pool function to avoid occasional resource errors starting a thread
+- Migrate MNE, Get Sources, Set Related Url, and WIA to use Worker Pool
+
 [B]Version 2.0.74[/B]
 - Fix set_view not working
 - Add function to prune url cache older than 30 days
