@@ -1,4 +1,4 @@
-[B]Version 2.0.76[/B]
+[B]Version 2.0.77[/B]
 - Add MovieHubs scraper
 - Fix MVL scraper
 - Fix dayt scraper
@@ -6,6 +6,9 @@
 - Fix xmovies8.v2 scraper
 - Fix ReleaseBB scraper
 - Fix MoviesHD scraper
+- Fix MovieGo Search
+- Fix MovieSub
+- Improve Furk Scraper
 - Improve Fardadownload scraper
 - Improve SeriesWatch scraper
 - Remove Moviebox scraper
