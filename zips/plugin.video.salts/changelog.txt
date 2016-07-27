@@ -1,3 +1,21 @@
+[B]Version 2.0.76[/B]
+- Add MovieHubs scraper
+- Fix MVL scraper
+- Fix dayt scraper
+- Fix MoviesPlanet scraper
+- Fix xmovies8.v2 scraper
+- Fix ReleaseBB scraper
+- Fix MoviesHD scraper
+- Improve Fardadownload scraper
+- Improve SeriesWatch scraper
+- Remove Moviebox scraper
+- Remove CloudMovie scraper
+- Remove SolarMovie scraper
+- Remove Uflix scraper
+- Improve CF Captcha
+- Improve SRU logic
+- Add support for reusable threads and max threads
+
 [B]Version 2.0.75[/B]
 - fix sezon scraper
 - Add prune cache to scheduled tasks
