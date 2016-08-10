@@ -1,3 +1,17 @@
+[B]Version 2.0.81[/B]
+- Fix Xmovies8.V2 scraper
+- Fix Stage66 scraper
+- Improve Dizibox scraper
+- Improve Dizimag scraper
+- Improve Filmovizjia scraper
+- Improve scene-rls scraper
+- Improve SeriesWatch scraper
+- Improve Furk scraper
+- Centralize and Improve Episode & Movie Matcher
+    - Improves all Blog style scrapers and EasyNews, Farda, Furk, OneClickTVShows, Premiumize, SceneDown, SeriesWatch
+- Improve image fallback handling
+- Various code improvements/simplifications/centralizations
+
 [B]Version 2.0.80[/B]
 - Add scene-rls Scraper
 - Add SceneDown Scraper
