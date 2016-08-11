@@ -1,3 +1,9 @@
+[B]Version 2.0.82[/B]
+- Improve collection open performance on slower hardware
+- Allow date format to be user overridden
+- More code optimizations
+- Fix KiwiHD scraper
+
 [B]Version 2.0.81[/B]
 - Fix Xmovies8.V2 scraper
 - Fix Stage66 scraper
