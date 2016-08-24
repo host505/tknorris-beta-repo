@@ -72,7 +72,7 @@ Addons Included
     </extension>
 </addon>
 
-<addon id="script.tvaddons.debug.log" name="TVA Log Uploader" version="1.0.4" provider-name="tvaddons.ag">
+<addon id="script.tvaddons.debug.log" name="TVA Log Uploader" version="1.0.5" provider-name="tvaddons.ag">
     <requires>
         <import addon="xbmc.python" version="2.20.0"/>
     </requires>
