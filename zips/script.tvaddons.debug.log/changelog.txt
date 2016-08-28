@@ -1,3 +1,6 @@
+[B]Version 1.0.6[/B]
+- Add PIN Auth for Dropbox
+
 [B]Version 1.0.5[/B]
 - Add dropbox upload support
 - Allow individual uploaders to be disabled from settings
