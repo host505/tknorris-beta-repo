@@ -1,3 +1,7 @@
+[B]Version 1.0.7[/B]
+- Remove Pastie; Add ubuntu
+- Add new artwork
+
 [B]Version 1.0.6[/B]
 - Add PIN Auth for Dropbox
 

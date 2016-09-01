@@ -72,7 +72,7 @@ Addons Included
     </extension>
 </addon>
 
-<addon id="script.tvaddons.debug.log" name="TVA Log Uploader" version="1.0.6" provider-name="tvaddons.ag">
+<addon id="script.tvaddons.debug.log" name="TVA Log Uploader" version="1.0.7" provider-name="tvaddons.ag">
     <requires>
         <import addon="xbmc.python" version="2.20.0"/>
     </requires>
@@ -91,7 +91,7 @@ Addons Included
 </addon>
 
 <!--suppress ALL -->
-<addon id="plugin.video.salts" version="2.0.85" name="Stream All The Sources" provider-name="tknorris">
+<addon id="plugin.video.salts" version="2.0.86" name="Stream All The Sources" provider-name="tknorris">
     <requires>
         <import addon="xbmc.python" version="2.19.0"/>
         <import addon="script.module.urlresolver" version="3.0.0"/>
@@ -330,7 +330,7 @@ Addons Included
 </addon>
 
 <!--suppress ALL -->
-<addon id="plugin.video.premiumize" version="0.0.8" name="Premiumize Cloud" provider-name="tknorris">
+<addon id="plugin.video.premiumize" version="0.0.9" name="Premiumize Cloud" provider-name="tknorris">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
     </requires>
