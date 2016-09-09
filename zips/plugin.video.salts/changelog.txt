@@ -1,3 +1,13 @@
+[B]Version 2.0.88[/B]
+- Add rlsmovies
+- Fix sezonlukdizi
+- Fix YesMovies
+- Fix afdah.org
+- Fix MVL
+- Fix Miradetodo
+- Fix MovieSub
+- Remove View47
+
 [B]Version 2.0.87[/B]
 - Add MoviePool
 - Fix LosMovies
