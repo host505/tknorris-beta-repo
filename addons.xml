@@ -1,247 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addons>
-<addon id="plugin.video.trakt_list_manager" name="Trakt.tv List Manager" version="0.1.5~alpha" provider-name="Tristan Fischer (sphere@dersphere.de)">
-    <requires>
-        <import addon="xbmc.python" version="2.1.0"/>
-        <import addon="script.module.xbmcswift2" version="2.4.0"/>
-    </requires>
-    <extension point="xbmc.python.pluginsource" library="addon.py">
-        <provides>executable video</provides>
-    </extension>
-    <extension point="xbmc.addon.metadata">
-        <language />
-        <platform>all</platform>
-        <website>http://www.trakt.tv</website>
-        <source>https://github.com/dersphere/plugin.video.trakt_list_manager</source>
-        <forum>http://forum.xbmc.org/showthread.php?tid=161319</forum>
-        <email>sphere@dersphere.de</email>
-        <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
-        <summary lang="de">Verwalten Trakt.tv Listen von XBMC</summary>
-        <summary lang="el">Διαχείριση Λιστών του Trakt.tv από το XBMC</summary>
-        <summary lang="en">Manage Trakt.tv Lists from XBMC</summary>
-        <summary lang="fr">Gérer les listes Trakt.tv à partir de XBMC</summary>
-        <summary lang="gl">Xestionar as listaxes de Trakt.tv dende o XBMC</summary>
-        <summary lang="ko">Trakt.tv 목록 관리</summary>
-        <summary lang="pl">Zarządzanie listami Trakt.tv z XBMC</summary>
-        <summary lang="pt">Gerir Listas Trakt.tv a partir do XBMC</summary>
-        <summary lang="pt_BR">Administrar Lista Trakt.tv via XBMC</summary>
-        <summary lang="sv">Hantera Trakt.tv listor från XBMC</summary>
-        <description lang="de">Mit Trakt.tv-Listen-Manager können Sie verwalten Ihre Trakt.tv-Listen.[CR]Aktuelle Features: [CR] - erstellen/löschen/View benutzerdefinierte Listen [CR] - hinzufügen/löschen Filme von benutzerdefinierten Listen [CR]-Watchlist anzeigen </description>
-        <description lang="el">Διαχείριση Λιστών του Trakt.tv μπορείτε να διαχειριστείτε τις λίστες σας του Trakt.tv.[CR]Χαρακτηριστικά:[CR]- Δημιουργία/Διαγραφή/Προβολή Προσαρμοσμένων Λιστών[CR]- Προσθήκη/Διαγραφή Ταινιών από Προσαρμοσμένες Λίστες[CR]- Προβολή Watchlist</description>
-        <description lang="en">With Trakt.tv List Manager you can manage your Trakt.tv Lists.[CR]Current Features:[CR]- Create/Delete/View Custom Lists[CR]- Add/Delete Movies from Custom Lists[CR]- View Watchlist</description>
-        <description lang="fr">Trakt.tv List Manager vous permet de gérer vos listes Trakt.tv.[CR]Caractéristiques actuelles:[CR]- Créer/Supprimer/Voir les listes personnalisées[CR]- Ajouter/supprimer des films à partir de listes personnalisées[CR]- Afficher Watchlist</description>
-        <description lang="gl">Grazas ao Xestor de Trakt.tv pode xestionar as súas listaxes.[CR]Características actuais:[CR]- Crear/Eliminar/Ver Listaxes Personalizadas[CR]- Engadir/Eliminar Filmes dende as Listaxes Personalizadas[CR]- Ver Listaxes</description>
-        <description lang="ko">Trakt.tv 목록을 관리할 수 있습니다.[CR]현재 기능:[CR]- 사용자 목록 생성/삭제/보기[CR]- 사용자 목록에서 영화 추가/삭제[CR]- 워치리스트 보기</description>
-        <description lang="pl">Przy użyciu menedżera list Trakt.tv można zarządzać własnymi listami Trakt.tv.[CR]Obecne możliwości:[CR]- Tworzenie/usuwanie/przeglądanie własnych list[CR]- Dodawanie/usuwanie filmów z własnych list[CR]- Przeglądanie list obserwowanych</description>
-        <description lang="pt">Com o Trakt.tv List Manager, pode gerir as suas listas Trakt.tv.[CR]Funcionalidades actuais:[CR]- Criar/Apagar/Ver Listas Personalizadas[CR]- Adicionar/Apagar Filmes em Listas Personalizadas[CR]- Ver Lista de Interesses</description>
-        <description lang="pt_BR">Com Trakt.tv Administrador de lista você pode gerenciar suas listas no Trakt.tv[CR]Recursos Atuais:[CR]-Criar/Deletar/Ver Listas Customizadas[CR]-Adicionar/Deletar Filmes das Listas Customizadas[CR]-Ver Listas dos Assistidos.</description>
-        <description lang="sv">Med Trakt.tv listhanterare kan du hantera dina Trakt.tv listor.[CR]Nuvarande funktioner:[CR]- Skapa/Ta bort/Visa egna listor[CR]- Lägg till/Ta bort filmer från egna listor[CR]- Visa lista över sedda filmer</description>
-    </extension>
-</addon>
-
-<addon id="repository.tknorris.beta" name="tknorris Beta Testing Repository" version="1.0.5" provider-name="tknorris">
-    <extension point="xbmc.addon.repository" name="tknorris beta testing repository">
-	    <dir>
-	        <info compressed="false">https://offshoregit.com/tvaresolvers/tva-common-repository/raw/master/addons.xml</info>
-	        <checksum>https://offshoregit.com/tvaresolvers/tva-common-repository/raw/master/addons.xml.md5</checksum>
-	        <datadir zip="true">https://offshoregit.com/tvaresolvers/tva-common-repository/raw/master/zips/</datadir>
-	    </dir>
-        <dir>
-            <info compressed="false">http://github.com/norris-addons/tknorris-beta-repo/raw/master/addons.xml</info>
-            <checksum>http://github.com/norris-addons/tknorris-beta-repo/raw/master/addons.xml.md5</checksum>
-            <datadir zip="true">http://github.com/norris-addons/tknorris-beta-repo/raw/master/zips/</datadir>
-        </dir>
-        <info compressed="false">http://github.com/tknorris/tknorris-beta-repo/raw/master/addons.xml</info>
-        <checksum>http://github.com/tknorris/tknorris-beta-repo/raw/master/addons.xml.md5</checksum>
-        <datadir zip="true">http://github.com/tknorris/tknorris-beta-repo/raw/master/zips/</datadir>
-    </extension>
-    <extension point="xbmc.addon.metadata">
-        <summary>This is used ONLY for beta testing</summary>
-        <description>Beta testing only!!!
-DO NOT INSTALL UNLESS YOU WISH TO PARTICIPATE IN BETA TESTING
-
-Addons Included
-    - 1Channel (Beta)
-    - 1Channel Thempak
-    - SALTS (Beta)
-    - SALTS Themepak
-    - Trakt (Beta)
-    - Trakt List Manager (Alpha)
-        </description>
-        <platform>all</platform>
-    </extension>
-</addon>
-
-<addon id="script.tvaddons.debug.log" name="TVA Log Uploader" version="1.0.7" provider-name="tvaddons.ag">
-    <requires>
-        <import addon="xbmc.python" version="2.20.0"/>
-    </requires>
-    <extension point="xbmc.python.script" library="default.py">
-        <provides>executable</provides>
-    </extension>
-    <extension point="xbmc.addon.metadata">
-        <summary lang="en">Upload Debug Logs to Shareable Location</summary>
-        <description lang="en">This add-on gives you the ability to upload your Kodi error logs to a shareable location, and can also optionally email you the link to your logs. Before you get started, be sure to Toggle ON the “Enable debug logging” function under the SYSTEM -> Settings -> System -> Logging menu within Kodi.</description>
-        <language></language>
-        <platform>all</platform>
-        <website>https://www.tvaddons.ag/</website>
-        <source>https://github.com/tknorris/script.tvaddons.debug.log</source>
-        <forum>https://forums.tvaddons.ag/maintenance-tool/</forum>
-    </extension>
-</addon>
-
-<!--suppress ALL -->
-<addon id="plugin.video.salts" version="2.0.88" name="Stream All The Sources" provider-name="tknorris">
-    <requires>
-        <import addon="xbmc.python" version="2.19.0"/>
-        <import addon="script.module.urlresolver" version="3.0.0"/>
-        <import addon="script.module.myconnpy" version="1.1.6" />
-        <import addon="script.module.tknorris.shared" version="0.0.2"/>
-    </requires>
-    <extension point="xbmc.python.pluginsource" library="default.py">
-        <provides>video</provides>
-    </extension>
-     <extension point="xbmc.service" library="service.py" start="startup"/>
-    <extension point="xbmc.addon.metadata">
-        <summary>Stream video from many difference sources</summary>
-        <description>This addon uses trakt.tv for most show and movie meta data and uses a variety of websites for hoster sources</description>
-        <platform>all</platform>
-        <website>http://tvaddons.ag/</website>
-		<forum>http://forums.tvaddons.ag/forums/180-TKNORRIS-RELEASE-REPOSITORY</forum>
-	</extension>
-</addon>
-
-<addon id="script.module.trakt"
-       name="trakt.py"
-       version="2.4.1"
-       provider-name="Fuzeman, Razzeee">
-  <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
-	<import addon="script.module.requests" version="2.7.0"/>
-	<import addon="script.module.six" version="1.9.0"/>
-	<import addon="script.module.arrow" version="0.6.0"/>
-  </requires>
-  <extension point="xbmc.python.module"
-             library="lib" />
-  <extension point="xbmc.addon.metadata">
-    <summary>Python interface for the trakt.tv API</summary>
-    <description>Packed for Kodi from https://github.com/fuzeman/trakt.py</description>
-    <platform>all</platform>
-    <language></language>
-    <license>MIT</license>
-    <forum></forum>
-    <website>https://github.com/fuzeman/trakt.py</website>
-    <source>https://github.com/Razzeee/script.module.trakt</source>
-    <email></email>
-  </extension>
-</addon>
-
-<addon id="script.module.arrow"
-       name="arrow"
-       version="0.6.0"
-       provider-name="crsmithdev, Razzeee">
-  <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
-	<import addon="script.module.dateutil" version="2.4.2"/>
-  </requires>
-  <extension point="xbmc.python.module"
-             library="lib" />
-  <extension point="xbmc.addon.metadata">
-    <summary>Arrow: better dates and times for Python</summary>
-    <description>Packed for Kodi from https://github.com/crsmithdev/arrow</description>
-    <platform>all</platform>
-    <language></language>
-    <license>Apache2</license>
-    <forum></forum>
-    <website>http://crsmithdev.com/arrow/</website>
-    <source>https://github.com/Razzeee/script.module.arrow</source>
-    <email>beenje AT gmail.com</email>
-  </extension>
-</addon>
-
-<addon id="script.salts.themepak" version="0.0.12" name="SALTS Themepak" provider-name="tknorris">
-    <requires>
-        <import addon="kodi.resource" version="1.0.0"/>
-    </requires>
-    <extension point="kodi.resource.images" compile="false" type="themepak" />
-    <extension point="xbmc.addon.metadata">
-        <summary>Themes for the SALTS Addon</summary>
-        <description>Themes for SALTS are maintained separately to make distribution of the the addon itself easier/faster.</description>
-        <platform>all</platform>
-    </extension>
-</addon>
-
-<!--suppress ALL -->
-<addon id="context.salts.tools" version="1.0.5" name="SALTS Context Tools" provider-name="tknorris">
-    <requires>
-        <import addon="xbmc.python" version="2.2.0"/>
-        <import addon="plugin.video.salts" version="1.0.65"/>
-        <import addon="script.module.tknorris.shared" version="0.0.1"/>
-    </requires>
-    <extension point="kodi.context.item" library="default.py">
-      <item>
-        <label>SALTS Tools...</label>
-        <visible>!StringCompare(ListItem.dbid,)+[StringCompare(ListItem.dbtype,movie)|StringCompare(ListItem.dbtype,tvshow)|StringCompare(ListItem.dbtype,season)|StringCompare(ListItem.dbtype,episode)]</visible>
-      </item>
-    </extension>
-    <extension point="xbmc.addon.metadata">
-        <summary>Library Context Menu Tools for SALTS</summary>
-        <description>This addon provides context menu items for the SALTS addon</description>
-        <platform>all</platform>
-        <website>http://tvaddons.ag/</website>
-		<forum>http://forums.tvaddons.ag/forums/180-TKNORRIS-RELEASE-REPOSITORY</forum>
-	</extension>
-</addon>
-
-<!--suppress ALL -->
-<addon id="plugin.video.1channel" version="2.5.77" name="1Channel" provider-name="Bstrdsmkr, tuxen, tknorris">
-    <requires>
-        <import addon="xbmc.python" version="2.1.0"/>
-        <import addon="script.module.urlresolver" version="3.0"/>
-        <import addon="script.module.addon.common" version="2.0.0" />
-        <import addon="script.module.metahandler" version="2.6.0" />
-        <import addon="script.module.myconnpy" version="1.1.6" />
-        <import addon="script.module.axel.downloader" version="0.2.0" optional="true"/>
-    </requires>
-    <extension point="xbmc.python.pluginsource" library="default.py">
-        <provides>video</provides>
-    </extension>
-    <extension point="xbmc.service" library="service.py" start="startup">
-    </extension>
-    <extension point="xbmc.addon.metadata">
-        <summary>Browse 1channel.ch</summary>
-        <description>Play a wide selection of movies and TV shows from PrimeWire.ag.
-***This addon is supported at [COLOR blue]www.tvaddons.ag[/COLOR], [COLOR white][B]NOT[/B][/COLOR] [COLOR red]xbmc.org[/COLOR]. ***
-        </description>
-        <platform>all</platform>
-        <website>http://tvaddons.ag/</website>
-		<forum>http://forums.tvaddons.ag/forums/32-BSTRDSMKR-S-REPOSITORY</forum>
-    </extension>
-</addon>
-
-<addon id="script.module.tknorris.shared" name="TKNorris Common Libraries" version="0.0.3" provider-name="tknorris">
-	<requires>
-		<import addon="xbmc.python" version="2.1.0" />
-	</requires>
-	<extension point="xbmc.python.module" library="lib" />
-	<extension point="xbmc.addon.metadata">
-		<platform>all</platform>
-		<summary lang="en">Reusable Modules used by several of tknorris's addons</summary>
-	</extension>
-</addon>
-
-<addon id="script.1channel.themepak" version="0.0.8" name="1Channel Themepak" provider-name="tknorris">
-    <requires>
-        <import addon="kodi.resource" version="1.0.0"/>
-    </requires>
-    <extension point="kodi.resource.images" compile="false" type="themepak" />
-    <extension point="xbmc.addon.metadata">
-        <summary>Themes for the 1Channel/PrimeWire Addon</summary>
-        <description>Themes for 1Channel are maintained separately to make distribution of the the addon itself easier/faster.</description>
-        <platform>all</platform>
-    </extension>
-</addon>
-
 <addon id="script.trakt" name="Trakt" version="3.1.4~alpha1" provider-name="Trakt.tv, Razzeee">
 	<requires>
         <import addon="xbmc.python" version="2.24.0"/>
@@ -306,26 +64,156 @@ Addons Included
 	</extension>
 </addon>
 
-<addon id="script.module.dateutil"
-       name="dateutil"
-       version="2.4.2"
-       provider-name="Gustavo Niemeyer, Tomi Pieviläinen, Yaron de Leeuw, Razzeee">
+<!--suppress ALL -->
+<addon id="plugin.video.1channel" version="2.5.77" name="1Channel" provider-name="Bstrdsmkr, tuxen, tknorris">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+        <import addon="script.module.urlresolver" version="3.0"/>
+        <import addon="script.module.addon.common" version="2.0.0" />
+        <import addon="script.module.metahandler" version="2.6.0" />
+        <import addon="script.module.myconnpy" version="1.1.6" />
+        <import addon="script.module.axel.downloader" version="0.2.0" optional="true"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.service" library="service.py" start="startup">
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <summary>Browse 1channel.ch</summary>
+        <description>Play a wide selection of movies and TV shows from PrimeWire.ag.
+***This addon is supported at [COLOR blue]www.tvaddons.ag[/COLOR], [COLOR white][B]NOT[/B][/COLOR] [COLOR red]xbmc.org[/COLOR]. ***
+        </description>
+        <platform>all</platform>
+        <website>http://tvaddons.ag/</website>
+		<forum>http://forums.tvaddons.ag/forums/32-BSTRDSMKR-S-REPOSITORY</forum>
+    </extension>
+</addon>
+
+<addon id="script.module.urlresolver" name="URLResolver" version="2.10.13~beta9" provider-name="Eldorado">
+	<requires>
+		<import addon="xbmc.python" version="2.1.0" />
+	</requires>
+	<extension point="xbmc.python.module" library="lib" />
+	<extension point="xbmc.python.pluginsource" library="default.py" />
+	<extension point="xbmc.addon.metadata">
+		<platform>all</platform>
+		<summary lang="en">Resolve common video host URL's to be playable in XBMC/Kodi.</summary>
+		<description lang="en">Resolve common video host URL's to be playable in XBMC/Kodi, simplify addon development of video plugins requiring multi video hosts.</description>
+	</extension>
+</addon>
+
+<addon id="script.salts.themepak" version="0.0.12" name="SALTS Themepak" provider-name="tknorris">
+    <requires>
+        <import addon="kodi.resource" version="1.0.0"/>
+    </requires>
+    <extension point="kodi.resource.images" compile="false" type="themepak" />
+    <extension point="xbmc.addon.metadata">
+        <summary>Themes for the SALTS Addon</summary>
+        <description>Themes for SALTS are maintained separately to make distribution of the the addon itself easier/faster.</description>
+        <platform>all</platform>
+    </extension>
+</addon>
+
+<!--suppress ALL -->
+<addon id="plugin.video.salts" version="2.0.89" name="Stream All The Sources" provider-name="tknorris">
+    <requires>
+        <import addon="xbmc.python" version="2.19.0"/>
+        <import addon="script.module.urlresolver" version="3.0.0"/>
+        <import addon="script.module.myconnpy" version="1.1.6" />
+        <import addon="script.module.tknorris.shared" version="0.0.2"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+     <extension point="xbmc.service" library="service.py" start="startup"/>
+    <extension point="xbmc.addon.metadata">
+        <summary>Stream video from many difference sources</summary>
+        <description>This addon uses trakt.tv for most show and movie meta data and uses a variety of websites for hoster sources</description>
+        <platform>all</platform>
+        <website>http://tvaddons.ag/</website>
+		<forum>http://forums.tvaddons.ag/forums/180-TKNORRIS-RELEASE-REPOSITORY</forum>
+	</extension>
+</addon>
+
+<addon id="repository.tknorris.beta" name="tknorris Beta Testing Repository" version="1.0.5" provider-name="tknorris">
+    <extension point="xbmc.addon.repository" name="tknorris beta testing repository">
+	    <dir>
+	        <info compressed="false">https://offshoregit.com/tvaresolvers/tva-common-repository/raw/master/addons.xml</info>
+	        <checksum>https://offshoregit.com/tvaresolvers/tva-common-repository/raw/master/addons.xml.md5</checksum>
+	        <datadir zip="true">https://offshoregit.com/tvaresolvers/tva-common-repository/raw/master/zips/</datadir>
+	    </dir>
+        <dir>
+            <info compressed="false">http://github.com/norris-addons/tknorris-beta-repo/raw/master/addons.xml</info>
+            <checksum>http://github.com/norris-addons/tknorris-beta-repo/raw/master/addons.xml.md5</checksum>
+            <datadir zip="true">http://github.com/norris-addons/tknorris-beta-repo/raw/master/zips/</datadir>
+        </dir>
+        <info compressed="false">http://github.com/tknorris/tknorris-beta-repo/raw/master/addons.xml</info>
+        <checksum>http://github.com/tknorris/tknorris-beta-repo/raw/master/addons.xml.md5</checksum>
+        <datadir zip="true">http://github.com/tknorris/tknorris-beta-repo/raw/master/zips/</datadir>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <summary>This is used ONLY for beta testing</summary>
+        <description>Beta testing only!!!
+DO NOT INSTALL UNLESS YOU WISH TO PARTICIPATE IN BETA TESTING
+
+Addons Included
+    - 1Channel (Beta)
+    - 1Channel Thempak
+    - SALTS (Beta)
+    - SALTS Themepak
+    - Trakt (Beta)
+    - Trakt List Manager (Alpha)
+        </description>
+        <platform>all</platform>
+    </extension>
+</addon>
+
+<addon id="script.module.trakt"
+       name="trakt.py"
+       version="2.4.1"
+       provider-name="Fuzeman, Razzeee">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
-    <import addon="script.module.six" version="1.9.0"/>
+	<import addon="script.module.requests" version="2.7.0"/>
+	<import addon="script.module.six" version="1.9.0"/>
+	<import addon="script.module.arrow" version="0.6.0"/>
   </requires>
   <extension point="xbmc.python.module"
              library="lib" />
   <extension point="xbmc.addon.metadata">
-    <summary>dateutil - powerful extensions to datetime</summary>
-    <description>Packed for Kodi from https://github.com/dateutil/dateutil</description>
+    <summary>Python interface for the trakt.tv API</summary>
+    <description>Packed for Kodi from https://github.com/fuzeman/trakt.py</description>
     <platform>all</platform>
     <language></language>
-    <license>Revised BSD License</license>
+    <license>MIT</license>
     <forum></forum>
-    <website>https://dateutil.readthedocs.org/en/latest/</website>
-    <source>https://github.com/Razzeee/script.module.dateutil</source>
+    <website>https://github.com/fuzeman/trakt.py</website>
+    <source>https://github.com/Razzeee/script.module.trakt</source>
     <email></email>
+  </extension>
+</addon>
+
+<addon id="script.module.arrow"
+       name="arrow"
+       version="0.6.0"
+       provider-name="crsmithdev, Razzeee">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0"/>
+	<import addon="script.module.dateutil" version="2.4.2"/>
+  </requires>
+  <extension point="xbmc.python.module"
+             library="lib" />
+  <extension point="xbmc.addon.metadata">
+    <summary>Arrow: better dates and times for Python</summary>
+    <description>Packed for Kodi from https://github.com/crsmithdev/arrow</description>
+    <platform>all</platform>
+    <language></language>
+    <license>Apache2</license>
+    <forum></forum>
+    <website>http://crsmithdev.com/arrow/</website>
+    <source>https://github.com/Razzeee/script.module.arrow</source>
+    <email>beenje AT gmail.com</email>
   </extension>
 </addon>
 
@@ -351,17 +239,55 @@ Addons Included
 	</extension>
 </addon>
 
-<addon id="script.module.urlresolver" name="URLResolver" version="2.10.13~beta9" provider-name="Eldorado">
-	<requires>
-		<import addon="xbmc.python" version="2.1.0" />
-	</requires>
-	<extension point="xbmc.python.module" library="lib" />
-	<extension point="xbmc.python.pluginsource" library="default.py" />
-	<extension point="xbmc.addon.metadata">
-		<platform>all</platform>
-		<summary lang="en">Resolve common video host URL's to be playable in XBMC/Kodi.</summary>
-		<description lang="en">Resolve common video host URL's to be playable in XBMC/Kodi, simplify addon development of video plugins requiring multi video hosts.</description>
-	</extension>
+<addon id="plugin.video.trakt_list_manager" name="Trakt.tv List Manager" version="0.1.5~alpha" provider-name="Tristan Fischer (sphere@dersphere.de)">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+        <import addon="script.module.xbmcswift2" version="2.4.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="addon.py">
+        <provides>executable video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <language />
+        <platform>all</platform>
+        <website>http://www.trakt.tv</website>
+        <source>https://github.com/dersphere/plugin.video.trakt_list_manager</source>
+        <forum>http://forum.xbmc.org/showthread.php?tid=161319</forum>
+        <email>sphere@dersphere.de</email>
+        <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
+        <summary lang="de">Verwalten Trakt.tv Listen von XBMC</summary>
+        <summary lang="el">Διαχείριση Λιστών του Trakt.tv από το XBMC</summary>
+        <summary lang="en">Manage Trakt.tv Lists from XBMC</summary>
+        <summary lang="fr">Gérer les listes Trakt.tv à partir de XBMC</summary>
+        <summary lang="gl">Xestionar as listaxes de Trakt.tv dende o XBMC</summary>
+        <summary lang="ko">Trakt.tv 목록 관리</summary>
+        <summary lang="pl">Zarządzanie listami Trakt.tv z XBMC</summary>
+        <summary lang="pt">Gerir Listas Trakt.tv a partir do XBMC</summary>
+        <summary lang="pt_BR">Administrar Lista Trakt.tv via XBMC</summary>
+        <summary lang="sv">Hantera Trakt.tv listor från XBMC</summary>
+        <description lang="de">Mit Trakt.tv-Listen-Manager können Sie verwalten Ihre Trakt.tv-Listen.[CR]Aktuelle Features: [CR] - erstellen/löschen/View benutzerdefinierte Listen [CR] - hinzufügen/löschen Filme von benutzerdefinierten Listen [CR]-Watchlist anzeigen </description>
+        <description lang="el">Διαχείριση Λιστών του Trakt.tv μπορείτε να διαχειριστείτε τις λίστες σας του Trakt.tv.[CR]Χαρακτηριστικά:[CR]- Δημιουργία/Διαγραφή/Προβολή Προσαρμοσμένων Λιστών[CR]- Προσθήκη/Διαγραφή Ταινιών από Προσαρμοσμένες Λίστες[CR]- Προβολή Watchlist</description>
+        <description lang="en">With Trakt.tv List Manager you can manage your Trakt.tv Lists.[CR]Current Features:[CR]- Create/Delete/View Custom Lists[CR]- Add/Delete Movies from Custom Lists[CR]- View Watchlist</description>
+        <description lang="fr">Trakt.tv List Manager vous permet de gérer vos listes Trakt.tv.[CR]Caractéristiques actuelles:[CR]- Créer/Supprimer/Voir les listes personnalisées[CR]- Ajouter/supprimer des films à partir de listes personnalisées[CR]- Afficher Watchlist</description>
+        <description lang="gl">Grazas ao Xestor de Trakt.tv pode xestionar as súas listaxes.[CR]Características actuais:[CR]- Crear/Eliminar/Ver Listaxes Personalizadas[CR]- Engadir/Eliminar Filmes dende as Listaxes Personalizadas[CR]- Ver Listaxes</description>
+        <description lang="ko">Trakt.tv 목록을 관리할 수 있습니다.[CR]현재 기능:[CR]- 사용자 목록 생성/삭제/보기[CR]- 사용자 목록에서 영화 추가/삭제[CR]- 워치리스트 보기</description>
+        <description lang="pl">Przy użyciu menedżera list Trakt.tv można zarządzać własnymi listami Trakt.tv.[CR]Obecne możliwości:[CR]- Tworzenie/usuwanie/przeglądanie własnych list[CR]- Dodawanie/usuwanie filmów z własnych list[CR]- Przeglądanie list obserwowanych</description>
+        <description lang="pt">Com o Trakt.tv List Manager, pode gerir as suas listas Trakt.tv.[CR]Funcionalidades actuais:[CR]- Criar/Apagar/Ver Listas Personalizadas[CR]- Adicionar/Apagar Filmes em Listas Personalizadas[CR]- Ver Lista de Interesses</description>
+        <description lang="pt_BR">Com Trakt.tv Administrador de lista você pode gerenciar suas listas no Trakt.tv[CR]Recursos Atuais:[CR]-Criar/Deletar/Ver Listas Customizadas[CR]-Adicionar/Deletar Filmes das Listas Customizadas[CR]-Ver Listas dos Assistidos.</description>
+        <description lang="sv">Med Trakt.tv listhanterare kan du hantera dina Trakt.tv listor.[CR]Nuvarande funktioner:[CR]- Skapa/Ta bort/Visa egna listor[CR]- Lägg till/Ta bort filmer från egna listor[CR]- Visa lista över sedda filmer</description>
+    </extension>
+</addon>
+
+<addon id="script.1channel.themepak" version="0.0.8" name="1Channel Themepak" provider-name="tknorris">
+    <requires>
+        <import addon="kodi.resource" version="1.0.0"/>
+    </requires>
+    <extension point="kodi.resource.images" compile="false" type="themepak" />
+    <extension point="xbmc.addon.metadata">
+        <summary>Themes for the 1Channel/PrimeWire Addon</summary>
+        <description>Themes for 1Channel are maintained separately to make distribution of the the addon itself easier/faster.</description>
+        <platform>all</platform>
+    </extension>
 </addon>
 
 <!--suppress ALL -->
@@ -376,6 +302,80 @@ Addons Included
     <extension point="xbmc.addon.metadata">
         <summary>Browse and Play Trailers from the Apple iTunes Website</summary>
         <description>Browse and Play Trailers from Apple iTunes Website. (Forked from the original ITunes Trailer addon by dersphere)</description>
+        <platform>all</platform>
+        <website>http://tvaddons.ag/</website>
+		<forum>http://forums.tvaddons.ag/forums/180-TKNORRIS-RELEASE-REPOSITORY</forum>
+	</extension>
+</addon>
+
+<addon id="script.module.dateutil"
+       name="dateutil"
+       version="2.4.2"
+       provider-name="Gustavo Niemeyer, Tomi Pieviläinen, Yaron de Leeuw, Razzeee">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0"/>
+    <import addon="script.module.six" version="1.9.0"/>
+  </requires>
+  <extension point="xbmc.python.module"
+             library="lib" />
+  <extension point="xbmc.addon.metadata">
+    <summary>dateutil - powerful extensions to datetime</summary>
+    <description>Packed for Kodi from https://github.com/dateutil/dateutil</description>
+    <platform>all</platform>
+    <language></language>
+    <license>Revised BSD License</license>
+    <forum></forum>
+    <website>https://dateutil.readthedocs.org/en/latest/</website>
+    <source>https://github.com/Razzeee/script.module.dateutil</source>
+    <email></email>
+  </extension>
+</addon>
+
+<addon id="script.module.tknorris.shared" name="TKNorris Common Libraries" version="0.0.4" provider-name="tknorris">
+	<requires>
+		<import addon="xbmc.python" version="2.1.0" />
+	</requires>
+	<extension point="xbmc.python.module" library="lib" />
+	<extension point="xbmc.addon.metadata">
+		<platform>all</platform>
+		<summary lang="en">Reusable Modules used by several of tknorris's addons</summary>
+	</extension>
+</addon>
+
+<addon id="script.tvaddons.debug.log" name="TVA Log Uploader" version="1.0.7" provider-name="tvaddons.ag">
+    <requires>
+        <import addon="xbmc.python" version="2.20.0"/>
+    </requires>
+    <extension point="xbmc.python.script" library="default.py">
+        <provides>executable</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <summary lang="en">Upload Debug Logs to Shareable Location</summary>
+        <description lang="en">This add-on gives you the ability to upload your Kodi error logs to a shareable location, and can also optionally email you the link to your logs. Before you get started, be sure to Toggle ON the “Enable debug logging” function under the SYSTEM -> Settings -> System -> Logging menu within Kodi.</description>
+        <language></language>
+        <platform>all</platform>
+        <website>https://www.tvaddons.ag/</website>
+        <source>https://github.com/tknorris/script.tvaddons.debug.log</source>
+        <forum>https://forums.tvaddons.ag/maintenance-tool/</forum>
+    </extension>
+</addon>
+
+<!--suppress ALL -->
+<addon id="context.salts.tools" version="1.0.5" name="SALTS Context Tools" provider-name="tknorris">
+    <requires>
+        <import addon="xbmc.python" version="2.2.0"/>
+        <import addon="plugin.video.salts" version="1.0.65"/>
+        <import addon="script.module.tknorris.shared" version="0.0.1"/>
+    </requires>
+    <extension point="kodi.context.item" library="default.py">
+      <item>
+        <label>SALTS Tools...</label>
+        <visible>!StringCompare(ListItem.dbid,)+[StringCompare(ListItem.dbtype,movie)|StringCompare(ListItem.dbtype,tvshow)|StringCompare(ListItem.dbtype,season)|StringCompare(ListItem.dbtype,episode)]</visible>
+      </item>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <summary>Library Context Menu Tools for SALTS</summary>
+        <description>This addon provides context menu items for the SALTS addon</description>
         <platform>all</platform>
         <website>http://tvaddons.ag/</website>
 		<forum>http://forums.tvaddons.ag/forums/180-TKNORRIS-RELEASE-REPOSITORY</forum>
