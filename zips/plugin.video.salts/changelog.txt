@@ -1,4 +1,4 @@
-[B]Version 2.0.94[/B]
+[B]Version 2.0.95[/B]
 - Add SeriesCoco
 - Fix scene-rls
 - Fix flixanity
