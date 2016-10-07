@@ -1,3 +1,10 @@
+[B]Version 2.0.94[/B]
+- Add SeriesCoco
+- Fix scene-rls
+- Fix flixanity
+- Fix PFTV
+- Remove vu45
+
 [B]Version 2.0.93[/B]
 - Add tvshow.me
 - Fix SeriesWatch
