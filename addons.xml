@@ -116,12 +116,12 @@
 </addon>
 
 <!--suppress ALL -->
-<addon id="plugin.video.salts" version="2.0.95" name="Stream All The Sources" provider-name="tknorris">
+<addon id="plugin.video.salts" version="2.0.96" name="Stream All The Sources" provider-name="tknorris">
     <requires>
         <import addon="xbmc.python" version="2.19.0"/>
         <import addon="script.module.urlresolver" version="3.0.0"/>
         <import addon="script.module.myconnpy" version="1.1.6" />
-        <import addon="script.module.tknorris.shared" version="0.0.7"/>
+        <import addon="script.module.tknorris.shared" version="0.0.10"/>
     </requires>
     <extension point="xbmc.python.pluginsource" library="default.py">
         <provides>video</provides>
@@ -303,10 +303,10 @@ Addons Included
 </addon>
 
 <!--suppress ALL -->
-<addon id="plugin.video.apple_trailers" version="0.0.8" name="Apple Trailers" provider-name="tknorris">
+<addon id="plugin.video.apple_trailers" version="0.0.9" name="Apple Trailers" provider-name="tknorris">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
-        <import addon="script.module.tknorris.shared" version="0.0.1"/>
+        <import addon="script.module.tknorris.shared" version="0.0.10"/>
     </requires>
     <extension point="xbmc.python.pluginsource" library="default.py">
         <provides>video</provides>
@@ -343,7 +343,7 @@ Addons Included
   </extension>
 </addon>
 
-<addon id="script.module.tknorris.shared" name="TKNorris Common Libraries" version="0.0.9" provider-name="tknorris">
+<addon id="script.module.tknorris.shared" name="TKNorris Common Libraries" version="0.0.10" provider-name="tknorris">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0" />
 	</requires>
