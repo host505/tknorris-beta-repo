@@ -1,3 +1,10 @@
+[B]Version 2.0.97[/B]
+- Allow no-language and en images for fanart
+- Allow image scrapers to be disabled
+- Add episode screenshots support from MNE, WIA and Season views (ONLY)
+- Add flush image cache function
+- Fix VKFlix
+
 [B]Version 2.0.96[/B]
 - Add fanart.tv, tmdb, tvdb, and omdb as a source for images
 - Improve Easynews (user contribution)
