@@ -1,3 +1,10 @@
+[B]Version 2.0.98[/B]
+- Switch TVDB scraper to use V1 API
+- Improve Season Image Scraping
+- Add yabancidizi scraper
+- Add Dizist scraper
+- Fix Putlocker
+
 [B]Version 2.0.97[/B]
 - Allow no-language and en images for fanart
 - Allow image scrapers to be disabled
