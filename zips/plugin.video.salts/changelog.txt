@@ -1,4 +1,4 @@
-[B]Version 2.0.100[/B]
+[B]Version 2.0.101[/B]
 - Switch TVDB scraper to use V1 API
 - Improve Season Image Scraping
 - Add yabancidizi scraper
