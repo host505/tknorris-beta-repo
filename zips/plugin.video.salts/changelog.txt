@@ -1,3 +1,11 @@
+[B]Version 2.0.103[/B]
+- Fix srt scraper bug
+- Fix salts check
+- Add Fanart.tv Personal API Key
+- Fix MoviesPlanet
+- Fix MovieXK
+- Fix Watch5s
+
 [B]Version 2.0.102[/B]
 - Switch TVDB scraper to use V1 API
 - Improve Season Image Scraping
