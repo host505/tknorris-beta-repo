@@ -1,3 +1,14 @@
+[B]Version 2.0.104[/B]
+- Add MaksiDizi scraper
+- Add WatchInHD scraper
+- Fix Putlocker scraper
+- Fix YesMovies
+- Improve xmovies8 scraper
+- Fix fanart disable
+- Add Refresh Images menu item
+- Improve thumbnail handling
+- Improve db_connection management
+
 [B]Version 2.0.103[/B]
 - Fix srt scraper bug
 - Fix salts check
