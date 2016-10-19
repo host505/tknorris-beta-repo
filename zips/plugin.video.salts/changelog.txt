@@ -1,4 +1,4 @@
-[B]Version 2.0.104[/B]
+[B]Version 2.0.105[/B]
 - Add MaksiDizi scraper
 - Add WatchInHD scraper
 - Fix Putlocker scraper
