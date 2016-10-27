@@ -1,3 +1,21 @@
+[B]Version 2.0.110[/B]
+- Add animated gif poster scraper
+- Remove rainierland scraper
+- Fix afdah.tv
+- Fix Watch5s
+- Fix iWatchOnline
+- Switch tvshow.me to debrid only
+
+[B]Version 2.0.108[/B]
+- Allow image types to be disabled.
+- Fix Watch5s
+- Fix m4ufree
+- Fix flixanity
+- Fix pubfilm
+- Fix wmo
+- Fix DDLSeries
+- Add veocube scraper
+
 [B]Version 2.0.105[/B]
 - Add MaksiDizi scraper
 - Add WatchInHD scraper
