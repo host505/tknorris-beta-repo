@@ -1,4 +1,4 @@
-[B]Version 2.0.115[/B]
+[B]Version 2.0.116[/B]
 - Improve Flush Url Cache to show progress on Kryton
 - Add support for Cast Thumbnails on Krypton
 - Fix image_cache table primary key (overlap of trakt id's)
