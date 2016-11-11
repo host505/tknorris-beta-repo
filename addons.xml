@@ -320,14 +320,14 @@ Addons Included
 	</extension>
 </addon>
 
-<addon id="script.module.image_cache" name="Image Cache DB" version="0.0.1" provider-name="tvaddons.ag, tknorris">
+<addon id="script.module.image_cache" name="TMDB Image API Cache" version="0.0.1" provider-name="tvaddons.ag, tknorris">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0" />
 	</requires>
 	<extension point="xbmc.python.module" library="lib" />
 	<extension point="xbmc.addon.metadata">
 		<platform>all</platform>
-		<summary lang="en">A local cache of image keys</summary>
+		<summary lang="en">A local cache of TMDB Image API Responses</summary>
 		<description lang="en">This is a local, querable DB cache of image keys that lighten the load on image metadata sources</description>
 	</extension>
 </addon>
