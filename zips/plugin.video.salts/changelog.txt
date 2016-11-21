@@ -1,3 +1,11 @@
+[B]Version 2.0.121[/B]
+- Fix VKFlix
+- Fix SpaceMov
+- Fix HeyDL
+- Improve TVHD scraper
+- Improve vidics
+- Remove MaksiDizi
+
 [B]Version 2.0.120[/B]
 - Add dailyreleases scraper
 - Add TVHD scraper
