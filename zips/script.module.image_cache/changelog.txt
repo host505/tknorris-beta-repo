@@ -1,3 +1,6 @@
+[B]Version 0.0.3[/B]
+- Fix objects that have duplicate TMDB IDs
+
 [B]Version 0.0.2[/B]
 - IDL Completed
 - Remove CM (broken on 2.6)
