@@ -1,3 +1,6 @@
+[B]Version 0.0.4[/B]
+- Update cache
+
 [B]Version 0.0.3[/B]
 - Fix objects that have duplicate TMDB IDs
 
