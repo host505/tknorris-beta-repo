@@ -1,4 +1,4 @@
-[B]Version 2.0.127[/B]
+[B]Version 2.0.128[/B]
 - Add OLMovies scraper
 - Fix Pelispedia scraper
 - Fix PFTV
