@@ -1,3 +1,8 @@
+[B]Version 2.0.129[/B]
+- Fix MVL
+- Fix Watch5s
+- Fix MovieHut
+
 [B]Version 2.0.128[/B]
 - Add OLMovies scraper
 - Fix Pelispedia scraper

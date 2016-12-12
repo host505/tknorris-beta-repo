@@ -116,7 +116,7 @@
 </addon>
 
 <!--suppress ALL -->
-<addon id="plugin.video.salts" version="2.0.128" name="Stream All The Sources" provider-name="tknorris">
+<addon id="plugin.video.salts" version="2.0.129" name="Stream All The Sources" provider-name="tknorris">
     <requires>
         <import addon="xbmc.python" version="2.19.0"/>
         <import addon="script.module.urlresolver" version="3.0.0"/>
@@ -304,7 +304,7 @@ Addons Included
 </addon>
 
 <!--suppress ALL -->
-<addon id="plugin.video.apple_trailers" version="0.0.10" name="Apple Trailers" provider-name="tknorris">
+<addon id="plugin.video.apple_trailers" version="0.0.11" name="Apple Trailers" provider-name="tknorris">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
         <import addon="script.module.tknorris.shared" version="0.0.10"/>
