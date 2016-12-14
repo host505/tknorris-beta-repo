@@ -71,6 +71,7 @@ def filter_po(content):
                 msgstr = True
             else:
                 if not line:
+                    msgid = msgstr = False
                     all_trans.append(trans)
                 elif msgid:
                     trans['msgid'].append(line)
