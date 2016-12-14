@@ -16,6 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
+import re
 import json
 import urllib2
 import urlparse
@@ -49,29 +50,46 @@ def filter_po(content):
     trans_exists = False
     file_buf = ''
     in_trans = False
+    msgid = False
+    msgstr = False
     all_trans = []
     for line in lines:
         if line.startswith('msgctxt'):
             in_trans = True
+            msgid = False
+            msgstr = False
             trans = {'msgctxt': line}
 
         if in_trans:
             if line.startswith('msgid'):
-                trans['msgid'] = line
+                trans['msgid'] = [line]
+                msgid = True
+                msgstr = False
             elif line.startswith('msgstr'):
-                trans['msgstr'] = line
-                all_trans.append(trans)
+                trans['msgstr'] = [line]
+                msgid = False
+                msgstr = True
+            else:
+                if not line:
+                    all_trans.append(trans)
+                elif msgid:
+                    trans['msgid'].append(line)
+                elif msgstr:
+                    trans['msgstr'].append(line)
         
         if not in_trans:
+            # strip email addresses jic
+            line = re.sub('\s*<[^>]+@[^>]+>', '', line)
             file_buf += line + '\n'
         
     trans_count = 0
     for trans in all_trans:
-        if trans['msgstr'] != 'msgstr ""':
+        if len(trans['msgstr']) > 1 or trans['msgstr'][0] != 'msgstr ""':
             trans_exists = True
             file_buf += trans['msgctxt'] + '\n'
-            file_buf += trans['msgid'] + '\n'
-            file_buf += trans['msgstr'] + '\n\n'
+            file_buf += '\n'.join(trans['msgid']) + '\n'
+            file_buf += '\n'.join(trans['msgstr']) + '\n'
+            file_buf += '\n'
             trans_count += 1
 
     if trans_exists:
