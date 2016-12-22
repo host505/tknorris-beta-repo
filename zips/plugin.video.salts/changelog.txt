@@ -1,3 +1,19 @@
+[B]Version 2.0.133[/B]
+- Add YabanciDizi
+- Add RealMovies
+- Fix PutMV
+- Fix Pelispedia
+- Fix Watch5s
+- Fix MovieGo
+- Fix MovieWatcher
+- Fix SpaceMov
+- Fix MovieHubs
+- Fix Afdah
+- Improve MovieXK
+- Fix TuneMovie
+- Fix WMO
+- Handle reserved windows filenames
+
 [B]Version 2.0.129[/B]
 - Fix MVL
 - Fix Watch5s
