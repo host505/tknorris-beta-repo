@@ -1,3 +1,11 @@
+[B]Version 2.0.136[/B]
+- Fix Watch5s
+- Fix MVL
+- Fix xmovies8.v2
+- Fix Putlockers
+- Fix rls-movies
+- Update sezonlukdizi
+
 [B]Version 2.0.133[/B]
 - Add YabanciDizi
 - Add RealMovies
