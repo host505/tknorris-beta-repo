@@ -1,3 +1,14 @@
+[B]Version 0.0.7[/B]
+- Download cache db at runtime
+- Add tknorris.shared as dependency
+
+[B]Version 0.0.6[/B]
+- allow access from different threads
+- Update cache
+
+[B]Version 0.0.5[/B]
+- Update cache
+
 [B]Version 0.0.4[/B]
 - Update cache
 

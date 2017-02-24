@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.module.image_cache" name="TMDB Image API Cache" version="0.0.5" provider-name="tvaddons.ag, tknorris">
+<addon id="script.module.image_cache" name="TMDB Image API Cache" version="0.0.7" provider-name="tvaddons.ag, tknorris">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0" />
+        <import addon="script.module.tknorris.shared" version="0.0.12"/>
 	</requires>
 	<extension point="xbmc.python.module" library="lib" />
 	<extension point="xbmc.addon.metadata">

@@ -116,7 +116,7 @@
 </addon>
 
 <!--suppress ALL -->
-<addon id="plugin.video.salts" version="2.0.142" name="Stream All The Sources" provider-name="tknorris">
+<addon id="plugin.video.salts" version="2.0.149" name="Stream All The Sources" provider-name="tknorris">
     <requires>
         <import addon="xbmc.python" version="2.19.0"/>
         <import addon="script.module.urlresolver" version="3.0.0"/>
@@ -321,9 +321,10 @@ Addons Included
 	</extension>
 </addon>
 
-<addon id="script.module.image_cache" name="TMDB Image API Cache" version="0.0.5" provider-name="tvaddons.ag, tknorris">
+<addon id="script.module.image_cache" name="TMDB Image API Cache" version="0.0.7" provider-name="tvaddons.ag, tknorris">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0" />
+        <import addon="script.module.tknorris.shared" version="0.0.12"/>
 	</requires>
 	<extension point="xbmc.python.module" library="lib" />
 	<extension point="xbmc.addon.metadata">
@@ -356,7 +357,7 @@ Addons Included
   </extension>
 </addon>
 
-<addon id="script.module.tknorris.shared" name="TKNorris Common Libraries" version="0.0.13" provider-name="tknorris">
+<addon id="script.module.tknorris.shared" name="TKNorris Common Libraries" version="0.0.14" provider-name="tknorris">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0" />
 	</requires>
