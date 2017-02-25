@@ -1,3 +1,6 @@
+[B]Version 0.0.8[/B]
+- Fix zip and db folder location
+
 [B]Version 0.0.7[/B]
 - Download cache db at runtime
 - Add tknorris.shared as dependency
