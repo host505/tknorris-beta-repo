@@ -1,3 +1,10 @@
+[B]Version 2.0.168[/B]
+- Fix WatchSeries
+- Fix get_files for SeriesWatch
+- Clear Thumbnail cache when proxy is enabled (fixes Refresh Images)
+- Allow gzip encoding for all scraper and trakt replies (~75% on the wire savings)
+- Update Translations
+
 [B]Version 2.0.167[/B]
 - Add IOMovies scraper
 - Add Kohi scraper
